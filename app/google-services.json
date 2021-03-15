@@ -1,0 +1,69 @@
+{
+  "project_info": {
+    "project_number": "791921886230",
+    "firebase_url": "https://stay-fit-rpg-default-rtdb.firebaseio.com",
+    "project_id": "stay-fit-rpg",
+    "storage_bucket": "stay-fit-rpg.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:791921886230:android:6bcebaacc4e7e6b7392137",
+        "android_client_info": {
+          "package_name": "com.edward_costache.stay_fitrpg"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "791921886230-sg8ob65626pvj8m0kin5vurhsvp1vono.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCXciq-fO1oBFU2qHbv8wWLL7McuRZBCQg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "791921886230-sg8ob65626pvj8m0kin5vurhsvp1vono.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:791921886230:android:7d72aaf3683e75a4392137",
+        "android_client_info": {
+          "package_name": "com.example.final_year_application"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "791921886230-sg8ob65626pvj8m0kin5vurhsvp1vono.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCXciq-fO1oBFU2qHbv8wWLL7McuRZBCQg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "791921886230-sg8ob65626pvj8m0kin5vurhsvp1vono.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
