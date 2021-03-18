@@ -29,7 +29,7 @@ public class LoginActivity extends AppCompatActivity {
 
     private Button btnLogin;
     private EditText editTxtEmail, editTxtPassword;
-    private TextView txtSignup, txtForgotPassword;
+    private TextView txtSignup, txtForgotPassword, txtVersion;
     private androidx.constraintlayout.widget.ConstraintLayout layout;
 
     private CheckBox checkBoxRememberMe;
@@ -48,7 +48,6 @@ public class LoginActivity extends AppCompatActivity {
         setContentView(R.layout.activity_log_in);
         initViews();
         mAuth = FirebaseAuth.getInstance();
-
 
         String intentEmail = getIntent().getStringExtra("email");
         String intentPassword = getIntent().getStringExtra("password");
@@ -113,6 +112,8 @@ public class LoginActivity extends AppCompatActivity {
         btnLogin = findViewById(R.id.loginBtnLogin);
         txtSignup = findViewById(R.id.loginTxtSignup);
         txtForgotPassword = findViewById(R.id.loginTxtForgot);
+        txtVersion = findViewById(R.id.loginVersion);
+
         layout = findViewById(R.id.loginLayout);
 
         checkBoxRememberMe = findViewById(R.id.loginRememberCheckbox);
@@ -201,6 +202,7 @@ public class LoginActivity extends AppCompatActivity {
             editTxtPassword.setVisibility(View.GONE);
             txtSignup.setVisibility(View.GONE);
             txtForgotPassword.setVisibility(View.GONE);
+            txtVersion.setVisibility(View.GONE);
 
             window.setVisibility(View.VISIBLE);
             progressBar.setVisibility(View.VISIBLE);
@@ -213,6 +215,7 @@ public class LoginActivity extends AppCompatActivity {
             editTxtPassword.setVisibility(View.VISIBLE);
             txtSignup.setVisibility(View.VISIBLE);
             txtForgotPassword.setVisibility(View.VISIBLE);
+            txtVersion.setVisibility(View.VISIBLE);
 
             window.setVisibility(View.GONE);
             progressBar.setVisibility(View.GONE);

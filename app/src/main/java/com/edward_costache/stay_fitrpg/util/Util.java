@@ -1,5 +1,11 @@
 package com.edward_costache.stay_fitrpg.util;
 
+import android.content.Context;
+import android.view.View;
+
+import com.edward_costache.stay_fitrpg.ProfileActivity;
+import com.google.android.material.snackbar.Snackbar;
+
 import java.util.Calendar;
 
 public abstract class Util {
@@ -25,5 +31,14 @@ public abstract class Util {
         c.set(Calendar.MILLISECOND, 0);
         c.add(Calendar.DATE, 1);
         return c.getTimeInMillis();
+    }
+
+    public static void displayNotImplemented(Context context, View view)
+    {
+        Snackbar.make(context, view, "Not yet implemented G!", Snackbar.LENGTH_INDEFINITE).setAction("Snm G!", new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+            }
+        }).show();
     }
 }

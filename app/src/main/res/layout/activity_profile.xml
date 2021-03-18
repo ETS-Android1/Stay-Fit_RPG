@@ -2,11 +2,11 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/profileLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/backgroundBlack"
-    tools:context=".ProfileActivity"
-    android:id="@+id/profileLayout">
+    tools:context=".ProfileActivity">
 
     <TextView
         android:id="@+id/profileTxtUsername"
@@ -16,7 +16,7 @@
         android:fontFamily="@font/roboto_condensed_regular"
         android:text="[USERNAME]"
         android:textColor="@color/textColor"
-        android:textSize="30sp"
+        android:textSize="24sp"
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -39,7 +39,7 @@
         android:layout_marginStart="8dp"
         android:fontFamily="@font/roboto_condensed_regular"
         android:text="Increase steps"
-        android:visibility="visible"
+        android:visibility="gone"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -110,14 +110,14 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        app:layout_constraintGuide_begin="233dp" />
+        app:layout_constraintGuide_begin="217dp" />
 
     <Button
         android:id="@+id/profileBtnCharacter"
         android:layout_width="167dp"
         android:layout_height="260dp"
         android:layout_marginStart="8dp"
-        android:layout_marginTop="4dp"
+        android:layout_marginBottom="16dp"
         android:fontFamily="@font/roboto_condensed_regular"
         android:text="[Character]"
         app:layout_constraintBottom_toTopOf="@+id/guideline4"
@@ -139,15 +139,16 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="0dp"
+        android:layout_height="wrap_content"
         android:orientation="horizontal"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@+id/guideline4">
 
         <com.google.android.material.card.MaterialCardView
             android:id="@+id/profileCardViewTrain"
-            android:layout_width="20dp"
+            android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_margin="4dp"
             android:layout_weight="1"
@@ -189,7 +190,7 @@
 
         <com.google.android.material.card.MaterialCardView
             android:id="@+id/profileCardViewFight"
-            android:layout_width="20dp"
+            android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_margin="4dp"
             android:layout_weight="1"
@@ -231,7 +232,7 @@
 
         <com.google.android.material.card.MaterialCardView
             android:id="@+id/profileCardViewProgress"
-            android:layout_width="20dp"
+            android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_margin="4dp"
             android:layout_weight="1"
@@ -277,11 +278,12 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        app:layout_constraintGuide_begin="531dp" />
+        app:layout_constraintGuide_begin="500dp" />
 
     <LinearLayout
         android:layout_width="195dp"
         android:layout_height="269dp"
+        android:layout_marginBottom="16dp"
         android:orientation="vertical"
         app:layout_constraintBottom_toTopOf="@+id/guideline4"
         app:layout_constraintEnd_toEndOf="parent"
@@ -379,5 +381,12 @@
             android:max="@integer/attributesMax"
             android:progressDrawable="@drawable/custom_progressbar" />
     </LinearLayout>
+
+    <androidx.constraintlayout.widget.Barrier
+        android:id="@+id/barrier2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:barrierDirection="top"
+        app:constraint_referenced_ids="profileLayout" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

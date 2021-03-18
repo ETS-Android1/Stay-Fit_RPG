@@ -103,61 +103,7 @@ public class ProfileActivity extends AppCompatActivity implements SensorEventLis
             overallSteps = sharedPreferences.getInt("overallSteps", 0);
         }
         displayUserInfo();
-
-        btnLogout.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                logout();
-            }
-        });
-
-        btnInrSteps.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                steps += 10;
-                overallSteps += 10;
-                updateSteps(steps, progressMax);
-            }
-        });
-
-        btnReset.setOnClickListener(new View.OnClickListener() {
-            @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
-            @Override
-            public void onClick(View v) {
-                sharedPreferences.edit().putInt("progress", 0).apply();
-                steps = 0;
-                overallSteps = 0;
-                reference.child(userID).child("level").setValue(1);
-                sharedPreferences.edit().putLong("time", 0).apply();
-                finishAndRemoveTask();
-            }
-        });
-
-        cardViewTrain.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                displayNotImplemented();
-            }
-        });
-        cardViewFight.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                displayNotImplemented();
-            }
-        });
-        cardViewProgress.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                displayNotImplemented();
-            }
-        });
-
-        btnCharacter.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                displayNotImplemented();
-            }
-        });
+        initOnClickListeners();
     }
 
     @Override
@@ -243,6 +189,65 @@ public class ProfileActivity extends AppCompatActivity implements SensorEventLis
         layout = findViewById(R.id.profileLayout);
     }
 
+    private void initOnClickListeners()
+    {
+        btnLogout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                logout();
+            }
+        });
+
+        btnInrSteps.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                steps += 10;
+                overallSteps += 10;
+                updateSteps(steps, progressMax);
+            }
+        });
+
+        btnReset.setOnClickListener(new View.OnClickListener() {
+            @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
+            @Override
+            public void onClick(View v) {
+                sharedPreferences.edit().putInt("progress", 0).apply();
+                steps = 0;
+                overallSteps = 0;
+                reference.child(userID).child("level").setValue(1);
+                sharedPreferences.edit().putLong("time", 0).apply();
+                finishAndRemoveTask();
+            }
+        });
+
+        cardViewTrain.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(ProfileActivity.this, ExercisesActivity.class);
+                startActivity(intent);
+            }
+        });
+        cardViewFight.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Util.displayNotImplemented(ProfileActivity.this, layout);
+            }
+        });
+        cardViewProgress.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Util.displayNotImplemented(ProfileActivity.this, layout);
+            }
+        });
+
+        btnCharacter.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Util.displayNotImplemented(ProfileActivity.this, layout);
+            }
+        });
+    }
+
     private void displayUserInfo()
     {
         reference.child(userID).addValueEventListener(new ValueEventListener() {
@@ -290,7 +295,6 @@ public class ProfileActivity extends AppCompatActivity implements SensorEventLis
             }
         });
     }
-
 
     private void updateSteps(int progress, int progressMax)
     {
@@ -342,15 +346,5 @@ public class ProfileActivity extends AppCompatActivity implements SensorEventLis
                 })
                 .setNegativeButton("No", null)
                 .show();
-    }
-
-    private void displayNotImplemented()
-    {
-        Snackbar.make(ProfileActivity.this, layout, "Not yet implemented G!", Snackbar.LENGTH_INDEFINITE).setAction("Snm G!", new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-            }
-        }).show();
     }
 }
