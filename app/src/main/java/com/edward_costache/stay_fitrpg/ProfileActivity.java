@@ -64,8 +64,6 @@ public class ProfileActivity extends AppCompatActivity implements SensorEventLis
 
     private final int STARTING_STEP_GOAL = 100;
     private final double MULTIPLIER = 1.0;
-
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -246,6 +244,13 @@ public class ProfileActivity extends AppCompatActivity implements SensorEventLis
             @Override
             public void onClick(View v) {
                 Util.displayNotImplemented(ProfileActivity.this, layout);
+            }
+        });
+
+        txtLevel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(ProfileActivity.this, EasterEggActivity.class));
             }
         });
     }
