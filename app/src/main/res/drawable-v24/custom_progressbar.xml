@@ -4,23 +4,23 @@
     <!-- Define the background properties like color etc -->
     <item android:id="@android:id/background">
         <shape>
-            <corners android:radius="45dp" />
-            <solid android:color="@color/progressBarStrokeColor" />
+            <corners android:radius="8dp" />
+            <solid android:color="@android:color/darker_gray" />
         </shape>
     </item>
 
     <!-- Define the progress properties like start color, end color etc -->
     <item android:id="@android:id/progress">
-        <clip>
+        <scale android:scaleWidth="100%">
             <shape>
-                <corners android:radius="45dp" />
+                <corners android:radius="8dp" />
                 <gradient
                     android:angle="180"
-                    android:centerColor="@color/purple_500"
+                    android:centerColor="@color/purple_700"
                     android:centerY="1.0"
                     android:endColor="#000000"
-                    android:startColor="@color/red" />
+                    android:startColor="@android:color/holo_red_light" />
             </shape>
-        </clip>
+        </scale>
     </item>
 </layer-list>

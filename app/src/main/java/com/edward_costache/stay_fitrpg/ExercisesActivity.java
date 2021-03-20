@@ -1,11 +1,13 @@
 package com.edward_costache.stay_fitrpg;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.Toast;
 
+import com.edward_costache.stay_fitrpg.exercises.PushupMenuActivity;
 import com.edward_costache.stay_fitrpg.util.Util;
 
 public class ExercisesActivity extends AppCompatActivity {
@@ -19,7 +21,7 @@ public class ExercisesActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_exercises);
         initViews();
-        initOnClickListeners();
+        initClickListeners();
     }
 
     private void initViews() {
@@ -33,12 +35,26 @@ public class ExercisesActivity extends AppCompatActivity {
         layout = findViewById(R.id.exercises_pageLayout);
     }
 
-    private void initOnClickListeners()
+    private void initClickListeners()
     {
         cardViewExercise1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Util.displayNotImplemented(ExercisesActivity.this, layout);
+                Intent intent = new Intent(ExercisesActivity.this, PushupMenuActivity.class);
+                startActivity(intent);
+            }
+        });
+
+        cardViewExercise1.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                new AlertDialog.Builder(ExercisesActivity.this, R.style.MyDialogTheme)
+                        .setIcon(android.R.drawable.ic_dialog_info)
+                        .setTitle("What are pushups?")
+                        .setMessage(R.string.pushup_description)
+                        .setPositiveButton("OK", null)
+                        .show();
+                return true;
             }
         });
 
@@ -49,10 +65,36 @@ public class ExercisesActivity extends AppCompatActivity {
             }
         });
 
+        cardViewExercise2.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                new AlertDialog.Builder(ExercisesActivity.this, R.style.MyDialogTheme)
+                        .setIcon(android.R.drawable.ic_dialog_info)
+                        .setTitle("What is Running?")
+                        .setMessage(R.string.running_description)
+                        .setPositiveButton("OK", null)
+                        .show();
+                return true;
+            }
+        });
+
         cardViewExercise3.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Util.displayNotImplemented(ExercisesActivity.this, layout);
+            }
+        });
+
+        cardViewExercise3.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                new AlertDialog.Builder(ExercisesActivity.this, R.style.MyDialogTheme)
+                        .setIcon(android.R.drawable.ic_dialog_info)
+                        .setTitle("What are Situps?")
+                        .setMessage(R.string.situp_description)
+                        .setPositiveButton("OK", null)
+                        .show();
+                return true;
             }
         });
 
@@ -63,6 +105,14 @@ public class ExercisesActivity extends AppCompatActivity {
             }
         });
 
+        cardViewExercise4.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                Util.displayNotImplemented(ExercisesActivity.this, layout);
+                return true;
+            }
+        });
+
         cardViewExercise5.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -70,10 +120,26 @@ public class ExercisesActivity extends AppCompatActivity {
             }
         });
 
+        cardViewExercise5.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                Util.displayNotImplemented(ExercisesActivity.this, layout);
+                return true;
+            }
+        });
+
         cardViewExercise6.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Util.displayNotImplemented(ExercisesActivity.this, layout);
+            }
+        });
+
+        cardViewExercise6.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                Util.displayNotImplemented(ExercisesActivity.this, layout);
+                return true;
             }
         });
     }

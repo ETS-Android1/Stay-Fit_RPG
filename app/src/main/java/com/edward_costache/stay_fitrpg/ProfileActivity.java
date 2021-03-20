@@ -65,10 +65,12 @@ public class ProfileActivity extends AppCompatActivity implements SensorEventLis
     private final int STARTING_STEP_GOAL = 100;
     private final double MULTIPLIER = 1.0;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile);
+
 
         sharedPreferences = getSharedPreferences("account", MODE_PRIVATE);
 
@@ -332,7 +334,7 @@ public class ProfileActivity extends AppCompatActivity implements SensorEventLis
 
     private void displayClosingAlertBox()
     {
-        new AlertDialog.Builder(ProfileActivity.this)
+        new AlertDialog.Builder(ProfileActivity.this, R.style.MyDialogTheme)
                 .setIcon(android.R.drawable.ic_dialog_alert)
                 .setTitle("Exiting the Application")
                 .setMessage("Are you sure you want to exit?")

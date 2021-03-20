@@ -1,4 +1,49 @@
 <resources>
     <string name="app_name">Stay-Fit RPG</string>
     <string name="footer">Created by Edward Costache</string>
+
+    <string name="warm_up_recommended">
+
+        NOTE: Before starting any exercise it is recommended that you do at least 5 minutes of warming up, and  drink plenty of water before the exercise, during the breaks and after exercise.
+
+    </string>
+
+    <string name="pushup_description">
+
+        Pushups are a great exercise for working out your upper body and arm muscles. Muscles affected;\n\t
+        • Deltoids (Shoulders), Triceps and Biceps which are located on your arms\n\t• Pectorals and Abdominal muscles which
+        are located on your chest and stomach.
+
+    </string>
+    <string name="pushup_instructions">
+
+        Place your device on the floor with the screen facing up. Position yourself in a pushup position, with your head
+        above the phone. Once clicking START do the usual pushup maneuver, but make sure to touch the phone with your chin, or nose
+        as you lower yourself.
+
+    </string>
+    <string name="situp_description">
+
+        Situps focus on increasing the strength of your abdominal muscles. Muscles affected;\n\t
+        • Abdominal muscles located on your stomach.
+
+    </string>
+    <string name="running_description">
+
+        Running is a great activity for building leg muscles and increasing your stamina and general fitness. Muscles affected;\n\t
+        • Soleus, located on the side of your ankles, also known as inner calf muscles.\n\t
+        • Gastrocnemius, located behind the shin bone, also known as calves.\n\t
+        • Quadriceps, located on the front on your leg.\n\t
+        • Hamstrings, located behind the Quadriceps, on the back of your leg.
+
+    </string>
+    <string name="squat_description">
+
+        Squats are solely used to massively increase the power in your legs and hips. Muscles affected;\n\t
+        • Quadriceps, located on the front on your leg.\n\t
+        • Hamstrings, located behind the Quadriceps, on the back of your leg.\n\t
+        • Glutes, located on the back of your hips, the bum cheeks.\n\t
+        • Gastrocnemius, located behind the shin bone, also known as calves.
+
+    </string>
 </resources>
