@@ -8,7 +8,10 @@ import android.os.Bundle;
 import android.view.View;
 
 import com.edward_costache.stay_fitrpg.exercises.PushupMenuActivity;
+import com.edward_costache.stay_fitrpg.exercises.SitupMenuActivity;
+import com.edward_costache.stay_fitrpg.exercises.SquatMenuActivity;
 import com.edward_costache.stay_fitrpg.util.Util;
+import com.google.firebase.internal.InternalTokenProvider;
 
 public class ExercisesActivity extends AppCompatActivity {
 
@@ -81,7 +84,8 @@ public class ExercisesActivity extends AppCompatActivity {
         cardViewExercise3.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Util.displayNotImplemented(ExercisesActivity.this, layout);
+                Intent intent = new Intent(ExercisesActivity.this, SitupMenuActivity.class);
+                startActivity(intent);
             }
         });
 
@@ -101,14 +105,21 @@ public class ExercisesActivity extends AppCompatActivity {
         cardViewExercise4.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Util.displayNotImplemented(ExercisesActivity.this, layout);
+                Intent intent = new Intent(ExercisesActivity.this, SquatMenuActivity.class);
+                startActivity(intent);
             }
         });
 
         cardViewExercise4.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
-                Util.displayNotImplemented(ExercisesActivity.this, layout);
+                new AlertDialog.Builder(ExercisesActivity.this, R.style.MyDialogTheme)
+                        .setIcon(android.R.drawable.ic_dialog_info)
+                        //TODO: ADD SQUAT DESCRIPTION
+                        .setTitle("What are Squats?")
+                        .setMessage(R.string.situp_description)
+                        .setPositiveButton("OK", null)
+                        .show();
                 return true;
             }
         });
