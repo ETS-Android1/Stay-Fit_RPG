@@ -45,8 +45,10 @@ public class PushupMenuActivity extends AppCompatActivity {
                 Intent intent = new Intent(PushupMenuActivity.this, PushupExerciseActivity.class);
                 intent.putExtra("strength", strengthGained);
                 intent.putExtra("health", healthGained);
-
                 intent.putExtra("rounds", rounds);
+
+                Log.i("ARRAY LIST: ", rounds.toString());
+                startActivity(intent);
             }
         });
     }

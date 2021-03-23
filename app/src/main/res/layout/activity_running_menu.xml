@@ -41,7 +41,7 @@
         android:layout_marginStart="16dp"
         android:layout_marginTop="24dp"
         android:layout_marginEnd="16dp"
-        android:text="[RUNNING INSTRUCTIONS]"
+        android:text="@string/running_instructions"
         android:textAlignment="center"
         android:textColor="@color/textColor"
         android:textSize="16sp"

@@ -21,6 +21,7 @@ import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.edward_costache.stay_fitrpg.exercises.PushupExerciseActivity;
 import com.edward_costache.stay_fitrpg.util.Util;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.auth.FirebaseAuth;
@@ -42,7 +43,6 @@ public class ProfileActivity extends AppCompatActivity implements SensorEventLis
     private ProgressBar progressBarHealth, progressBarStamina, progressBarAgility, progressBarStrength;
 
     private FirebaseAuth mAuth;
-    private FirebaseUser user;
 
     private DatabaseReference reference;
     private SharedPreferences sharedPreferences;
@@ -149,8 +149,19 @@ public class ProfileActivity extends AppCompatActivity implements SensorEventLis
     {
         mAuth = FirebaseAuth.getInstance();
         reference = FirebaseDatabase.getInstance().getReference("users");
-        user = FirebaseAuth.getInstance().getCurrentUser();
-        userID = user.getUid();
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        if(user != null)
+        {
+            userID = user.getUid();
+        }
+        else
+        {
+            Snackbar.make(ProfileActivity.this, layout, "Something went wrong, logout and login again!", Snackbar.LENGTH_LONG).setAction("OK", new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                }
+            }).show();
+        }
     }
 
     private void logout()

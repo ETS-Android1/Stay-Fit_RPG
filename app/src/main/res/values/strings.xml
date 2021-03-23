@@ -28,6 +28,12 @@
         • Abdominal muscles located on your stomach.
 
     </string>
+    <string name="situp_instructions">
+
+        Get into a situp position and either hold your phone on your chest, and place your hands in a criss-cross position or place your hands behind your head and hold the phone in either hand.
+        Once you press START do a normal situp until the phone vibrates, this will indicate that you have reached the goal, and you can take a break.
+
+    </string>
     <string name="running_description">
 
         Running is a great activity for building leg muscles and increasing your stamina and general fitness. Muscles affected;\n\t
@@ -37,6 +43,13 @@
         • Hamstrings, located behind the Quadriceps, on the back of your leg.
 
     </string>
+    <string name="running_instructions">
+
+        NOTE: Make sure you do not look at the phone will running to not hurt yourself.
+        When running, you will need to reach the required speed in order for the distance you need to reach to decrease. You will be given a distance goal, that you need to reach while running at a certain speed or higher
+        , the application will let you know if you need to run faster by making the phone vibrate. Once you have reached the goal, the phone will vibrate twice and make a sound to let you know you can take a break.
+
+    </string>
     <string name="squat_description">
 
         Squats are solely used to massively increase the power in your legs and hips. Muscles affected;\n\t
@@ -44,6 +57,12 @@
         • Hamstrings, located behind the Quadriceps, on the back of your leg.\n\t
         • Glutes, located on the back of your hips, the bum cheeks.\n\t
         • Gastrocnemius, located behind the shin bone, also known as calves.
+
+    </string>
+    <string name="squat_instructions">
+
+        When doing squats, hold your phone in front of you and proceed to do a normal squat by lowering yourself down while keeping your legs in the same position and bending your knees. You can look at your phone while doing squats
+        to see how many squats you have left until a break.
 
     </string>
 </resources>

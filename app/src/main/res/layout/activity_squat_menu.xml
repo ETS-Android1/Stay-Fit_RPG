@@ -41,7 +41,7 @@
         android:layout_marginStart="16dp"
         android:layout_marginTop="24dp"
         android:layout_marginEnd="16dp"
-        android:text="[SQUAT INSTRUCTIONS]"
+        android:text="@string/squat_instructions"
         android:textAlignment="center"
         android:textColor="@color/textColor"
         android:textSize="16sp"
