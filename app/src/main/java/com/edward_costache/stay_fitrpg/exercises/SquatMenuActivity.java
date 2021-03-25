@@ -3,7 +3,9 @@ package com.edward_costache.stay_fitrpg.exercises;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.annotation.SuppressLint;
+import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.RadioButton;
@@ -12,16 +14,19 @@ import android.widget.TextView;
 
 import com.edward_costache.stay_fitrpg.R;
 
+import java.util.ArrayList;
+
 public class SquatMenuActivity extends AppCompatActivity {
 
     private RadioGroup radioGroup;
     private RadioButton radioButtonVeryEasy, radioButtonEasy, radioButtonMedium, radioButtonHard;
-    private TextView txtStrength, txtHealth, txtRound1, txtRound2, txtRound3, txtRound4, txtRound5, txtRound6;
+    private TextView txtStrength, txtStamina, txtRound1, txtRound2, txtRound3, txtRound4, txtRound5, txtRound6;
     private Button btnStart;
 
     private int strengthGained;
     private int staminaGained;
     private int maxReps;
+    private final ArrayList<Integer> rounds = new ArrayList<>();
     
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,6 +37,18 @@ public class SquatMenuActivity extends AppCompatActivity {
         setMedium();
         updateViews();
         setOnCheckedListeners();
+        btnStart.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(SquatMenuActivity.this, SquatExerciseActivity.class);
+                intent.putExtra("strength", strengthGained);
+                intent.putExtra("stamina", staminaGained);
+                intent.putExtra("rounds", rounds);
+
+                Log.i("ARRAY LIST: ", rounds.toString());
+                startActivity(intent);
+            }
+        });
     }
 
     @Override
@@ -69,9 +86,9 @@ public class SquatMenuActivity extends AppCompatActivity {
 
     private void setVeryEasy()
     {
-        strengthGained = 8;
-        staminaGained = 6;
-        maxReps = 16;
+        strengthGained = 6;
+        staminaGained = 5;
+        maxReps = 10;
 
         //Round 4
         txtRound4.setVisibility(View.GONE);
@@ -79,71 +96,86 @@ public class SquatMenuActivity extends AppCompatActivity {
         txtRound5.setVisibility(View.GONE);
         //Round 6
         txtRound6.setVisibility(View.GONE);
+
+        rounds.clear();
+        rounds.add((int)(maxReps*0.5));
+        rounds.add((int)(maxReps*0.8));
+        rounds.add(maxReps);
     }
 
     private void setEasy()
     {
-        strengthGained = 9;
-        staminaGained = 7;
-        maxReps = 18;
+        strengthGained = 8;
+        staminaGained = 6;
+        maxReps = 12;
 
-        //Round 4
-        txtRound4.setVisibility(View.VISIBLE);
-        txtRound4.setText(String.format("ROUND 4: %02d", (int)(maxReps*0.5)));
         //Round 5
         txtRound5.setVisibility(View.GONE);
         //Round 6
         txtRound6.setVisibility(View.GONE);
 
+        rounds.clear();
+        rounds.add((int)(maxReps*0.5));
+        rounds.add((int)(maxReps*0.8));
+        rounds.add(maxReps);
+        rounds.add((int)(maxReps*0.5));
     }
 
     private void setMedium()
     {
         strengthGained = 10;
-        staminaGained = 8;
-        maxReps = 20;
+        staminaGained = 9;
+        maxReps = 14;
 
-        //Round 4
-        txtRound4.setVisibility(View.VISIBLE);
-        txtRound4.setText(String.format("ROUND 4: %02d", (int)(maxReps*0.5)));
-        //Round 5
-        txtRound5.setVisibility(View.VISIBLE);
-        txtRound5.setText(String.format("ROUND 5: %02d", (int)(maxReps*0.8)));
-        //Round 6
         txtRound6.setVisibility(View.GONE);
 
-
+        rounds.clear();
+        rounds.add((int)(maxReps*0.5));
+        rounds.add((int)(maxReps*0.8));
+        rounds.add(maxReps);
+        rounds.add((int)(maxReps*0.5));
+        rounds.add((int)(maxReps*0.8));
     }
 
     private void setHard()
     {
         strengthGained = 12;
-        staminaGained = 10;
-        maxReps = 24;
+        staminaGained = 11;
+        maxReps = 118;
 
-        //Round 4
-        txtRound4.setVisibility(View.VISIBLE);
-        txtRound4.setText(String.format("ROUND 4: %02d", (int)(maxReps*0.5)));
-        //Round 5
-        txtRound5.setVisibility(View.VISIBLE);
-        txtRound5.setText(String.format("ROUND 5: %02d", (int)(maxReps*0.8)));
-        //Round 6
-        txtRound6.setVisibility(View.VISIBLE);
-        txtRound6.setText(String.format("ROUND 6: %02d", maxReps));
+        rounds.clear();
+        rounds.add((int)(maxReps*0.5));
+        rounds.add((int)(maxReps*0.8));
+        rounds.add(maxReps);
+        rounds.add((int)(maxReps*0.5));
+        rounds.add((int)(maxReps*0.8));
+        rounds.add(maxReps);
     }
 
     private void updateViews()
     {
         //Round 1
-        txtRound1.setText(String.format("ROUND 1: %02d", (int)(maxReps*0.5)));
+        txtRound1.setText(String.format("ROUND 1: %02d", rounds.get(0)));
         //Round 2
-        txtRound2.setText(String.format("ROUND 2: %02d", (int)(maxReps*0.8)));
+        txtRound2.setText(String.format("ROUND 2: %02d", rounds.get(1)));
         //Round 3
-        txtRound3.setText(String.format("ROUND 3: %02d", maxReps));
+        txtRound3.setText(String.format("ROUND 3: %02d", rounds.get(2)));
 
+        try {
+            txtRound4.setText(String.format("ROUND 4: %02d", rounds.get(3)));
+            txtRound4.setVisibility(View.VISIBLE);
+            txtRound5.setText(String.format("ROUND 5: %02d", rounds.get(4)));
+            txtRound5.setVisibility(View.VISIBLE);
+            txtRound6.setText(String.format("ROUND 6: %02d", rounds.get(5)));
+            txtRound6.setVisibility(View.VISIBLE);
+        }
+        catch (Exception e)
+        {
+            Log.i("UPDATE VIEWS", ": STOPPED");
+        }
 
-        txtStrength.setText(String.format("STRENGTH: +%02d", strengthGained));
-        txtHealth.setText(String.format("STAMINA: +%02d", staminaGained));
+        txtStrength.setText(String.format("STAMINA: +%02d", strengthGained));
+        txtStamina.setText(String.format("HEALTH: +%02d", staminaGained));
     }
 
 
@@ -156,7 +188,7 @@ public class SquatMenuActivity extends AppCompatActivity {
         radioButtonHard = findViewById(R.id.squatRadioButtonHard);
 
         txtStrength = findViewById(R.id.squatTxtStrength);
-        txtHealth = findViewById(R.id.squatTxtHealth);
+        txtStamina = findViewById(R.id.squatTxtStamina);
         txtRound1 = findViewById(R.id.squatTxtRound1);
         txtRound2 = findViewById(R.id.squatTxtRound2);
         txtRound3 = findViewById(R.id.squatTxtRound3);

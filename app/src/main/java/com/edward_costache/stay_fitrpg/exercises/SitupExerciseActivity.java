@@ -13,7 +13,6 @@ import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
-import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.os.Build;
 import android.os.Bundle;
@@ -21,11 +20,9 @@ import android.os.CountDownTimer;
 import android.os.Vibrator;
 import android.util.Log;
 import android.view.View;
-import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.edward_costache.stay_fitrpg.LoginActivity;
 import com.edward_costache.stay_fitrpg.R;
 import com.edward_costache.stay_fitrpg.User;
 import com.edward_costache.stay_fitrpg.util.SoundLibrary;
@@ -177,9 +174,9 @@ public class SitupExerciseActivity extends AppCompatActivity implements SensorEv
         vibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
         mediaPlayer = MediaPlayer.create(SitupExerciseActivity.this, R.raw.ding);
 
-        txtX = findViewById(R.id.xAxis);
-        txtY = findViewById(R.id.yAxis);
-        txtZ = findViewById(R.id.zAxis);
+        txtX = findViewById(R.id.AccX);
+        txtY = findViewById(R.id.AccY);
+        txtZ = findViewById(R.id.AccZ);
     }
 
     private void registerAccelerometer() {

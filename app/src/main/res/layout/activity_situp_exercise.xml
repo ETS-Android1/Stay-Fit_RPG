@@ -43,7 +43,7 @@
             android:textSize="36sp" />
 
         <TextView
-            android:id="@+id/xAxis"
+            android:id="@+id/AccX"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:fontFamily="@font/roboto_condensed_regular"
@@ -53,7 +53,7 @@
             android:visibility="invisible" />
 
         <TextView
-            android:id="@+id/yAxis"
+            android:id="@+id/AccY"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:fontFamily="@font/roboto_condensed_regular"
@@ -63,13 +63,14 @@
             android:visibility="invisible" />
 
         <TextView
-            android:id="@+id/zAxis"
+            android:id="@+id/AccZ"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:fontFamily="@font/roboto_condensed_regular"
             android:textAlignment="center"
             android:textColor="@color/textColor"
-            android:textSize="24sp" />
+            android:textSize="24sp"
+            android:visibility="invisible" />
 
     </LinearLayout>
 

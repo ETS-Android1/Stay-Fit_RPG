@@ -201,7 +201,7 @@
                             android:src="@drawable/stamina_icon" />
 
                         <TextView
-                            android:id="@+id/squatTxtHealth"
+                            android:id="@+id/squatTxtStamina"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginStart="7dp"

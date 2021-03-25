@@ -3,7 +3,6 @@ package com.edward_costache.stay_fitrpg.util;
 import android.content.Context;
 import android.media.MediaPlayer;
 
-import com.edward_costache.stay_fitrpg.R;
 
 public abstract class SoundLibrary {
 
