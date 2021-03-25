@@ -115,7 +115,6 @@ public class ExercisesActivity extends AppCompatActivity {
             public boolean onLongClick(View v) {
                 new AlertDialog.Builder(ExercisesActivity.this, R.style.MyDialogTheme)
                         .setIcon(android.R.drawable.ic_dialog_info)
-                        //TODO: ADD SQUAT DESCRIPTION
                         .setTitle("What are Squats?")
                         .setMessage(R.string.situp_description)
                         .setPositiveButton("OK", null)

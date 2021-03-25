@@ -3,7 +3,9 @@ package com.edward_costache.stay_fitrpg.exercises;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.annotation.SuppressLint;
+import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.RadioButton;
@@ -11,6 +13,8 @@ import android.widget.RadioGroup;
 import android.widget.TextView;
 
 import com.edward_costache.stay_fitrpg.R;
+
+import java.util.ArrayList;
 
 public class SitupMenuActivity extends AppCompatActivity {
 
@@ -22,6 +26,7 @@ public class SitupMenuActivity extends AppCompatActivity {
     private int maxReps;
     private int staminaGained;
     private int healthGained;
+    private final ArrayList<Integer> rounds = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,6 +37,19 @@ public class SitupMenuActivity extends AppCompatActivity {
         setMedium();
         updateViews();
         setOnCheckedListeners();
+
+        btnStart.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(SitupMenuActivity.this, SitupExerciseActivity.class);
+                intent.putExtra("stamina", staminaGained);
+                intent.putExtra("health", healthGained);
+                intent.putExtra("rounds", rounds);
+
+                Log.i("ARRAY LIST: ", rounds.toString());
+                startActivity(intent);
+            }
+        });
     }
 
     @Override
@@ -79,6 +97,11 @@ public class SitupMenuActivity extends AppCompatActivity {
         txtRound5.setVisibility(View.GONE);
         //Round 6
         txtRound6.setVisibility(View.GONE);
+
+        rounds.clear();
+        rounds.add((int)(maxReps*0.5));
+        rounds.add((int)(maxReps*0.8));
+        rounds.add(maxReps);
     }
 
     private void setEasy()
@@ -87,14 +110,16 @@ public class SitupMenuActivity extends AppCompatActivity {
         healthGained = 5;
         maxReps = 10;
 
-        //Round 4
-        txtRound4.setVisibility(View.VISIBLE);
-        txtRound4.setText(String.format("ROUND 4: %02d", (int)(maxReps*0.5)));
         //Round 5
         txtRound5.setVisibility(View.GONE);
         //Round 6
         txtRound6.setVisibility(View.GONE);
 
+        rounds.clear();
+        rounds.add((int)(maxReps*0.5));
+        rounds.add((int)(maxReps*0.8));
+        rounds.add(maxReps);
+        rounds.add((int)(maxReps*0.5));
     }
 
     private void setMedium()
@@ -103,16 +128,14 @@ public class SitupMenuActivity extends AppCompatActivity {
         healthGained = 6;
         maxReps = 12;
 
-        //Round 4
-        txtRound4.setVisibility(View.VISIBLE);
-        txtRound4.setText(String.format("ROUND 4: %02d", (int)(maxReps*0.5)));
-        //Round 5
-        txtRound5.setVisibility(View.VISIBLE);
-        txtRound5.setText(String.format("ROUND 5: %02d", (int)(maxReps*0.8)));
-        //Round 6
         txtRound6.setVisibility(View.GONE);
 
-
+        rounds.clear();
+        rounds.add((int)(maxReps*0.5));
+        rounds.add((int)(maxReps*0.8));
+        rounds.add(maxReps);
+        rounds.add((int)(maxReps*0.5));
+        rounds.add((int)(maxReps*0.8));
     }
 
     private void setHard()
@@ -121,25 +144,36 @@ public class SitupMenuActivity extends AppCompatActivity {
         healthGained = 8;
         maxReps = 16;
 
-        //Round 4
-        txtRound4.setVisibility(View.VISIBLE);
-        txtRound4.setText(String.format("ROUND 4: %02d", (int)(maxReps*0.5)));
-        //Round 5
-        txtRound5.setVisibility(View.VISIBLE);
-        txtRound5.setText(String.format("ROUND 5: %02d", (int)(maxReps*0.8)));
-        //Round 6
-        txtRound6.setVisibility(View.VISIBLE);
-        txtRound6.setText(String.format("ROUND 6: %02d", maxReps));
+        rounds.clear();
+        rounds.add((int)(maxReps*0.5));
+        rounds.add((int)(maxReps*0.8));
+        rounds.add(maxReps);
+        rounds.add((int)(maxReps*0.5));
+        rounds.add((int)(maxReps*0.8));
+        rounds.add(maxReps);
     }
 
     private void updateViews()
     {
         //Round 1
-        txtRound1.setText(String.format("ROUND 1: %02d", (int)(maxReps*0.5)));
+        txtRound1.setText(String.format("ROUND 1: %02d", rounds.get(0)));
         //Round 2
-        txtRound2.setText(String.format("ROUND 2: %02d", (int)(maxReps*0.8)));
+        txtRound2.setText(String.format("ROUND 2: %02d", rounds.get(1)));
         //Round 3
-        txtRound3.setText(String.format("ROUND 3: %02d", maxReps));
+        txtRound3.setText(String.format("ROUND 3: %02d", rounds.get(2)));
+
+        try {
+            txtRound4.setText(String.format("ROUND 4: %02d", rounds.get(3)));
+            txtRound4.setVisibility(View.VISIBLE);
+            txtRound5.setText(String.format("ROUND 5: %02d", rounds.get(4)));
+            txtRound5.setVisibility(View.VISIBLE);
+            txtRound6.setText(String.format("ROUND 6: %02d", rounds.get(5)));
+            txtRound6.setVisibility(View.VISIBLE);
+        }
+        catch (Exception e)
+        {
+            Log.i("UPDATE VIEWS", ": STOPPED");
+        }
 
 
         txtStrength.setText(String.format("STAMINA: +%02d", staminaGained));

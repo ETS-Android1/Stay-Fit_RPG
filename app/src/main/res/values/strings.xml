@@ -30,8 +30,9 @@
     </string>
     <string name="situp_instructions">
 
-        Get into a situp position and either hold your phone on your chest, and place your hands in a criss-cross position or place your hands behind your head and hold the phone in either hand.
-        Once you press START do a normal situp until the phone vibrates, this will indicate that you have reached the goal, and you can take a break.
+        Get into a situp position and either hold your phone on your chest, or place your hands behind your head while holding the phone in your hands hand.
+        Before you press START make sure you are already laying on the ground. Once you have started the exercise, you can do your sit, the phone will let you know with a sound
+        that you have completed one situp. The phone will eventually vibrate, this indicates you have completed the round, and you can take a break, or the exercise is over.
 
     </string>
     <string name="running_description">
@@ -63,6 +64,12 @@
 
         When doing squats, hold your phone in front of you and proceed to do a normal squat by lowering yourself down while keeping your legs in the same position and bending your knees. You can look at your phone while doing squats
         to see how many squats you have left until a break.
+
+    </string>
+    <string name="break_instructions">
+
+        DRINK SOME WATER!\nWater is very important when doing exercise, because your body constantly sweats dehydrating your body. It is vital to rehydrate during breaks, and after exercise.\n\n
+        GET YOUR BREATH BACK!\nYour body uses oxygen to fuel your muscles with energy, make sure you take deep breaths during breaks.
 
     </string>
 </resources>

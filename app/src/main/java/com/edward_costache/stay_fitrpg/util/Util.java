@@ -1,9 +1,16 @@
 package com.edward_costache.stay_fitrpg.util;
 
 import android.content.Context;
+import android.content.DialogInterface;
+import android.os.Build;
+import android.util.Log;
 import android.view.View;
 
+import androidx.annotation.RequiresApi;
+import androidx.appcompat.app.AlertDialog;
+
 import com.edward_costache.stay_fitrpg.ProfileActivity;
+import com.edward_costache.stay_fitrpg.R;
 import com.google.android.material.snackbar.Snackbar;
 
 import java.util.Calendar;

@@ -178,6 +178,7 @@
                     android:layout_below="@id/profileImgTrain"
                     android:layout_centerHorizontal="true"
                     android:layout_marginTop="2dp"
+                    android:layout_marginBottom="5dp"
                     android:fontFamily="@font/roboto_condensed_regular"
                     android:text="TRAIN"
                     android:textColor="@color/textColor"
@@ -220,6 +221,7 @@
                     android:layout_below="@id/profileImgFight"
                     android:layout_centerHorizontal="true"
                     android:layout_marginTop="2dp"
+                    android:layout_marginBottom="5dp"
                     android:fontFamily="@font/roboto_condensed_regular"
                     android:text="FIGHT"
                     android:textColor="@color/textColor"
@@ -262,6 +264,7 @@
                     android:layout_below="@id/profileImgProgress"
                     android:layout_centerHorizontal="true"
                     android:layout_marginTop="2dp"
+                    android:layout_marginBottom="5dp"
                     android:fontFamily="@font/roboto_condensed_regular"
                     android:text="PROGRESS"
                     android:textColor="@color/textColor"
@@ -322,9 +325,10 @@
             android:layout_marginStart="8dp"
             android:layout_marginTop="10dp"
             android:fontFamily="@font/roboto_condensed_regular"
-            android:text="[STRENGTH]"
+            android:text="STRENGTH"
             android:textColor="@color/textColor"
-            android:textSize="18sp" />
+            android:textSize="18sp"
+            android:textStyle="bold" />
 
         <ProgressBar
             android:id="@+id/profileProgressBarStrength"
@@ -344,9 +348,10 @@
             android:layout_marginStart="8dp"
             android:layout_marginTop="10dp"
             android:fontFamily="@font/roboto_condensed_regular"
-            android:text="[AGILITY]"
+            android:text="AGILITY"
             android:textColor="@color/textColor"
-            android:textSize="18sp" />
+            android:textSize="18sp"
+            android:textStyle="bold" />
 
         <ProgressBar
             android:id="@+id/profileProgressBarAgility"
@@ -366,9 +371,10 @@
             android:layout_marginStart="8dp"
             android:layout_marginTop="10dp"
             android:fontFamily="@font/roboto_condensed_regular"
-            android:text="[STAMINA]"
+            android:text="STAMINA"
             android:textColor="@color/textColor"
-            android:textSize="18sp" />
+            android:textSize="18sp"
+            android:textStyle="bold" />
 
         <ProgressBar
             android:id="@+id/profileProgressBarStamina"
