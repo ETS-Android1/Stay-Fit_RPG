@@ -31,6 +31,11 @@ public class Gyroscope {
             public void onSensorChanged(SensorEvent event) {
                 if(listener != null)
                 {
+                    /*
+                    This Overwritten method returns 3 different set of values stored in an Array called values. The indexing goes from 0 to 2 and it represents
+                    x, y, z respectively. Here i am using the interface of the listener initialized above to pass these values onto a method called onRotate(),
+                    these values can then be fetched and used when creating a Gyroscope object in another class.
+                     */
                     listener.onRotation(event.values[0], event.values[1], event.values[2]);
                 }
             }

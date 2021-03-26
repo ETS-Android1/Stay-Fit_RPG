@@ -7,8 +7,7 @@ import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.widget.Toast;
 
-public class Accelerometer {
-
+public class Graviton {
     private SensorManager sensorManager;
     private Sensor sensor;
     private SensorEventListener sensorEventListener;
@@ -16,7 +15,7 @@ public class Accelerometer {
 
     public interface Listener
     {
-        void onTranslation(float tx, float ty, float tz);
+        void onGravitation(float gx, float gy, float gz);
     }
     private Listener listener;
     public void setListener(Listener l)
@@ -24,11 +23,11 @@ public class Accelerometer {
         listener = l;
     }
 
-    public Accelerometer(Context context, int sensorType)
+    public Graviton(Context context)
     {
         this.context = context;
         sensorManager = (SensorManager) context.getSystemService(Context.SENSOR_SERVICE);
-        sensor = sensorManager.getDefaultSensor(sensorType);
+        sensor = sensorManager.getDefaultSensor(Sensor.TYPE_GRAVITY);
         sensorEventListener = new SensorEventListener() {
             @Override
             public void onSensorChanged(SensorEvent event)
@@ -37,10 +36,10 @@ public class Accelerometer {
                 {
                     /*
                     This Overwritten method returns 3 different set of values stored in an Array called values. The indexing goes from 0 to 2 and it represents
-                    x, y, z respectively. Here i am using the interface of the listener initialized above to pass these values onto a method called onTranslate(),
+                    x, y, z respectively. Here i am using the interface of the listener initialized above to pass these values onto a method called onGravitation(),
                     these values can then be fetched and used when creating a Accelerometer object in another class.
                      */
-                    listener.onTranslation(event.values[0], event.values[1], event.values[2]);
+                    listener.onGravitation(event.values[0], event.values[1], event.values[2]);
                 }
             }
 
@@ -54,12 +53,12 @@ public class Accelerometer {
     public void registerListener()
     {
         sensorManager.registerListener(sensorEventListener, sensor, SensorManager.SENSOR_DELAY_UI);
-        Toast.makeText(context, "Accelerometer Registered", Toast.LENGTH_SHORT).show();
+        Toast.makeText(context, "Graviton Registered", Toast.LENGTH_SHORT).show();
     }
 
     public void un_registerListener()
     {
         sensorManager.unregisterListener(sensorEventListener);
-        Toast.makeText(context, "Accelerometer Unregistered", Toast.LENGTH_SHORT).show();
+        Toast.makeText(context, "Graviton Unregistered", Toast.LENGTH_SHORT).show();
     }
 }

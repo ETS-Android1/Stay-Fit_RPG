@@ -4,6 +4,56 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".exercises.RunningExerciseActivity">
+    tools:context=".exercises.RunningExerciseActivity"
+    android:background="@color/backgroundBlack">
+
+    <TextView
+        android:id="@+id/stepCounter"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="32dp"
+        android:fontFamily="@font/roboto_condensed_regular"
+        android:textAlignment="center"
+        android:textColor="@color/textColor"
+        android:textSize="30sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/txtDistance"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/roboto_condensed_regular"
+        android:textAlignment="center"
+        android:textColor="@color/textColor"
+        android:textSize="30sp"
+        app:layout_constraintEnd_toEndOf="@+id/stepCounter"
+        app:layout_constraintStart_toStartOf="@+id/stepCounter"
+        app:layout_constraintTop_toBottomOf="@+id/stepCounter" />
+
+    <TextView
+        android:id="@+id/txtTime"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/roboto_condensed_regular"
+        android:textAlignment="center"
+        android:textColor="@color/textColor"
+        android:textSize="30sp"
+        app:layout_constraintEnd_toEndOf="@+id/txtDistance"
+        app:layout_constraintStart_toStartOf="@+id/txtDistance"
+        app:layout_constraintTop_toBottomOf="@+id/txtDistance" />
+
+    <TextView
+        android:id="@+id/txtSpeed"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/roboto_condensed_regular"
+        android:textAlignment="center"
+        android:textColor="@color/textColor"
+        android:textSize="30sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/txtTime" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

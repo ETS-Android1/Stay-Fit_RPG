@@ -84,37 +84,37 @@
             android:id="@+id/textView13"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Gyroscope"
+            android:fontFamily="@font/roboto_condensed_regular"
             android:textAlignment="center"
             android:textColor="@color/textColor"
             android:textSize="24sp" />
 
         <TextView
-            android:id="@+id/GyroX"
+            android:id="@+id/gravityX"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:fontFamily="@font/roboto_condensed_regular"
             android:textAlignment="center"
             android:textColor="@color/textColor"
-            android:textSize="24sp"
-            android:visibility="visible" />
+            android:textSize="24sp" />
 
         <TextView
-            android:id="@+id/GyroY"
+            android:id="@+id/gravityY"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:fontFamily="@font/roboto_condensed_regular"
             android:textAlignment="center"
             android:textColor="@color/textColor"
-            android:textSize="24sp"
-            android:visibility="visible" />
+            android:textSize="24sp" />
 
         <TextView
-            android:id="@+id/GyroZ"
+            android:id="@+id/gravityZ"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:fontFamily="@font/roboto_condensed_regular"
             android:textAlignment="center"
             android:textColor="@color/textColor"
-            android:textSize="24sp"
-            android:visibility="visible" />
+            android:textSize="24sp" />
 
     </LinearLayout>
 

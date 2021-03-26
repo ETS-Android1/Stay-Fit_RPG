@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.view.View;
 
 import com.edward_costache.stay_fitrpg.exercises.PushupMenuActivity;
+import com.edward_costache.stay_fitrpg.exercises.RunningMenuActivity;
 import com.edward_costache.stay_fitrpg.exercises.SitupMenuActivity;
 import com.edward_costache.stay_fitrpg.exercises.SquatMenuActivity;
 import com.edward_costache.stay_fitrpg.util.Util;
@@ -64,7 +65,8 @@ public class ExercisesActivity extends AppCompatActivity {
         cardViewExercise2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Util.displayNotImplemented(ExercisesActivity.this, layout);
+                Intent intent = new Intent(ExercisesActivity.this, RunningMenuActivity.class);
+                startActivity(intent);
             }
         });
 

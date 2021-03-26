@@ -7,16 +7,17 @@ import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.widget.Toast;
 
-public class Accelerometer {
+public class StepDetector {
 
     private SensorManager sensorManager;
     private Sensor sensor;
     private SensorEventListener sensorEventListener;
     private Context context;
+    private int steps;
 
     public interface Listener
     {
-        void onTranslation(float tx, float ty, float tz);
+        void onStep(int steps);
     }
     private Listener listener;
     public void setListener(Listener l)
@@ -24,23 +25,19 @@ public class Accelerometer {
         listener = l;
     }
 
-    public Accelerometer(Context context, int sensorType)
+    public StepDetector(Context context)
     {
         this.context = context;
         sensorManager = (SensorManager) context.getSystemService(Context.SENSOR_SERVICE);
-        sensor = sensorManager.getDefaultSensor(sensorType);
+        sensor = sensorManager.getDefaultSensor(Sensor.TYPE_STEP_DETECTOR);
         sensorEventListener = new SensorEventListener() {
             @Override
             public void onSensorChanged(SensorEvent event)
             {
                 if(listener != null)
                 {
-                    /*
-                    This Overwritten method returns 3 different set of values stored in an Array called values. The indexing goes from 0 to 2 and it represents
-                    x, y, z respectively. Here i am using the interface of the listener initialized above to pass these values onto a method called onTranslate(),
-                    these values can then be fetched and used when creating a Accelerometer object in another class.
-                     */
-                    listener.onTranslation(event.values[0], event.values[1], event.values[2]);
+                    steps++;
+                    listener.onStep(steps);
                 }
             }
 
@@ -54,12 +51,12 @@ public class Accelerometer {
     public void registerListener()
     {
         sensorManager.registerListener(sensorEventListener, sensor, SensorManager.SENSOR_DELAY_UI);
-        Toast.makeText(context, "Accelerometer Registered", Toast.LENGTH_SHORT).show();
+        Toast.makeText(context, "Step Detector Registered", Toast.LENGTH_SHORT).show();
     }
 
     public void un_registerListener()
     {
         sensorManager.unregisterListener(sensorEventListener);
-        Toast.makeText(context, "Accelerometer Unregistered", Toast.LENGTH_SHORT).show();
+        Toast.makeText(context, "Step Detector Unregistered", Toast.LENGTH_SHORT).show();
     }
 }

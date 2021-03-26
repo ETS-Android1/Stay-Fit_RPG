@@ -25,6 +25,8 @@ import android.widget.TextView;
 
 import com.edward_costache.stay_fitrpg.R;
 import com.edward_costache.stay_fitrpg.User;
+import com.edward_costache.stay_fitrpg.util.Accelerometer;
+import com.edward_costache.stay_fitrpg.util.Gyroscope;
 import com.edward_costache.stay_fitrpg.util.SoundLibrary;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.auth.FirebaseAuth;
@@ -37,7 +39,7 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 
-public class SitupExerciseActivity extends AppCompatActivity implements SensorEventListener {
+public class SitupExerciseActivity extends AppCompatActivity {
 
     private static final String TAG = "SITUP_SENSOR - ";
     private LinearLayout layoutRound, layoutBreak;
@@ -48,18 +50,15 @@ public class SitupExerciseActivity extends AppCompatActivity implements SensorEv
     private String userID;
     private androidx.constraintlayout.widget.ConstraintLayout mainLayout;
     private User userProfile;
-    private TextView txtX, txtY, txtZ;
 
     // Round
-    private SensorManager sensorManager;
-    private Sensor accelerometer;
     private TextView txtSitupCount;
     private ArrayList<Integer> rounds;
     private int round = 0;
     private int maxRounds, goal, currentSitups, userStamina, userHealth, overallSitups;
     private boolean ready = true;
     private Vibrator vibrator;
-    private MediaPlayer mediaPlayer;
+    private Accelerometer accelerometer;
 
     // Break
     private CountDownTimer breakTimer;
@@ -111,6 +110,18 @@ public class SitupExerciseActivity extends AppCompatActivity implements SensorEv
     }
 
     @Override
+    protected void onPause() {
+        super.onPause();
+        accelerometer.un_registerListener();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        accelerometer.registerListener();
+    }
+
+    @Override
     public void onBackPressed() {
         displayClosingAlertBox();
     }
@@ -118,20 +129,8 @@ public class SitupExerciseActivity extends AppCompatActivity implements SensorEv
     @Override
     protected void onStop() {
         super.onStop();
-        un_registerAccelerometer();
+        accelerometer.un_registerListener();
         SoundLibrary.stopSound();
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-        un_registerAccelerometer();
-    }
-
-    @Override
-    protected void onPostResume() {
-        super.onPostResume();
-        registerAccelerometer();
     }
 
     private void displayClosingAlertBox() {
@@ -144,7 +143,6 @@ public class SitupExerciseActivity extends AppCompatActivity implements SensorEv
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         Log.i("ON STOP: ", "YES");
-                        un_registerAccelerometer();
                         finish();
                     }
                 })
@@ -167,33 +165,51 @@ public class SitupExerciseActivity extends AppCompatActivity implements SensorEv
         txtRound6 = findViewById(R.id.situpExerciseTxtRound6);
         txtTime = findViewById(R.id.situpExerciseTxtTime);
 
-        sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
-        accelerometer = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
-        registerAccelerometer();
+        accelerometer = new Accelerometer(SitupExerciseActivity.this, Sensor.TYPE_ACCELEROMETER);
+        accelerometer.setListener(new Accelerometer.Listener() {
+            @Override
+            public void onTranslation(float tx, float ty, float tz) {
+                double startingValue = -6.7;
+                double distance = 5.5;
+
+                /*
+                As mentioned in the Accelerometer class, onTranslate is a method which is part of the listener Interface. Here we use the Interface as a medium to pass values from the
+                actual sensorChanged() Overwritten method to a class where we want to use the Accelerometer.
+                At first, the SitupExerciseActivity would implement a SensorEventListener, but this was impractical, so i created a seperate class called Accelerometer where all of the Accelerometer code
+                would be stored, and to use it simply create the Accelerometer object.
+                 */
+
+                if (tz <= 1 && ready) {
+                    if ((tz - startingValue) >= distance) {
+                        SoundLibrary.playSound(SitupExerciseActivity.this, R.raw.ding);
+                        currentSitups++;
+                        overallSitups++;
+                        ready = false;
+
+                        if (currentSitups == goal) {
+                            round++;
+                            if (round == maxRounds) {
+                                vibrator.vibrate(500);
+                                endOfExercise();
+                            } else {
+                                vibrator.vibrate(500);
+                                goal = rounds.get(round);
+                                currentSitups = 0;
+                                switchLayout();
+                            }
+                        } else {
+                            updateTextView();
+                        }
+                    }
+                } else {
+                    if (tz <= startingValue) {
+                        ready = true;
+                    }
+                }
+            }
+        });
 
         vibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
-        mediaPlayer = MediaPlayer.create(SitupExerciseActivity.this, R.raw.ding);
-
-        txtX = findViewById(R.id.AccX);
-        txtY = findViewById(R.id.AccY);
-        txtZ = findViewById(R.id.AccZ);
-    }
-
-    private void registerAccelerometer() {
-        try {
-            sensorManager.registerListener(SitupExerciseActivity.this, accelerometer, SensorManager.SENSOR_DELAY_UI);
-            Log.i(TAG, "registerAccelerometer: ACCELEROMETER REGISTERED");
-        } catch (Exception e) {
-            Log.i(TAG, "registerAccelerometer: CANNOT REGISTER SENSOR");
-        }
-    }
-
-    private void un_registerAccelerometer() {
-        try {
-            sensorManager.unregisterListener(SitupExerciseActivity.this, accelerometer);
-        } catch (Exception e) {
-            Log.i(TAG, "un_registerAccelerometer: CANNOT UNREGISTER SENSOR");
-        }
     }
 
     private void updateTextView() {
@@ -205,6 +221,7 @@ public class SitupExerciseActivity extends AppCompatActivity implements SensorEv
         if (isRound) {
             // Change to break
             ready = false;
+            accelerometer.un_registerListener();
             layoutRound.setVisibility(View.GONE);
             layoutBreak.setVisibility(View.VISIBLE);
 
@@ -240,6 +257,7 @@ public class SitupExerciseActivity extends AppCompatActivity implements SensorEv
         } else {
             // Change to round
             ready = true;
+            accelerometer.registerListener();
 
             layoutRound.setVisibility(View.VISIBLE);
             layoutBreak.setVisibility(View.GONE);
@@ -305,65 +323,5 @@ public class SitupExerciseActivity extends AppCompatActivity implements SensorEv
                 }
             }).show();
         }
-    }
-
-    @Override
-    public void onSensorChanged(SensorEvent event) {
-        /*
-        How this method works:
-        This method which is Overwritten is called each and every time the Hardware Sensor is changed.
-        In order to somewhat accurately decide which movement is a situp, i use the Z axis of the Accelerometer to determine if the phone has been tilted
-        at least a certain distance. For this to work, i need to predefine a starting value i.e what the z value is roughly when the user is about to do a situp
-        and i need to define a distance which is used to calculate the difference between the starting distance and the Z axis when the method is called. If this difference
-        is equal or bigger than the predefined distance, a situp is recorded.
-
-        NOTES:
-        I though of building a Machine Learning model that could differentiate between what is a situp and what isn't. However, that was quite ambitious because it would require a lot of data to be accurate,
-        and this data would have to be recorded manually, we are talking about me doing thousands of situps, which would be a damn good exercise but very impractical.
-        Additionally, it was a question of, how much accurate would that be, will predefined values work fairy wel. After some testing i have found that if the user takes some steps to prepare the setup, situps could be
-        recorded quite well.
-         */
-        double z = event.values[2];
-        double startingValue = -6.7;
-        double distance = 5.5;
-
-        if (z <= 1 && ready) {
-            if ((z - startingValue) >= distance) {
-                SoundLibrary.playSound(SitupExerciseActivity.this, R.raw.ding);
-                currentSitups++;
-                overallSitups++;
-                ready = false;
-
-                if (currentSitups == goal) {
-                    round++;
-                    if (round == maxRounds) {
-                        vibrator.vibrate(500);
-                        endOfExercise();
-                    } else {
-                        vibrator.vibrate(500);
-                        goal = rounds.get(round);
-                        currentSitups = 0;
-                        switchLayout();
-                    }
-                } else {
-                    updateTextView();
-                }
-            }
-        } else {
-            if (z <= startingValue) {
-                ready = true;
-            }
-        }
-
-        // Testing
-        //txtX.setText(String.format("X Axis: %.3f", x));
-        //txtY.setText(String.format("Y Axis: %.3f", y));
-        //txtZ.setText(String.format("Z Axis: %.3f", z));
-
-    }
-
-    @Override
-    public void onAccuracyChanged(Sensor sensor, int accuracy) {
-        Log.i("SITUP EXERCISE: ", "ACCURACY CHANGED TO " + accuracy);
     }
 }
