@@ -263,6 +263,7 @@ public class SquatExerciseActivity extends AppCompatActivity {
                         finish();
                     }
                 })
+                .setCancelable(false)
                 .show();
     }
 

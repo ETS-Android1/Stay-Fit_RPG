@@ -50,6 +50,7 @@ public class RunningExerciseActivity extends AppCompatActivity {
     private TextView txtDistance;
     private StepDetector stepDetector;
     private Vibrator vibrator;
+    private Button btnTest;
 
     private double[] rounds;
     private int round = 0;
@@ -84,6 +85,8 @@ public class RunningExerciseActivity extends AppCompatActivity {
                     round++;
                     if (round == maxRounds) {
                         endOfExercise();
+                        SoundLibrary.playLoopSound(RunningExerciseActivity.this, R.raw.ding, 3);
+                        vibrator.vibrate(700);
                     } else {
                         SoundLibrary.playLoopSound(RunningExerciseActivity.this, R.raw.ding, 3);
                         vibrator.vibrate(700);
@@ -128,6 +131,24 @@ public class RunningExerciseActivity extends AppCompatActivity {
                 switchLayout();
             }
         };
+
+        btnTest.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                round++;
+                if (round == maxRounds) {
+                    endOfExercise();
+                    SoundLibrary.playLoopSound(RunningExerciseActivity.this, R.raw.ding, 3);
+                    vibrator.vibrate(700);
+                } else {
+                    SoundLibrary.playLoopSound(RunningExerciseActivity.this, R.raw.ding, 3);
+                    vibrator.vibrate(700);
+                    distanceKm = 0.0;
+                    goal = rounds[round];
+                    switchLayout();
+                }
+            }
+        });
     }
 
     @Override
@@ -167,6 +188,7 @@ public class RunningExerciseActivity extends AppCompatActivity {
         txtDistance = findViewById(R.id.runningExerciseTxtDistance);
 
         vibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
+        btnTest = findViewById(R.id.btnTest);
     }
 
     @SuppressLint("ResourceAsColor")
@@ -240,6 +262,7 @@ public class RunningExerciseActivity extends AppCompatActivity {
                         finish();
                     }
                 })
+                .setCancelable(false)
                 .show();
     }
 

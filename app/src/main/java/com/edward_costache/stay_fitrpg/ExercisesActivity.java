@@ -54,7 +54,7 @@ public class ExercisesActivity extends AppCompatActivity {
             public boolean onLongClick(View v) {
                 new AlertDialog.Builder(ExercisesActivity.this, R.style.MyDialogTheme)
                         .setIcon(android.R.drawable.ic_dialog_info)
-                        .setTitle("What are pushups?")
+                        .setTitle("What are Pushups?")
                         .setMessage(R.string.pushup_description)
                         .setPositiveButton("OK", null)
                         .show();
@@ -118,7 +118,7 @@ public class ExercisesActivity extends AppCompatActivity {
                 new AlertDialog.Builder(ExercisesActivity.this, R.style.MyDialogTheme)
                         .setIcon(android.R.drawable.ic_dialog_info)
                         .setTitle("What are Squats?")
-                        .setMessage(R.string.situp_description)
+                        .setMessage(R.string.squat_description)
                         .setPositiveButton("OK", null)
                         .show();
                 return true;

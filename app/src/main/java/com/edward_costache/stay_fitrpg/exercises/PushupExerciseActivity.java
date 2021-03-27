@@ -20,6 +20,7 @@ import android.widget.TextView;
 
 import com.edward_costache.stay_fitrpg.R;
 import com.edward_costache.stay_fitrpg.User;
+import com.edward_costache.stay_fitrpg.util.Proximiter;
 import com.edward_costache.stay_fitrpg.util.SoundLibrary;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.auth.FirebaseAuth;
@@ -50,12 +51,14 @@ public class PushupExerciseActivity extends AppCompatActivity {
     private ArrayList<Integer> rounds;
     private int round = 0;
     private int maxRounds, goal, currentPushups, userStrength, userHealth, overallPushups;
+    private Proximiter proximiter;
+    private boolean readyForPushup = true;
 
     // Break
     private CountDownTimer breakTimer;
     private long startMilliseconds;
     private TextView txtRound1, txtRound2, txtRound3, txtRound4, txtRound5, txtRound6, txtTime;
-    private final int BREAK_TIME = 60;
+    private final int BREAK_TIME = 1;
 
 
     @Override
@@ -68,6 +71,9 @@ public class PushupExerciseActivity extends AppCompatActivity {
         startMilliseconds = System.currentTimeMillis();
         Log.i("ARRAY AFTER INTENT: ", rounds.toString());
         initViews();
+        // TESTING START
+        btnAction.setVisibility(View.GONE);
+        // TESTING END
         layoutRound.setVisibility(View.VISIBLE);
         layoutBreak.setVisibility(View.GONE);
         initListeners();
@@ -103,9 +109,22 @@ public class PushupExerciseActivity extends AppCompatActivity {
     }
 
     @Override
+    protected void onResume() {
+        super.onResume();
+        proximiter.registerListener();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        proximiter.un_registerListener();
+    }
+
+    @Override
     protected void onStop() {
         super.onStop();
         SoundLibrary.stopSound();
+        proximiter.un_registerListener();
     }
 
     @Override
@@ -146,6 +165,7 @@ public class PushupExerciseActivity extends AppCompatActivity {
         txtTime = findViewById(R.id.pushupExerciseTxtTime);
 
         btnAction = findViewById(R.id.pushupExerciseBtnAction);
+        proximiter = new Proximiter(PushupExerciseActivity.this);
     }
 
     private void initListeners() {
@@ -170,6 +190,35 @@ public class PushupExerciseActivity extends AppCompatActivity {
                 }
             }
         });
+
+        proximiter.setListener(new Proximiter.Listener() {
+            @Override
+            public void onDistance(float cm) {
+                // When user's face gets close to sensor, count a pushup
+                if (cm < 8.0f && readyForPushup) {
+                    readyForPushup = false;
+                    SoundLibrary.playSound(PushupExerciseActivity.this, R.raw.ding);
+                    currentPushups++;
+                    overallPushups++;
+                    if (currentPushups == goal) {
+                        round++;
+                        if (round == maxRounds) {
+                            endOfExercise();
+                        } else {
+                            currentPushups = 0;
+                            goal = rounds.get(round);
+                            switchLayout();
+                        }
+
+                    } else {
+                        updateTextView();
+                    }
+                    // After user lifted his face, enable pushups
+                } else {
+                    readyForPushup = true;
+                }
+            }
+        });
     }
 
     private void updateTextView() {
@@ -180,6 +229,8 @@ public class PushupExerciseActivity extends AppCompatActivity {
     private void switchLayout() {
         if (isRound) {
             // Change to break
+            readyForPushup = false;
+            proximiter.un_registerListener();
             layoutRound.setVisibility(View.GONE);
             layoutBreak.setVisibility(View.VISIBLE);
 
@@ -214,6 +265,8 @@ public class PushupExerciseActivity extends AppCompatActivity {
             isRound = false;
         } else {
             // Change to round
+            readyForPushup = true;
+            proximiter.registerListener();
             layoutRound.setVisibility(View.VISIBLE);
             layoutBreak.setVisibility(View.GONE);
 
@@ -251,7 +304,7 @@ public class PushupExerciseActivity extends AppCompatActivity {
         // currentTimeInMillis() returns the milliseconds for Epoch time, just like the Util.java class
         // Here i am subtracting the milliseconds at the start of the Activity from the milliseconds recorded at the end of the Activity
         // in order to get the amount of milliseconds the Activity has been running, then convert that to seconds
-        int seconds = (int)((System.currentTimeMillis() - startMilliseconds)/1000);
+        int seconds = (int) ((System.currentTimeMillis() - startMilliseconds) / 1000);
 
         new AlertDialog.Builder(PushupExerciseActivity.this)
                 .setTitle("Exercise Finished, Well Done!")
@@ -263,6 +316,7 @@ public class PushupExerciseActivity extends AppCompatActivity {
                         finish();
                     }
                 })
+                .setCancelable(false)
                 .show();
     }
 
