@@ -47,8 +47,8 @@
     <string name="running_instructions">
 
         NOTE: Make sure you do not look at the phone will running to not hurt yourself.
-        When running, you will need to reach the required speed in order for the distance you need to reach to decrease. You will be given a distance goal, that you need to reach while running at a certain speed or higher
-        , the application will let you know if you need to run faster by making the phone vibrate. Once you have reached the goal, the phone will vibrate twice and make a sound to let you know you can take a break.
+        Depending on the difficulty you will be given a set number of rounds with a distance goal for each round. That distance must be reached while you run or job, then you can take a break. Because you are not looking at the phone,
+        you will either holding it while running or putting it in your pocket. The application will therefore alert you if you have reached the distance goal by vibrating and playing a sound.
 
     </string>
     <string name="squat_description">

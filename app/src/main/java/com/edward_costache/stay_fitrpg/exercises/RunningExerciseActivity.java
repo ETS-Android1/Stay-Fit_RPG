@@ -1,54 +1,133 @@
 package com.edward_costache.stay_fitrpg.exercises;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.annotation.SuppressLint;
+import android.content.Context;
+import android.content.DialogInterface;
+import android.graphics.Color;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.CountDownTimer;
+import android.os.Vibrator;
+import android.util.Log;
+import android.view.View;
+import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.edward_costache.stay_fitrpg.R;
+import com.edward_costache.stay_fitrpg.User;
+import com.edward_costache.stay_fitrpg.util.SoundLibrary;
 import com.edward_costache.stay_fitrpg.util.StepDetector;
+import com.google.android.material.snackbar.Snackbar;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+
+import java.util.ArrayList;
 
 public class RunningExerciseActivity extends AppCompatActivity {
 
-    private TextView txtStepCounter, txtDistance, txtSpeed, txtTime;
-    private StepDetector stepDetector;
+    private LinearLayout layoutRound, layoutBreak;
+    private TextView txtTitle;
+    private boolean isRound = true;
 
+    private DatabaseReference reference;
+    private String userID;
+    private androidx.constraintlayout.widget.ConstraintLayout mainLayout;
+    private User userProfile;
     private final int STEP_LENGTH = 78;
-    private double startSeconds;
-    private double distance;
-    private double timeInSeconds;
-    private double speed;
+
+    // Round
+    private TextView txtDistance;
+    private StepDetector stepDetector;
+    private Vibrator vibrator;
+
+    private double[] rounds;
+    private int round = 0;
+    private int maxRounds, userStamina, userAgility;
+    private double goal;
+    private double distanceKm;
+    private double distanceOverall;
+
+    // Break
+    private CountDownTimer breakTimer;
+    private long startMillis;
+    private TextView txtRound1, txtRound2, txtRound3, txtRound4, txtRound5, txtRound6, txtTime;
+    private final int BREAK_TIME = 5;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_running_exercise);
-        startSeconds = System.currentTimeMillis()/1000.0;
+
+        rounds = getIntent().getDoubleArrayExtra("rounds");
+        maxRounds = rounds.length;
+        Log.i("TAG", "ROUNDS.LENGTH(): "+maxRounds);
+        startMillis = System.currentTimeMillis();
+        Log.i("ARRAY AFTER INTENT: ", rounds.toString());
         initViews();
-    }
-
-    private void initViews()
-    {
-        txtStepCounter = findViewById(R.id.stepCounter);
-        txtDistance = findViewById(R.id.txtDistance);
-        txtSpeed = findViewById(R.id.txtSpeed);
-        txtTime = findViewById(R.id.txtTime);
-
-        stepDetector = new StepDetector(RunningExerciseActivity.this);
         stepDetector.setListener(new StepDetector.Listener() {
             @Override
             public void onStep(int steps) {
-                //TODO: FINISH RUNNING LOGIC, REWRITE RUNNING_INSTRUCTIONS
-                txtStepCounter.setText(String.format("Steps: %d", steps));
-                distance = ((double)steps * 78)/100.0;
-                txtDistance.setText(String.format("Distance: %.2f m", distance));
-                double currentSeconds = System.currentTimeMillis()/1000.0;
-                timeInSeconds = currentSeconds - startSeconds;
-                txtTime.setText(String.format("Time: %.2f", timeInSeconds));
-                double speed = distance / timeInSeconds;
-                txtSpeed.setText(String.format("Speed: %.2f", speed));
+                distanceKm = (steps * STEP_LENGTH)/100000.0;
+                distanceOverall = (steps * STEP_LENGTH)/100000.0;
+                if (distanceKm >= goal) {
+                    round++;
+                    if (round == maxRounds) {
+                        endOfExercise();
+                    } else {
+                        SoundLibrary.playLoopSound(RunningExerciseActivity.this, R.raw.ding, 3);
+                        vibrator.vibrate(700);
+                        distanceKm = 0.0;
+                        goal = rounds[round];
+                        switchLayout();
+                    }
+
+                } else {
+                    updateTextView();
+                }
             }
         });
+        layoutRound.setVisibility(View.VISIBLE);
+        layoutBreak.setVisibility(View.GONE);
+        goal = rounds[round];
+        updateTextView();
+        txtTitle.setText(String.format("ROUND: %d", round + 1));
+
+        if (maxRounds == 4) {
+            txtRound4.setVisibility(View.VISIBLE);
+        } else if (maxRounds == 5) {
+            txtRound4.setVisibility(View.VISIBLE);
+            txtRound5.setVisibility(View.VISIBLE);
+        } else if (maxRounds == 6) {
+            txtRound4.setVisibility(View.VISIBLE);
+            txtRound5.setVisibility(View.VISIBLE);
+            txtRound6.setVisibility(View.VISIBLE);
+        }
+        setUpUser();
+        getUserCurrentStats();
+
+        breakTimer = new CountDownTimer(BREAK_TIME * 1000 + 100, 1000) {
+            @Override
+            public void onTick(long millisUntilFinished) {
+                int seconds = (int) (millisUntilFinished / 1000);
+                txtTime.setText(String.format("%02d:%02d", seconds / 60, seconds % 60));
+            }
+
+            @Override
+            public void onFinish() {
+                switchLayout();
+            }
+        };
     }
 
     @Override
@@ -67,5 +146,134 @@ public class RunningExerciseActivity extends AppCompatActivity {
     protected void onStop() {
         super.onStop();
         stepDetector.un_registerListener();
+        SoundLibrary.stopSound();
+    }
+
+    private void initViews() {
+        stepDetector = new StepDetector(RunningExerciseActivity.this);
+
+        layoutRound = findViewById(R.id.runningExerciseRoundLayout);
+        layoutBreak = findViewById(R.id.runningExerciseBreakLayout);
+        mainLayout = findViewById(R.id.runningExerciseMainLayout);
+
+        txtTitle = findViewById(R.id.runningExerciseTxtTitle);
+        txtRound1 = findViewById(R.id.runningExerciseTxtRound1);
+        txtRound2 = findViewById(R.id.runningExerciseTxtRound2);
+        txtRound3 = findViewById(R.id.runningExerciseTxtRound3);
+        txtRound4 = findViewById(R.id.runningExerciseTxtRound4);
+        txtRound5 = findViewById(R.id.runningExerciseTxtRound5);
+        txtRound6 = findViewById(R.id.runningExerciseTxtRound6);
+        txtTime = findViewById(R.id.runningExerciseTxtTime);
+        txtDistance = findViewById(R.id.runningExerciseTxtDistance);
+
+        vibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
+    }
+
+    @SuppressLint("ResourceAsColor")
+    private void switchLayout() {
+        if (isRound) {
+            // Change to break
+            layoutRound.setVisibility(View.GONE);
+            layoutBreak.setVisibility(View.VISIBLE);
+
+            txtTitle.setText("BREAK");
+
+            txtRound1.setText(String.format("ROUND 1: %.2fkm", rounds[0]));
+            txtRound1.setTextColor(Color.GREEN);
+            txtRound2.setText(String.format("ROUND 2: %.2fkm", rounds[1]));
+            if (round == 2) {
+                txtRound2.setTextColor(Color.GREEN);
+            }
+            txtRound3.setText(String.format("ROUND 3: %.2fkm", rounds[2]));
+            if (round == 3) {
+                txtRound3.setTextColor(Color.GREEN);
+            }
+
+            try {
+                txtRound4.setText(String.format("ROUND 3: %.2fkm", rounds[3]));
+                if (round == 4) {
+                    txtRound4.setTextColor(Color.GREEN);
+                }
+                txtRound5.setText(String.format("ROUND 3: %.2fkm", rounds[4]));
+                if (round == 5) {
+                    txtRound5.setTextColor(Color.GREEN);
+                }
+                txtRound6.setText(String.format("ROUND 3: %.2fkm", rounds[5]));
+
+            } catch (Exception e) {
+                Log.i("PUSHUP EXERCISE: ", "NOT ENOUGH ROUNDS");
+            }
+            breakTimer.start();
+            isRound = false;
+        } else {
+            // Change to round
+            layoutRound.setVisibility(View.VISIBLE);
+            layoutBreak.setVisibility(View.GONE);
+
+            txtTitle.setText(String.format("ROUND: %d", round + 1));
+            updateTextView();
+            breakTimer.cancel();
+            isRound = true;
+        }
+    }
+
+    private void updateTextView() {
+        txtDistance.setText(String.format("%.2f / %.2f", distanceKm, goal));
+    }
+
+    private void endOfExercise() {
+        reference.child(userID).child("stamina").setValue(userStamina + getIntent().getIntExtra("stamina", 0));
+        reference.child(userID).child("agility").setValue(userAgility + getIntent().getIntExtra("agility", 0));
+
+        // currentTimeInMillis() returns the milliseconds for Epoch time, just like the Util.java class
+        // Here i am subtracting the milliseconds at the start of the Activity from the milliseconds recorded at the end of the Activity
+        // in order to get the amount of milliseconds the Activity has been running, then convert that to seconds
+        int seconds = (int)((System.currentTimeMillis() - startMillis)/1000);
+
+        new AlertDialog.Builder(RunningExerciseActivity.this)
+                .setTitle("Exercise Finished, Well Done!")
+                .setMessage(String.format("Total Time: %02dm and %02ds\nTotal distance: %.2fkm\nStamina +%02d\t\tAgility +%02d", seconds / 60, seconds % 60, distanceOverall, getIntent().getIntExtra("stamina", 0), getIntent().getIntExtra("agility", 0)))
+                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        finish();
+                    }
+                })
+                .show();
+    }
+
+    private void getUserCurrentStats() {
+        reference.child(userID).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                try {
+                    userProfile = snapshot.getValue(User.class);
+                    userStamina = (int) userProfile.getStamina();
+                    userAgility = (int) userProfile.getAgility();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    Log.i("DISPLAY USER INFO: ", "USER IS NULL");
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+            }
+        });
+    }
+
+    private void setUpUser() {
+        reference = FirebaseDatabase.getInstance().getReference("users");
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        if (user != null) {
+            userID = user.getUid();
+        } else {
+            Snackbar.make(RunningExerciseActivity.this, mainLayout, "Something went wrong, logout and login again!", Snackbar.LENGTH_LONG).setAction("OK", new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                }
+            }).show();
+        }
     }
 }

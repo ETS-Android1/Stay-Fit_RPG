@@ -22,6 +22,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.edward_costache.stay_fitrpg.exercises.PushupExerciseActivity;
+import com.edward_costache.stay_fitrpg.util.StepDetector;
 import com.edward_costache.stay_fitrpg.util.Util;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.auth.FirebaseAuth;
@@ -32,10 +33,10 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
-public class ProfileActivity extends AppCompatActivity implements SensorEventListener{
+public class ProfileActivity extends AppCompatActivity{
 
     private TextView txtUsername, txtProgress, txtLevel, txtOverallSteps;
-    private Button btnLogout, btnInrSteps, btnReset, btnCharacter;
+    private Button btnLogout, btnCharacter;
     private com.google.android.material.card.MaterialCardView cardViewTrain, cardViewFight, cardViewProgress;
     private androidx.constraintlayout.widget.ConstraintLayout layout;
 
@@ -46,9 +47,7 @@ public class ProfileActivity extends AppCompatActivity implements SensorEventLis
 
     private DatabaseReference reference;
     private SharedPreferences sharedPreferences;
-
-    private SensorManager sensorManager;
-    private Sensor countSensor;
+    private StepDetector stepDetector;
 
     private User userProfile;
     private String username;
@@ -69,31 +68,27 @@ public class ProfileActivity extends AppCompatActivity implements SensorEventLis
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile);
 
-
         sharedPreferences = getSharedPreferences("account", MODE_PRIVATE);
-
         // Set-up functions that initialize declarations
         initViews();
-        setUpStepDetector();
         setUpUser();
 
         Log.i("TODAY TIME: ", Long.toString(Util.getToday()));
         Log.i("TOMORROW TIME: ", Long.toString(Util.getTomorrow()));
         Log.i("CURRENT TIME: ", Long.toString(System.currentTimeMillis()));
 
-        // If it is a new day, reset the user progress, but not the level nor the steps until next level
-        if(sharedPreferences.getLong("time", 0) == Util.getToday())
+        long time = sharedPreferences.getLong("time", 0);
+
+        // If it is a new day, reset the user progress
+        if(time == Util.getToday())
         {
-            Log.i("OLD DAY: ", "NOT A NEW DAY, STEPS REMAIN SAME");
+            Log.i("SAME DAY: ", "NOT A NEW DAY, STEPS REMAIN SAME");
         }
-        else if(sharedPreferences.getLong("time", 0) > 0)
+        else if(time != Util.getToday() && time != 0)
         {
             sharedPreferences.edit().putInt("progress", 0).apply();
+            sharedPreferences.edit().putInt("overallSteps", 0).apply();
             Log.i("NEW DAY: ", "A NEW DAY, THEREFORE STEPS RESET");
-        }
-        else
-        {
-            Log.i("TIME: ", "RESET VALUE");
         }
 
         // If the application has been closed before, retrieve the progress
@@ -104,30 +99,27 @@ public class ProfileActivity extends AppCompatActivity implements SensorEventLis
         }
         displayUserInfo();
         initOnClickListeners();
+        stepDetector = new StepDetector(ProfileActivity.this);
+        stepDetector.setListener(new StepDetector.Listener() {
+            @Override
+            public void onStep(int Nsteps) {
+                steps = Nsteps;
+                overallSteps++;
+                updateSteps(steps, progressMax);
+            }
+        });
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        try {
-            sensorManager.registerListener(ProfileActivity.this, countSensor, SensorManager.SENSOR_DELAY_UI);
-        }
-        catch (Exception e)
-        {
-            Log.i("SENSOR MANAGER: ", "Failed to unregister the listener");
-        }
+        stepDetector.registerListener();
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        try {
-            sensorManager.unregisterListener(ProfileActivity.this);
-        }
-        catch (Exception e)
-        {
-            Log.i("SENSOR MANAGER: ", "Failed to unregister the listener");
-        }
+        stepDetector.un_registerListener();
     }
 
     @Override
@@ -136,15 +128,8 @@ public class ProfileActivity extends AppCompatActivity implements SensorEventLis
         sharedPreferences.edit().putInt("progress", steps).apply();
         sharedPreferences.edit().putInt("overallSteps", overallSteps).apply();
         sharedPreferences.edit().putLong("time", Util.getToday()).apply();
+        stepDetector.un_registerListener();
     }
-
-    private void setUpStepDetector()
-    {
-        sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
-        countSensor = sensorManager .getDefaultSensor(Sensor.TYPE_STEP_DETECTOR);
-        sensorManager.registerListener(ProfileActivity.this, countSensor, SensorManager.SENSOR_DELAY_UI);
-    }
-
     private void setUpUser()
     {
         mAuth = FirebaseAuth.getInstance();
@@ -187,8 +172,6 @@ public class ProfileActivity extends AppCompatActivity implements SensorEventLis
         cardViewProgress = findViewById(R.id.profileCardViewProgress);
 
         btnLogout = findViewById(R.id.profileBtnLogout);
-        btnInrSteps = findViewById(R.id.profileBtnIncreaseSteps);
-        btnReset = findViewById(R.id.profileBtnReset);
         btnCharacter = findViewById(R.id.profileBtnCharacter);
 
         progressBarTest = findViewById(R.id.profileProgressBar);
@@ -206,28 +189,6 @@ public class ProfileActivity extends AppCompatActivity implements SensorEventLis
             @Override
             public void onClick(View v) {
                 logout();
-            }
-        });
-
-        btnInrSteps.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                steps += 10;
-                overallSteps += 10;
-                updateSteps(steps, progressMax);
-            }
-        });
-
-        btnReset.setOnClickListener(new View.OnClickListener() {
-            @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
-            @Override
-            public void onClick(View v) {
-                sharedPreferences.edit().putInt("progress", 0).apply();
-                steps = 0;
-                overallSteps = 0;
-                reference.child(userID).child("level").setValue(1);
-                sharedPreferences.edit().putLong("time", 0).apply();
-                finishAndRemoveTask();
             }
         });
 
@@ -329,18 +290,6 @@ public class ProfileActivity extends AppCompatActivity implements SensorEventLis
     {
         reference.child(userID).child("level").setValue(level+1);
         steps = 0;
-    }
-
-    @Override
-    public void onSensorChanged(SensorEvent event) {
-        steps++;
-        overallSteps++;
-        updateSteps(steps, progressMax);
-    }
-
-    @Override
-    public void onAccuracyChanged(Sensor sensor, int accuracy) {
-        Log.i("SENSOR: ", "Accuracy changed");
     }
 
     @Override

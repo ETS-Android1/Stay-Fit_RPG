@@ -32,17 +32,6 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <Button
-        android:id="@+id/profileBtnIncreaseSteps"
-        android:layout_width="89dp"
-        android:layout_height="95dp"
-        android:layout_marginStart="8dp"
-        android:fontFamily="@font/roboto_condensed_regular"
-        android:text="Increase steps"
-        android:visibility="gone"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
     <pl.pawelkleczkowski.customgauge.CustomGauge
         android:id="@+id/profileProgressBar"
         android:layout_width="200dp"
@@ -94,16 +83,6 @@
         app:layout_constraintBottom_toBottomOf="@+id/profileProgressBar"
         app:layout_constraintEnd_toEndOf="@+id/profileProgressBar"
         app:layout_constraintStart_toStartOf="@+id/profileProgressBar" />
-
-    <Button
-        android:id="@+id/profileBtnReset"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:fontFamily="@font/roboto_condensed_regular"
-        android:text="Reset"
-        app:layout_constraintEnd_toEndOf="@+id/profileBtnLogout"
-        app:layout_constraintStart_toStartOf="@+id/profileBtnLogout"
-        app:layout_constraintTop_toBottomOf="@+id/profileBtnLogout" />
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/guideline3"
