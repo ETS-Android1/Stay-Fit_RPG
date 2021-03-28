@@ -3,10 +3,10 @@ package com.edward_costache.stay_fitrpg;
 public class User {
     private String username;
     private double level;
-    private double strength;
-    private double agility;
-    private double stamina;
-    private double health;
+    private int strength;
+    private int agility;
+    private int stamina;
+    private int health;
 
     public User()
     {
@@ -38,35 +38,35 @@ public class User {
         this.level = level;
     }
 
-    public double getStrength() {
+    public int getStrength() {
         return strength;
     }
 
-    public void setStrength(double strength) {
+    public void setStrength(int strength) {
         this.strength = strength;
     }
 
-    public double getAgility() {
+    public int getAgility() {
         return agility;
     }
 
-    public void setAgility(double agility) {
+    public void setAgility(int agility) {
         this.agility = agility;
     }
 
-    public double getStamina() {
+    public int getStamina() {
         return stamina;
     }
 
-    public void setStamina(double stamina) {
+    public void setStamina(int stamina) {
         this.stamina = stamina;
     }
 
-    public double getHealth() {
+    public int getHealth() {
         return health;
     }
 
-    public void setHealth(double health) {
+    public void setHealth(int health) {
         this.health = health;
     }
 }

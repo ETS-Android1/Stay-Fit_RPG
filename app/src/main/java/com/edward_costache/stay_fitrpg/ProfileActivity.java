@@ -35,7 +35,7 @@ import com.google.firebase.database.ValueEventListener;
 
 public class ProfileActivity extends AppCompatActivity{
 
-    private TextView txtUsername, txtProgress, txtLevel, txtOverallSteps;
+    private TextView txtUsername, txtProgress, txtLevel, txtOverallSteps, txtHealth, txtStrength, txtAgility, txtStamina;
     private Button btnLogout, btnCharacter;
     private com.google.android.material.card.MaterialCardView cardViewTrain, cardViewFight, cardViewProgress;
     private androidx.constraintlayout.widget.ConstraintLayout layout;
@@ -52,10 +52,10 @@ public class ProfileActivity extends AppCompatActivity{
     private User userProfile;
     private String username;
     private String userID;
-    private double health;
-    private double strength;
-    private double stamina;
-    private double agility;
+    private int health;
+    private int strength;
+    private int stamina;
+    private int agility;
     private int steps;
     private int overallSteps;
     private int progressMax;
@@ -166,6 +166,9 @@ public class ProfileActivity extends AppCompatActivity{
         txtProgress = findViewById(R.id.profileTxtProgress);
         txtLevel = findViewById(R.id.profileTxtLevel);
         txtOverallSteps = findViewById(R.id.profileTxtOverallSteps);
+        txtHealth = findViewById(R.id.profileTxtHealthValue);
+        txtStrength = findViewById(R.id.profileTxtStrengthValue);
+        txtAgility = findViewById(R.id.profileTxtAgilityValue);
 
         cardViewTrain = findViewById(R.id.profileCardViewTrain);
         cardViewFight = findViewById(R.id.profileCardViewFight);
@@ -257,10 +260,14 @@ public class ProfileActivity extends AppCompatActivity{
                     progressBarTest.setEndValue(progressMax);
                     updateSteps(steps, progressMax);
 
-                    progressBarHealth.setProgress((int)health);
-                    progressBarAgility.setProgress((int)agility);
-                    progressBarStamina.setProgress((int)stamina);
-                    progressBarStrength.setProgress((int)strength);
+                    progressBarHealth.setProgress(health);
+                    txtHealth.setText(Integer.toString(health));
+                    progressBarAgility.setProgress(agility);
+                    txtAgility.setText(Integer.toString(agility));
+                    progressBarStamina.setProgress(stamina);
+                    txtStamina.setText(Integer.toString(stamina));
+                    progressBarStrength.setProgress(strength);
+                    txtStrength.setText(Integer.toString(strength));
                 }
                 catch (Exception e)
                 {
