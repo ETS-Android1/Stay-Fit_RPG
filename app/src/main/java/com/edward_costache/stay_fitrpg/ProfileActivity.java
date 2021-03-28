@@ -169,6 +169,7 @@ public class ProfileActivity extends AppCompatActivity{
         txtHealth = findViewById(R.id.profileTxtHealthValue);
         txtStrength = findViewById(R.id.profileTxtStrengthValue);
         txtAgility = findViewById(R.id.profileTxtAgilityValue);
+        txtStamina = findViewById(R.id.profileTxtStaminaValue);
 
         cardViewTrain = findViewById(R.id.profileCardViewTrain);
         cardViewFight = findViewById(R.id.profileCardViewFight);
@@ -232,52 +233,97 @@ public class ProfileActivity extends AppCompatActivity{
 
     private void displayUserInfo()
     {
-        reference.child(userID).addValueEventListener(new ValueEventListener() {
+        reference.child(userID).child("username").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                try {
-                    userProfile = snapshot.getValue(User.class);
-                    level = userProfile.getLevel();
-                    username = userProfile.getUsername();
-
-                    strength = userProfile.getStrength();
-                    health = userProfile.getHealth();
-                    agility = userProfile.getAgility();
-                    stamina = userProfile.getStamina();
-
-                    if(level == 1)
-                    {
-                        progressMax = STARTING_STEP_GOAL;
-                    }
-                    else
-                    {
-                        // A formula for deriving the required steps for next level
-                        double levelPercent = ((level/7) * (level/7)) + MULTIPLIER;
-                        progressMax = (int)(STARTING_STEP_GOAL * levelPercent);
-                    }
-                    txtUsername.setText(username);
-                    txtLevel.setText(String.format("LEVEL: %d", (int)level));
-                    progressBarTest.setEndValue(progressMax);
-                    updateSteps(steps, progressMax);
-
-                    progressBarHealth.setProgress(health);
-                    txtHealth.setText(Integer.toString(health));
-                    progressBarAgility.setProgress(agility);
-                    txtAgility.setText(Integer.toString(agility));
-                    progressBarStamina.setProgress(stamina);
-                    txtStamina.setText(Integer.toString(stamina));
-                    progressBarStrength.setProgress(strength);
-                    txtStrength.setText(Integer.toString(strength));
-                }
-                catch (Exception e)
-                {
-                    e.printStackTrace();
-                    Log.i("DISPLAY USER INFO: ", "User is null");
-                }
+                username = snapshot.getValue(String.class);
+                txtUsername.setText(username);
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+
+        reference.child(userID).child("level").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                level = snapshot.getValue(Integer.class);
+                if(level == 1)
+                {
+                    progressMax = STARTING_STEP_GOAL;
+                }
+                else
+                {
+                    // A formula for deriving the required steps for next level
+                    double levelPercent = ((level/7) * (level/7)) + MULTIPLIER;
+                    progressMax = (int)(STARTING_STEP_GOAL * levelPercent);
+                }
+                txtLevel.setText(String.format("LEVEL: %d", (int)level));
+                progressBarTest.setEndValue(progressMax);
+                updateSteps(steps, progressMax);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+
+        reference.child(userID).child("agility").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                agility = snapshot.getValue(Integer.class);
+                progressBarAgility.setProgress(agility);
+                txtAgility.setText(Integer.toString(agility));
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+
+        reference.child(userID).child("health").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                health = snapshot.getValue(Integer.class);
+                progressBarHealth.setProgress(health);
+                txtHealth.setText(Integer.toString(health));
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+
+        reference.child(userID).child("stamina").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                stamina = snapshot.getValue(Integer.class);
+                progressBarStamina.setProgress(stamina);
+                txtStamina.setText(Integer.toString(stamina));
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+
+        reference.child(userID).child("strength").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                strength = snapshot.getValue(Integer.class);
+                progressBarStrength.setProgress(strength);
+                txtStrength.setText(Integer.toString(strength));
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
             }
         });
     }
