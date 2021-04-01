@@ -54,12 +54,14 @@ public class Accelerometer {
     public void registerListener()
     {
         sensorManager.registerListener(sensorEventListener, sensor, SensorManager.SENSOR_DELAY_UI);
-        Toast.makeText(context, "Accelerometer Registered", Toast.LENGTH_SHORT).show();
+        //Testing
+        //Toast.makeText(context, "Accelerometer Registered", Toast.LENGTH_SHORT).show();
     }
 
     public void un_registerListener()
     {
         sensorManager.unregisterListener(sensorEventListener);
-        Toast.makeText(context, "Accelerometer Unregistered", Toast.LENGTH_SHORT).show();
+        //Testing
+        //Toast.makeText(context, "Accelerometer Unregistered", Toast.LENGTH_SHORT).show();
     }
 }

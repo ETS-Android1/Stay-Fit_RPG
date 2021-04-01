@@ -37,6 +37,7 @@ public class ProfileActivity extends AppCompatActivity{
 
     private TextView txtUsername, txtProgress, txtLevel, txtOverallSteps, txtHealth, txtStrength, txtAgility, txtStamina;
     private Button btnLogout, btnCharacter;
+    //private Button btnTest;
     private com.google.android.material.card.MaterialCardView cardViewTrain, cardViewFight, cardViewProgress;
     private androidx.constraintlayout.widget.ConstraintLayout layout;
 
@@ -102,12 +103,23 @@ public class ProfileActivity extends AppCompatActivity{
         stepDetector = new StepDetector(ProfileActivity.this);
         stepDetector.setListener(new StepDetector.Listener() {
             @Override
-            public void onStep(int Nsteps) {
-                steps = Nsteps;
+            public void onStep() {
+                steps++;
                 overallSteps++;
                 updateSteps(steps, progressMax);
             }
         });
+
+        /* TESTING
+        btnTest.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                steps++;
+                overallSteps++;
+                updateSteps(steps, progressMax);
+            }
+        });
+         */
     }
 
     @Override
@@ -177,6 +189,7 @@ public class ProfileActivity extends AppCompatActivity{
 
         btnLogout = findViewById(R.id.profileBtnLogout);
         btnCharacter = findViewById(R.id.profileBtnCharacter);
+        //btnTest = findViewById(R.id.profileBtnStepTest);
 
         progressBarTest = findViewById(R.id.profileProgressBar);
         progressBarHealth = findViewById(R.id.profileProgressBarHealth);

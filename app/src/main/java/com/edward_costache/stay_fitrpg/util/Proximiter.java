@@ -5,6 +5,7 @@ import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
+import android.widget.Toast;
 
 public class Proximiter {
 
@@ -21,9 +22,11 @@ public class Proximiter {
     private SensorManager sensorManager;
     private Sensor sensor;
     private SensorEventListener sensorEventListener;
+    private Context context;
 
     public Proximiter(Context context)
     {
+        this.context = context;
         sensorManager = (SensorManager) context.getSystemService(Context.SENSOR_SERVICE);
         sensor = sensorManager.getDefaultSensor(Sensor.TYPE_PROXIMITY);
         sensorEventListener = new SensorEventListener() {
@@ -50,10 +53,14 @@ public class Proximiter {
     public void registerListener()
     {
         sensorManager.registerListener(sensorEventListener, sensor, SensorManager.SENSOR_DELAY_NORMAL);
+        // Testing
+        Toast.makeText(context, "Proximeter Registered", Toast.LENGTH_SHORT).show();
     }
 
     public void un_registerListener()
     {
         sensorManager.unregisterListener(sensorEventListener);
+        // Testing
+        Toast.makeText(context, "Proximeter Un-Registered", Toast.LENGTH_SHORT).show();
     }
 }

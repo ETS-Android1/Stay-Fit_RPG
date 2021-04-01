@@ -13,11 +13,10 @@ public class StepDetector {
     private Sensor sensor;
     private SensorEventListener sensorEventListener;
     private Context context;
-    private int steps;
 
     public interface Listener
     {
-        void onStep(int steps);
+        void onStep();
     }
     private Listener listener;
     public void setListener(Listener l)
@@ -36,8 +35,7 @@ public class StepDetector {
             {
                 if(listener != null)
                 {
-                    steps++;
-                    listener.onStep(steps);
+                    listener.onStep();
                 }
             }
 
@@ -51,12 +49,14 @@ public class StepDetector {
     public void registerListener()
     {
         sensorManager.registerListener(sensorEventListener, sensor, SensorManager.SENSOR_DELAY_UI);
-        Toast.makeText(context, "Step Detector Registered", Toast.LENGTH_SHORT).show();
+        //Testing
+        //Toast.makeText(context, "Step Detector Registered", Toast.LENGTH_SHORT).show();
     }
 
     public void un_registerListener()
     {
         sensorManager.unregisterListener(sensorEventListener);
-        Toast.makeText(context, "Step Detector Unregistered", Toast.LENGTH_SHORT).show();
+        //Testing
+        //Toast.makeText(context, "Step Detector Unregistered", Toast.LENGTH_SHORT).show();
     }
 }

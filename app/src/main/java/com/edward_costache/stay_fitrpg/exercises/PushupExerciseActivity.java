@@ -58,7 +58,7 @@ public class PushupExerciseActivity extends AppCompatActivity {
     private CountDownTimer breakTimer;
     private long startMilliseconds;
     private TextView txtRound1, txtRound2, txtRound3, txtRound4, txtRound5, txtRound6, txtTime;
-    private final int BREAK_TIME = 1;
+    private final int BREAK_TIME = 60;
 
 
     @Override
@@ -133,10 +133,11 @@ public class PushupExerciseActivity extends AppCompatActivity {
     }
 
     private void displayClosingAlertBox() {
+        int seconds = (int) ((System.currentTimeMillis() - startMilliseconds) / 1000);
         new AlertDialog.Builder(PushupExerciseActivity.this, R.style.MyDialogTheme)
                 .setIcon(android.R.drawable.ic_dialog_alert)
-                .setTitle("Exiting the Application")
-                .setMessage("Are you sure you want to exit?")
+                .setTitle("Exiting the Exercise")
+                .setMessage(String.format("Quitting yields NO rewards! \nTotal Time: %02dm and %02ds\nTotal pushups: %d", seconds / 60, seconds % 60, overallPushups))
                 .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
                     @Override

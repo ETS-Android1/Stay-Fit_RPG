@@ -22,7 +22,7 @@ import android.widget.TextView;
 import com.edward_costache.stay_fitrpg.R;
 import com.edward_costache.stay_fitrpg.User;
 import com.edward_costache.stay_fitrpg.util.Accelerometer;
-import com.edward_costache.stay_fitrpg.util.Graviton;
+import com.edward_costache.stay_fitrpg.util.Gravimeter;
 import com.edward_costache.stay_fitrpg.util.SoundLibrary;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.auth.FirebaseAuth;
@@ -38,7 +38,7 @@ import java.util.ArrayList;
 public class SquatExerciseActivity extends AppCompatActivity {
 
     private Accelerometer accelerometer;
-    private Graviton graviton;
+    private Gravimeter gravimeter;
 
     private TextView AccX, AccY, AccZ, gravX, gravY, gravZ;
     private final String TAG = "TEST";
@@ -156,7 +156,7 @@ public class SquatExerciseActivity extends AppCompatActivity {
             }
         };
 
-        graviton.setListener(new Graviton.Listener() {
+        gravimeter.setListener(new Gravimeter.Listener() {
             @Override
             public void onGravitation(float gx, float gy, float gz) {
                 gravityX = gx;
@@ -286,7 +286,7 @@ public class SquatExerciseActivity extends AppCompatActivity {
         txtTime = findViewById(R.id.squatExerciseTxtTime);
 
         accelerometer = new Accelerometer(SquatExerciseActivity.this, Sensor.TYPE_ACCELEROMETER);
-        graviton = new Graviton(SquatExerciseActivity.this);
+        gravimeter = new Gravimeter(SquatExerciseActivity.this);
         AccX = findViewById(R.id.AccX);
         AccY = findViewById(R.id.AccY);
         AccZ = findViewById(R.id.AccZ);
@@ -303,20 +303,43 @@ public class SquatExerciseActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         accelerometer.registerListener();
-        graviton.registerListener();
+        gravimeter.registerListener();
     }
 
     @Override
     protected void onPause() {
         super.onPause();
         accelerometer.un_registerListener();
-        graviton.un_registerListener();
+        gravimeter.un_registerListener();
     }
 
     @Override
     protected void onStop() {
         super.onStop();
         SoundLibrary.stopSound();
+    }
+
+    @Override
+    public void onBackPressed() {
+        displayClosingAlertBox();
+    }
+
+    private void displayClosingAlertBox() {
+        int seconds = (int) ((System.currentTimeMillis() - startMilliseconds) / 1000);
+        new AlertDialog.Builder(SquatExerciseActivity.this, R.style.MyDialogTheme)
+                .setIcon(android.R.drawable.ic_dialog_alert)
+                .setTitle("Exiting the Exercise")
+                .setMessage(String.format("Quiting yields no rewards!\nTotal Time: %02dm and %02ds\nTotal squats: %d", seconds / 60, seconds % 60, overallSquats))
+                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        Log.i("ON STOP: ", "YES");
+                        finish();
+                    }
+                })
+                .setNegativeButton("No", null)
+                .show();
     }
 
     private void setUpUser() {

@@ -7,7 +7,7 @@ import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.widget.Toast;
 
-public class Graviton {
+public class Gravimeter {
     private SensorManager sensorManager;
     private Sensor sensor;
     private SensorEventListener sensorEventListener;
@@ -23,7 +23,7 @@ public class Graviton {
         listener = l;
     }
 
-    public Graviton(Context context)
+    public Gravimeter(Context context)
     {
         this.context = context;
         sensorManager = (SensorManager) context.getSystemService(Context.SENSOR_SERVICE);
@@ -53,12 +53,14 @@ public class Graviton {
     public void registerListener()
     {
         sensorManager.registerListener(sensorEventListener, sensor, SensorManager.SENSOR_DELAY_UI);
-        Toast.makeText(context, "Graviton Registered", Toast.LENGTH_SHORT).show();
+        //Testing
+        //Toast.makeText(context, "Graviton Registered", Toast.LENGTH_SHORT).show();
     }
 
     public void un_registerListener()
     {
         sensorManager.unregisterListener(sensorEventListener);
-        Toast.makeText(context, "Graviton Unregistered", Toast.LENGTH_SHORT).show();
+        //Testing
+        //Toast.makeText(context, "Graviton Unregistered", Toast.LENGTH_SHORT).show();
     }
 }

@@ -58,12 +58,13 @@ public class RunningExerciseActivity extends AppCompatActivity {
     private double goal;
     private double distanceKm;
     private double distanceOverall;
+    private int steps;
 
     // Break
     private CountDownTimer breakTimer;
     private long startMillis;
     private TextView txtRound1, txtRound2, txtRound3, txtRound4, txtRound5, txtRound6, txtTime;
-    private final int BREAK_TIME = 5;
+    private final int BREAK_TIME = 180;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -78,7 +79,8 @@ public class RunningExerciseActivity extends AppCompatActivity {
         initViews();
         stepDetector.setListener(new StepDetector.Listener() {
             @Override
-            public void onStep(int steps) {
+            public void onStep() {
+                steps++;
                 distanceKm = (steps * STEP_LENGTH)/100000.0;
                 distanceOverall = (steps * STEP_LENGTH)/100000.0;
                 if (distanceKm >= goal) {
@@ -91,6 +93,7 @@ public class RunningExerciseActivity extends AppCompatActivity {
                         SoundLibrary.playLoopSound(RunningExerciseActivity.this, R.raw.ding, 3);
                         vibrator.vibrate(700);
                         distanceKm = 0.0;
+                        steps = 0;
                         goal = rounds[round];
                         switchLayout();
                     }
@@ -168,6 +171,29 @@ public class RunningExerciseActivity extends AppCompatActivity {
         super.onStop();
         stepDetector.un_registerListener();
         SoundLibrary.stopSound();
+    }
+
+    @Override
+    public void onBackPressed() {
+        displayClosingAlertBox();
+    }
+
+    private void displayClosingAlertBox() {
+        int seconds = (int) ((System.currentTimeMillis() - startMillis) / 1000);
+        new AlertDialog.Builder(RunningExerciseActivity.this, R.style.MyDialogTheme)
+                .setIcon(android.R.drawable.ic_dialog_alert)
+                .setTitle("Exiting the Exercise")
+                .setMessage(String.format("Quiting yields NO rewards!\nTotal Time: %02dm and %02ds\nTotal distance: %.2fkm", seconds / 60, seconds % 60, distanceOverall))
+                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        Log.i("ON STOP: ", "YES");
+                        finish();
+                    }
+                })
+                .setNegativeButton("No", null)
+                .show();
     }
 
     private void initViews() {

@@ -10,10 +10,6 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.graphics.Color;
 import android.hardware.Sensor;
-import android.hardware.SensorEvent;
-import android.hardware.SensorEventListener;
-import android.hardware.SensorManager;
-import android.media.MediaPlayer;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.CountDownTimer;
@@ -26,7 +22,6 @@ import android.widget.TextView;
 import com.edward_costache.stay_fitrpg.R;
 import com.edward_costache.stay_fitrpg.User;
 import com.edward_costache.stay_fitrpg.util.Accelerometer;
-import com.edward_costache.stay_fitrpg.util.Gyroscope;
 import com.edward_costache.stay_fitrpg.util.SoundLibrary;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.auth.FirebaseAuth;
@@ -64,7 +59,7 @@ public class SitupExerciseActivity extends AppCompatActivity {
     private CountDownTimer breakTimer;
     private long startMilliseconds;
     private TextView txtRound1, txtRound2, txtRound3, txtRound4, txtRound5, txtRound6, txtTime;
-    private final int BREAK_TIME = 2;
+    private final int BREAK_TIME = 60;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -122,22 +117,23 @@ public class SitupExerciseActivity extends AppCompatActivity {
     }
 
     @Override
-    public void onBackPressed() {
-        displayClosingAlertBox();
-    }
-
-    @Override
     protected void onStop() {
         super.onStop();
         accelerometer.un_registerListener();
         SoundLibrary.stopSound();
     }
 
+    @Override
+    public void onBackPressed() {
+        displayClosingAlertBox();
+    }
+
     private void displayClosingAlertBox() {
+        int seconds = (int) ((System.currentTimeMillis() - startMilliseconds) / 1000);
         new AlertDialog.Builder(SitupExerciseActivity.this, R.style.MyDialogTheme)
                 .setIcon(android.R.drawable.ic_dialog_alert)
-                .setTitle("Exiting the Application")
-                .setMessage("Are you sure you want to exit?")
+                .setTitle("Exiting the Exercise")
+                .setMessage(String.format("Quiting yields NO rewards\nTotal Time: %02dm and %02ds\nTotal situps: %d", seconds / 60, seconds % 60, overallSitups))
                 .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
                     @Override
