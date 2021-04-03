@@ -50,7 +50,7 @@
             android:textAlignment="center"
             android:textColor="@color/textColor"
             android:textSize="24sp"
-            android:visibility="invisible" />
+            android:visibility="gone" />
 
         <TextView
             android:id="@+id/AccY"
@@ -60,7 +60,7 @@
             android:textAlignment="center"
             android:textColor="@color/textColor"
             android:textSize="24sp"
-            android:visibility="invisible" />
+            android:visibility="gone" />
 
         <TextView
             android:id="@+id/AccZ"
@@ -70,7 +70,7 @@
             android:textAlignment="center"
             android:textColor="@color/textColor"
             android:textSize="24sp"
-            android:visibility="invisible" />
+            android:visibility="gone" />
 
     </LinearLayout>
 

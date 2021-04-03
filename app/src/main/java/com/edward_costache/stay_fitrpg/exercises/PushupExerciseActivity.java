@@ -58,7 +58,7 @@ public class PushupExerciseActivity extends AppCompatActivity {
     private CountDownTimer breakTimer;
     private long startMilliseconds;
     private TextView txtRound1, txtRound2, txtRound3, txtRound4, txtRound5, txtRound6, txtTime;
-    private final int BREAK_TIME = 60;
+    private final int BREAK_TIME = 1;
 
 
     @Override
@@ -71,9 +71,10 @@ public class PushupExerciseActivity extends AppCompatActivity {
         startMilliseconds = System.currentTimeMillis();
         Log.i("ARRAY AFTER INTENT: ", rounds.toString());
         initViews();
-        // TESTING START
+
+        // TESTING
         btnAction.setVisibility(View.GONE);
-        // TESTING END
+
         layoutRound.setVisibility(View.VISIBLE);
         layoutBreak.setVisibility(View.GONE);
         initListeners();
