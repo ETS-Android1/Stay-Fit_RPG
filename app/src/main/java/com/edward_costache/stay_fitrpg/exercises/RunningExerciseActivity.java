@@ -270,6 +270,7 @@ public class RunningExerciseActivity extends AppCompatActivity {
     }
 
     private void endOfExercise() {
+        stepDetector.un_registerListener();
         reference.child(userID).child("stamina").setValue(userStamina + getIntent().getIntExtra("stamina", 0));
         reference.child(userID).child("agility").setValue(userAgility + getIntent().getIntExtra("agility", 0));
 

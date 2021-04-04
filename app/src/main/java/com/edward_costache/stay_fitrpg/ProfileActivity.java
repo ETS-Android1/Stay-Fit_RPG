@@ -15,6 +15,7 @@ import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.os.Build;
 import android.os.Bundle;
+import android.provider.ContactsContract;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -219,7 +220,8 @@ public class ProfileActivity extends AppCompatActivity{
         cardViewFight.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Util.displayNotImplemented(ProfileActivity.this, layout);
+                Intent intent = new Intent(ProfileActivity.this, OnlineMenuActivity.class);
+                startActivity(intent);
             }
         });
         cardViewProgress.setOnClickListener(new View.OnClickListener() {

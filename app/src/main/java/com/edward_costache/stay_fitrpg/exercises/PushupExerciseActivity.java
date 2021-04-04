@@ -58,7 +58,7 @@ public class PushupExerciseActivity extends AppCompatActivity {
     private CountDownTimer breakTimer;
     private long startMilliseconds;
     private TextView txtRound1, txtRound2, txtRound3, txtRound4, txtRound5, txtRound6, txtTime;
-    private final int BREAK_TIME = 1;
+    private final int BREAK_TIME = 60;
 
 
     @Override
@@ -300,6 +300,7 @@ public class PushupExerciseActivity extends AppCompatActivity {
     }
 
     private void endOfExercise() {
+        readyForPushup = false;
         reference.child(userID).child("strength").setValue(userStrength + getIntent().getIntExtra("strength", 0));
         reference.child(userID).child("health").setValue(userHealth + getIntent().getIntExtra("health", 0));
 

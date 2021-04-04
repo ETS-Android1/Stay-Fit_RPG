@@ -286,6 +286,7 @@ public class SitupExerciseActivity extends AppCompatActivity {
     }
 
     private void endOfExercise() {
+        ready = false;
         reference.child(userID).child("stamina").setValue(userStamina + getIntent().getIntExtra("stamina", 0));
         reference.child(userID).child("health").setValue(userHealth + getIntent().getIntExtra("health", 0));
 

@@ -245,6 +245,7 @@ public class SquatExerciseActivity extends AppCompatActivity {
     }
 
     private void endOfExercise() {
+        ready = false;
         reference.child(userID).child("strength").setValue(userStrength + getIntent().getIntExtra("strength", 0));
         reference.child(userID).child("stamina").setValue(userStamina + getIntent().getIntExtra("stamina", 0));
 
