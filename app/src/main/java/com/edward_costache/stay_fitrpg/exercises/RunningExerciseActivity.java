@@ -176,6 +176,7 @@ public class RunningExerciseActivity extends AppCompatActivity {
     @Override
     public void onBackPressed() {
         displayClosingAlertBox();
+
     }
 
     private void displayClosingAlertBox() {
@@ -189,6 +190,7 @@ public class RunningExerciseActivity extends AppCompatActivity {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         Log.i("ON STOP: ", "YES");
+                        stepDetector.un_registerListener();
                         finish();
                     }
                 })

@@ -2,18 +2,20 @@ package com.edward_costache.stay_fitrpg;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
-import android.widget.LinearLayout;
+import android.widget.EditText;
+import android.widget.RelativeLayout;
 
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
@@ -21,11 +23,19 @@ import java.util.ArrayList;
 
 public class OnlineMenuActivity extends AppCompatActivity {
 
-    private RecyclerView userRecView;
-    private LinearLayout menuLayout, searchPlayerLayout, searchOnlineLayout;
-    private Button btnSearchPlayer;
+    private RecyclerView roomsRecView;
 
-    private ArrayList<User> users;
+    private RelativeLayout roomsLayout;
+    private ConstraintLayout makeRoomLayout;
+
+    private EditText editTxtRoomName;
+    private Button btnCreateRoom, btnCreateRoomConfirm;
+
+    private ArrayList<Room> rooms;
+
+    private boolean creatingRoom = false;
+
+    private RoomsRecViewAdapter adapter;
 
 
     @Override
@@ -34,80 +44,110 @@ public class OnlineMenuActivity extends AppCompatActivity {
         setContentView(R.layout.activity_online_menu);
 
         initViews();
-        userRecView.setLayoutManager(new LinearLayoutManager(this));
+        roomsRecView.setLayoutManager(new LinearLayoutManager(this));
+        rooms = new ArrayList<>();
+        displayRooms();
 
-        menuLayout.setVisibility(View.VISIBLE);
-        searchOnlineLayout.setVisibility(View.GONE);
-        searchPlayerLayout.setVisibility(View.GONE);
+        roomsLayout.setVisibility(View.VISIBLE);
+        makeRoomLayout.setVisibility(View.GONE);
 
-        btnSearchPlayer.setOnClickListener(new View.OnClickListener() {
+        btnCreateRoom.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                menuLayout.setVisibility(View.GONE);
-                searchOnlineLayout.setVisibility(View.GONE);
-                searchPlayerLayout.setVisibility(View.VISIBLE);
-
-                DatabaseReference rootRef = FirebaseDatabase.getInstance().getReference();
-                DatabaseReference usersRef = rootRef.child("users");
-
-                usersRef.addValueEventListener(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(@NonNull DataSnapshot snapshot) {
-                        users = new ArrayList<>();
-                        for(DataSnapshot ss : snapshot.getChildren())
-                        {
-                            User user = ss.getValue(User.class);
-                            Log.d("TAG", "onDataChange: "+ss.getKey());
-                            users.add(user);
-                        }
-                        UsersRecViewAdapter adapter = new UsersRecViewAdapter();
-                        adapter.setUsers(users);
-                        userRecView.setAdapter(adapter);
-                        userRecView.setLayoutManager(new LinearLayoutManager(OnlineMenuActivity.this));
-
-                        adapter.notifyDataSetChanged();
-                    }
-
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError error) {
-
-                    }
-                });
+                creatingRoom = true;
+                roomsLayout.setVisibility(View.GONE);
+                makeRoomLayout.setVisibility(View.VISIBLE);
             }
         });
 
-        //TODO: WHEN SEARCH USER IS PRESSED POPULATE ADAPTER WITH USERS FROM FIREBASE
+        btnCreateRoomConfirm.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(creatingRoom)
+                {
+                    String roomName = editTxtRoomName.getText().toString();
+                    FirebaseDatabase.getInstance().getReference("rooms").child(FirebaseAuth.getInstance().getCurrentUser().getUid()+"ROOM").setValue(new Room(roomName, FirebaseAuth.getInstance().getCurrentUser().getUid()));
+                    refreshRooms();
+                    creatingRoom = false;
+                    roomsLayout.setVisibility(View.VISIBLE);
+                    makeRoomLayout.setVisibility(View.GONE);
+
+                    Intent intent = new Intent(OnlineMenuActivity.this, RoomActivity.class);
+                    intent.putExtra("roomName", roomName);
+                    intent.putExtra("role", "host");
+                    intent.putExtra("userID", FirebaseAuth.getInstance().getCurrentUser().getUid());
+                    startActivity(intent);
+                }
+            }
+        });
+
+    }
+
+    private void displayRooms()
+    {
+        FirebaseDatabase.getInstance().getReference("rooms").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                rooms.clear();
+                if(snapshot.getChildrenCount() != 0)
+                {
+                    for(DataSnapshot ds : snapshot.getChildren())
+                    {
+                        Room room = ds.getValue(Room.class);
+                        rooms.add(room);
+                    }
+                }
+                refreshRooms();
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+        adapter.setRooms(rooms);
+        roomsRecView.setAdapter(adapter);
+        roomsRecView.setLayoutManager(new LinearLayoutManager(OnlineMenuActivity.this));
+    }
+
+    private void refreshRooms()
+    {
+        adapter.notifyDataSetChanged();
     }
 
     @Override
-    protected void onResume() {
-        super.onResume();
+    public void onBackPressed() {
+        if(creatingRoom)
+        {
+            roomsLayout.setVisibility(View.VISIBLE);
+            makeRoomLayout.setVisibility(View.GONE);
+            editTxtRoomName.setText("");
+            creatingRoom = false;
+        }
+        else
+        {
+            super.onBackPressed();
+            finish();
+        }
     }
 
     @Override
-    protected void onPause() {
-        super.onPause();
-    }
-
-    @Override
-    protected void onStop() {
-        super.onStop();
-        finish();
+    protected void onDestroy() {
+        super.onDestroy();
+        FirebaseDatabase.getInstance().getReference("rooms").child(FirebaseAuth.getInstance().getCurrentUser().getUid()+"-").removeValue();
+        rooms.clear();
     }
 
     private void initViews()
     {
-        userRecView = findViewById(R.id.onlineMenuRecViewUsers);
+        adapter = new RoomsRecViewAdapter(OnlineMenuActivity.this, FirebaseAuth.getInstance().getCurrentUser().getUid());
+        roomsRecView = findViewById(R.id.onlineMenuRecViewRooms);
 
-        menuLayout = findViewById(R.id.onlineMenuLinearLayoutMenu);
-        searchPlayerLayout = findViewById(R.id.onlineMenuLinearLayoutSearchPlayer);
-        searchOnlineLayout = findViewById(R.id.onlineMenuLinearLayoutSearchOnline);
+        roomsLayout = findViewById(R.id.onlineMenuRoomsLayout);
+        makeRoomLayout = findViewById(R.id.onlineMenuMakeRoomLayout);
 
-        btnSearchPlayer = findViewById(R.id.onlineMenuBtnSearchPlayer);
-    }
-
-    public void createRoom()
-    {
-
+        editTxtRoomName = findViewById(R.id.onlineMenuEditTxtRoomName);
+        btnCreateRoom = findViewById(R.id.onlineMenuBtnCreateRoom);
+        btnCreateRoomConfirm = findViewById(R.id.onlineMenuBtnConfirmRoom);
     }
 }

@@ -3,25 +3,26 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_margin="10dp"
-    android:id="@+id/itemListParentLayout">
+    android:id="@+id/itemListParentLayout"
+    >
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/itemListTxtUsername"
-        android:text="username"
+        android:id="@+id/itemListTxtRoomName"
+        android:text="roomName"
         android:textSize="20sp"
         android:fontFamily="@font/roboto_condensed_regular"
         android:textColor="@color/textColor"/>
 
     <TextView
-        android:id="@+id/itemListTxtInvite"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentEnd="true"
-        android:text="REQUEST MATCH"
-        android:textSize="16sp"
+        android:id="@+id/itemListTxtRoomCapacity"
+        android:text="1/2"
+        android:textSize="20sp"
         android:fontFamily="@font/roboto_condensed_regular"
-        android:textColor="@color/red"/>
+        android:textColor="@color/textColor"
+        android:layout_alignParentEnd="true"/>
 
 </RelativeLayout>

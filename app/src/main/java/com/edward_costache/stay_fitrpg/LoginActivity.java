@@ -24,6 +24,8 @@ import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -40,7 +42,7 @@ public class LoginActivity extends AppCompatActivity {
 
     private FirebaseAuth mAuth;
 
-    private SharedPreferences sharedPreferences;
+    private SharedPreferences sharedPreferencesAccount;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,12 +59,12 @@ public class LoginActivity extends AppCompatActivity {
             editTxtPassword.setText(intentPassword);
         }
 
-        sharedPreferences = getSharedPreferences("account", MODE_PRIVATE);
+        sharedPreferencesAccount = getSharedPreferences("account", MODE_PRIVATE);
         //sharedPreferences.edit().clear().apply();
-        if(sharedPreferences.getBoolean("rememberMe", false))
+        if(sharedPreferencesAccount.getBoolean("rememberMe", false))
         {
-            String email = sharedPreferences.getString("email", "");
-            String password = sharedPreferences.getString("password", "");
+            String email = sharedPreferencesAccount.getString("email", "");
+            String password = sharedPreferencesAccount.getString("password", "");
             login(email, password);
         }
 
@@ -94,7 +96,7 @@ public class LoginActivity extends AppCompatActivity {
         checkBoxRememberMe.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                SharedPreferences.Editor editor = sharedPreferences.edit();
+                SharedPreferences.Editor editor = sharedPreferencesAccount.edit();
                 if(buttonView.isChecked())
                 {
                     editor.putBoolean("rememberMe", true);
@@ -158,7 +160,7 @@ public class LoginActivity extends AppCompatActivity {
 
         if(checkBoxRememberMe.isChecked())
         {
-            SharedPreferences.Editor editor = sharedPreferences.edit();
+            SharedPreferences.Editor editor = sharedPreferencesAccount.edit();
             editor.putString("email", email);
             editor.putString("password", password);
             editor.apply();

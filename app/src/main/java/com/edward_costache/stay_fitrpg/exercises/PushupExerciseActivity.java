@@ -144,6 +144,7 @@ public class PushupExerciseActivity extends AppCompatActivity {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         Log.i("ON STOP: ", "YES");
+                        proximiter.un_registerListener();
                         finish();
                     }
                 })

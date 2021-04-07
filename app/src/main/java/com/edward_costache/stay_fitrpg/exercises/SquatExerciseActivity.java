@@ -336,6 +336,8 @@ public class SquatExerciseActivity extends AppCompatActivity {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         Log.i("ON STOP: ", "YES");
+                        accelerometer.un_registerListener();
+                        gravimeter.un_registerListener();
                         finish();
                     }
                 })

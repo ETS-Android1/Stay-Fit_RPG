@@ -116,6 +116,7 @@ public class SitupExerciseActivity extends AppCompatActivity {
         accelerometer.registerListener();
     }
 
+
     @Override
     protected void onStop() {
         super.onStop();
@@ -126,6 +127,7 @@ public class SitupExerciseActivity extends AppCompatActivity {
     @Override
     public void onBackPressed() {
         displayClosingAlertBox();
+
     }
 
     private void displayClosingAlertBox() {
@@ -139,6 +141,7 @@ public class SitupExerciseActivity extends AppCompatActivity {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         Log.i("ON STOP: ", "YES");
+                        accelerometer.un_registerListener();
                         finish();
                     }
                 })

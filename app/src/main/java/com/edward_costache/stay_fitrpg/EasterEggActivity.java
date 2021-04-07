@@ -8,6 +8,9 @@ import android.provider.MediaStore;
 import android.widget.MediaController;
 import android.widget.VideoView;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.FirebaseDatabase;
+
 public class EasterEggActivity extends AppCompatActivity {
 
     private VideoView videoView;
@@ -31,4 +34,5 @@ public class EasterEggActivity extends AppCompatActivity {
     public void onBackPressed() {
         super.onBackPressed();
     }
+
 }

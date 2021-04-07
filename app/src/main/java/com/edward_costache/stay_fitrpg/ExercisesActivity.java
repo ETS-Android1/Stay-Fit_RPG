@@ -12,6 +12,8 @@ import com.edward_costache.stay_fitrpg.exercises.RunningMenuActivity;
 import com.edward_costache.stay_fitrpg.exercises.SitupMenuActivity;
 import com.edward_costache.stay_fitrpg.exercises.SquatMenuActivity;
 import com.edward_costache.stay_fitrpg.util.Util;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.internal.InternalTokenProvider;
 
 public class ExercisesActivity extends AppCompatActivity {
@@ -38,6 +40,7 @@ public class ExercisesActivity extends AppCompatActivity {
 
         layout = findViewById(R.id.exercises_pageLayout);
     }
+
 
     private void initClickListeners()
     {

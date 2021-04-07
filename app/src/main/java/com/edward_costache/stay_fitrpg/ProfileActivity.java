@@ -19,8 +19,10 @@ import android.provider.ContactsContract;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.edward_costache.stay_fitrpg.exercises.PushupExerciseActivity;
 import com.edward_costache.stay_fitrpg.util.StepDetector;
@@ -37,7 +39,8 @@ import com.google.firebase.database.ValueEventListener;
 public class ProfileActivity extends AppCompatActivity{
 
     private TextView txtUsername, txtProgress, txtLevel, txtOverallSteps, txtHealth, txtStrength, txtAgility, txtStamina;
-    private Button btnLogout, btnCharacter;
+    private Button btnLogout;
+    private ImageView imageCharacter;
     //private Button btnTest;
     private com.google.android.material.card.MaterialCardView cardViewTrain, cardViewFight, cardViewProgress;
     private androidx.constraintlayout.widget.ConstraintLayout layout;
@@ -48,10 +51,9 @@ public class ProfileActivity extends AppCompatActivity{
     private FirebaseAuth mAuth;
 
     private DatabaseReference reference;
-    private SharedPreferences sharedPreferences;
+    private SharedPreferences sharedPreferencesAccount, sharedPreferencesData;
     private StepDetector stepDetector;
 
-    private User userProfile;
     private String username;
     private String userID;
     private int health;
@@ -70,7 +72,8 @@ public class ProfileActivity extends AppCompatActivity{
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile);
 
-        sharedPreferences = getSharedPreferences("account", MODE_PRIVATE);
+        sharedPreferencesAccount = getSharedPreferences("account", MODE_PRIVATE);
+        sharedPreferencesData = getSharedPreferences("data", MODE_PRIVATE);
         // Set-up functions that initialize declarations
         initViews();
         setUpUser();
@@ -79,7 +82,7 @@ public class ProfileActivity extends AppCompatActivity{
         Log.i("TOMORROW TIME: ", Long.toString(Util.getTomorrow()));
         Log.i("CURRENT TIME: ", Long.toString(System.currentTimeMillis()));
 
-        long time = sharedPreferences.getLong("time", 0);
+        long time = sharedPreferencesData.getLong("time", 0);
 
         // If it is a new day, reset the user progress
         if(time == Util.getToday())
@@ -88,16 +91,16 @@ public class ProfileActivity extends AppCompatActivity{
         }
         else if(time != Util.getToday() && time != 0)
         {
-            sharedPreferences.edit().putInt("progress", 0).apply();
-            sharedPreferences.edit().putInt("overallSteps", 0).apply();
+            sharedPreferencesData.edit().putInt("progress", 0).apply();
+            sharedPreferencesData.edit().putInt("overallSteps", 0).apply();
             Log.i("NEW DAY: ", "A NEW DAY, THEREFORE STEPS RESET");
         }
 
         // If the application has been closed before, retrieve the progress
-        if(sharedPreferences.getInt("overallSteps", 0) != 0)
+        if(sharedPreferencesData.getInt("overallSteps", 0) != 0)
         {
-            steps = sharedPreferences.getInt("progress", 0);
-            overallSteps = sharedPreferences.getInt("overallSteps", 0);
+            steps = sharedPreferencesData.getInt("progress", 0);
+            overallSteps = sharedPreferencesData.getInt("overallSteps", 0);
         }
         displayUserInfo();
         initOnClickListeners();
@@ -110,6 +113,8 @@ public class ProfileActivity extends AppCompatActivity{
                 updateSteps(steps, progressMax);
             }
         });
+
+
 
         /* TESTING
         btnTest.setOnClickListener(new View.OnClickListener() {
@@ -133,16 +138,17 @@ public class ProfileActivity extends AppCompatActivity{
     protected void onPause() {
         super.onPause();
         stepDetector.un_registerListener();
+        sharedPreferencesData.edit().putInt("progress", steps).apply();
+        sharedPreferencesData.edit().putInt("overallSteps", overallSteps).apply();
+        sharedPreferencesData.edit().putLong("time", Util.getToday()).apply();
     }
 
     @Override
-    protected void onStop() {
-        super.onStop();
-        sharedPreferences.edit().putInt("progress", steps).apply();
-        sharedPreferences.edit().putInt("overallSteps", overallSteps).apply();
-        sharedPreferences.edit().putLong("time", Util.getToday()).apply();
-        stepDetector.un_registerListener();
+    protected void onDestroy() {
+        mAuth.signOut();
+        super.onDestroy();
     }
+
     private void setUpUser()
     {
         mAuth = FirebaseAuth.getInstance();
@@ -164,11 +170,9 @@ public class ProfileActivity extends AppCompatActivity{
 
     private void logout()
     {
-        mAuth.signOut();
-        SharedPreferences.Editor editor = sharedPreferences.edit();
+        SharedPreferences.Editor editor = sharedPreferencesAccount.edit();
         editor.clear();
         editor.apply();
-
         startActivity(new Intent(ProfileActivity.this, LoginActivity.class));
         finish();
     }
@@ -189,7 +193,7 @@ public class ProfileActivity extends AppCompatActivity{
         cardViewProgress = findViewById(R.id.profileCardViewProgress);
 
         btnLogout = findViewById(R.id.profileBtnLogout);
-        btnCharacter = findViewById(R.id.profileBtnCharacter);
+        imageCharacter = findViewById(R.id.profileImageCharacter);
         //btnTest = findViewById(R.id.profileBtnStepTest);
 
         progressBarTest = findViewById(R.id.profileProgressBar);
@@ -231,7 +235,7 @@ public class ProfileActivity extends AppCompatActivity{
             }
         });
 
-        btnCharacter.setOnClickListener(new View.OnClickListener() {
+        imageCharacter.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Util.displayNotImplemented(ProfileActivity.this, layout);

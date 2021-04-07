@@ -8,13 +8,15 @@
     <uses-permission android:name="android.permission.WAKE_LOCK" />
 
     <application
+        android:name=".BaseApplication"
         android:allowBackup="true"
         android:icon="@mipmap/app_launcher"
         android:label="@string/app_name"
         android:roundIcon="@mipmap/app_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.StayFitRPG">
-        <activity android:name=".OnlineMenuActivity"></activity>
+        <activity android:name=".RoomActivity"></activity>
+        <activity android:name=".OnlineMenuActivity" />
         <activity android:name=".exercises.RunningExerciseActivity" />
         <activity android:name=".exercises.SquatExerciseActivity" />
         <activity android:name=".exercises.SitupExerciseActivity" />

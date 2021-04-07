@@ -13,6 +13,8 @@ import android.widget.RadioGroup;
 import android.widget.TextView;
 
 import com.edward_costache.stay_fitrpg.R;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.ArrayList;
 
@@ -57,6 +59,7 @@ public class SitupMenuActivity extends AppCompatActivity {
         super.onBackPressed();
         finish();
     }
+
 
     private void setOnCheckedListeners()
     {

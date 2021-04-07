@@ -101,17 +101,16 @@
         android:orientation="horizontal"
         app:layout_constraintGuide_begin="217dp" />
 
-    <Button
-        android:id="@+id/profileBtnCharacter"
+    <ImageView
+        android:id="@+id/profileImageCharacter"
+        android:layout_marginBottom="16dp"
+        android:layout_marginStart="8dp"
         android:layout_width="167dp"
         android:layout_height="260dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginBottom="16dp"
-        android:fontFamily="@font/roboto_condensed_regular"
-        android:text="[Character]"
         app:layout_constraintBottom_toTopOf="@+id/guideline4"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/guideline3" />
+        app:layout_constraintTop_toTopOf="@+id/guideline3"
+        android:src="@drawable/test_character"/>
 
     <TextView
         android:id="@+id/profileTxtOverallSteps"
