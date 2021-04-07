@@ -45,12 +45,13 @@ public class RoomActivity extends AppCompatActivity {
         roomRef = FirebaseDatabase.getInstance().getReference("rooms");
         if(role.equals("host"))
         {
-            userID1 = mAuth.getCurrentUser().getUid();
+            userID1 = getIntent().getStringExtra("userID1");
             Log.d(TAG, "onCreate: "+userID1);
         }
         else if(role.equals("guest"))
         {
-            userID2 = mAuth.getCurrentUser().getUid();
+            userID1 = getIntent().getStringExtra("userID1");
+            userID2 = getIntent().getStringExtra("userID2");
             Log.d(TAG, "onCreate: "+userID2);
         }
         else
@@ -119,7 +120,8 @@ public class RoomActivity extends AppCompatActivity {
         }
         else if(role.equals("guest"))
         {
-
+            roomRef.child(roomID).child("userID2").removeValue();
+            finish();
         }
     }
 }

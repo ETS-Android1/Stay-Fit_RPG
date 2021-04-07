@@ -47,7 +47,8 @@ public class RoomsRecViewAdapter extends RecyclerView.Adapter<RoomsRecViewAdapte
                 Log.d("TAG", "onClick: "+rooms.get(position).getRoomName());
                 Intent intent = new Intent(context, RoomActivity.class);
                 intent.putExtra("role", "guest");
-                intent.putExtra("userID", FirebaseAuth.getInstance().getCurrentUser().getUid());
+                intent.putExtra("userID1", userID);
+                intent.putExtra("userID2", FirebaseAuth.getInstance().getCurrentUser().getUid());
                 FirebaseDatabase.getInstance().getReference("rooms").child(rooms.get(position).getUserID1()+"ROOM").child("amountPlayers").setValue(2);
                 FirebaseDatabase.getInstance().getReference("rooms").child(rooms.get(position).getUserID1()+"ROOM").child("userID2").setValue(FirebaseAuth.getInstance().getCurrentUser().getUid());
                 rooms.get(position).setUserID2(FirebaseAuth.getInstance().getCurrentUser().getUid());
