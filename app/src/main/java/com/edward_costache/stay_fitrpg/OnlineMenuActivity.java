@@ -75,8 +75,9 @@ public class OnlineMenuActivity extends AppCompatActivity {
                     Intent intent = new Intent(OnlineMenuActivity.this, RoomActivity.class);
                     intent.putExtra("roomName", roomName);
                     intent.putExtra("role", "host");
-                    intent.putExtra("userID1", FirebaseAuth.getInstance().getCurrentUser().getUid());
+                    intent.putExtra("userID", FirebaseAuth.getInstance().getCurrentUser().getUid());
                     startActivity(intent);
+                    finish();
                 }
             }
         });

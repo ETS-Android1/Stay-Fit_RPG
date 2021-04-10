@@ -2,14 +2,14 @@ package com.edward_costache.stay_fitrpg;
 
 public class Room {
     private String roomName, userID1, userID2;
-    private int amountPlayers;
+    private int playersReady;
 
     Room(String roomName, String userID1)
     {
         setRoomName(roomName);
         setUserID1(userID1);
         setUserID2("");
-        amountPlayers = 1;
+        playersReady = 1;
     }
 
     Room()
@@ -41,11 +41,11 @@ public class Room {
         this.userID2 = userID2;
     }
 
-    public int getAmountPlayers() {
-        return amountPlayers;
+    public int getPlayersReady() {
+        return playersReady;
     }
 
-    public void setAmountPlayers(int amountPlayers) {
-        this.amountPlayers = amountPlayers;
+    public void setPlayersReady(int playersReady) {
+        this.playersReady = playersReady;
     }
 }

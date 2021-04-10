@@ -11,4 +11,6 @@
     <color name="textColor">#C3C3C3</color>
     <color name="progressBarStrokeColor">#B4B4D0</color>
     <color name="red">#C50000</color>
+    <color name="redText">#970101</color>
+    <color name="transparent">#00FFFFFF</color>
 </resources>

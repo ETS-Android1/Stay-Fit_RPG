@@ -1,0 +1,204 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".GameActivity"
+    android:background="@color/backgroundBlack">
+
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/gameCardViewMenu"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="8dp"
+        app:cardBackgroundColor="@color/purple_500"
+        app:cardCornerRadius="2dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <ImageView
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:layout_margin="4dp"
+            android:src="@drawable/ic_round_menu_24" />
+
+    </com.google.android.material.card.MaterialCardView>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="5dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/gameCardViewMenu"
+        android:id="@+id/gameLinearLayoutCharacters">
+
+        <RelativeLayout
+            android:id="@+id/relativeLayout"
+            android:layout_width="175dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="12dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/gameCardViewMenu"
+            android:layout_weight="1">
+
+            <TextView
+                android:id="@+id/gameTxtUser1Username"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/letterLoading"
+                android:textColor="@color/textColor"
+                android:textSize="22sp"
+                android:layout_centerHorizontal="true"/>
+
+            <ImageView
+                android:id="@+id/gameImageUser1Character"
+                android:layout_width="100dp"
+                android:layout_height="225dp"
+                android:layout_below="@id/gameTxtUser1Username"
+                android:src="@drawable/test_character"
+                android:layout_centerInParent="true"/>
+
+            <LinearLayout
+                android:id="@+id/gameLinearLayoutUser1Stats"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/gameImageUser1Character">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_weight="1"
+                    android:fontFamily="@font/roboto_condensed_regular"
+                    android:text="HEALTH"
+                    android:textColor="@color/textColor"
+                    android:textSize="18sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/gameTxtUser1HealthValue"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginEnd="18dp"
+                    android:layout_weight="1"
+                    android:fontFamily="@font/roboto_condensed_regular"
+                    android:text="@string/numberLoading"
+                    android:textAlignment="viewEnd"
+                    android:textColor="@color/textColor"
+                    android:textSize="18sp"
+                    android:textStyle="bold" />
+
+            </LinearLayout>
+
+            <ProgressBar
+                android:id="@+id/gameProgressBarUser1Health"
+                style="?android:attr/progressBarStyleHorizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/gameLinearLayoutUser1Stats"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginEnd="16dp"
+                android:max="@integer/attributesMax"
+                android:progressDrawable="@drawable/custom_progressbar" />
+
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="175dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="12dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/gameCardViewMenu"
+            android:layout_weight="1">
+
+            <TextView
+                android:id="@+id/gameTxtUser2Username"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/letterLoading"
+                android:textColor="@color/textColor"
+                android:textSize="22sp"
+                android:layout_centerHorizontal="true"/>
+
+            <ImageView
+                android:id="@+id/gameImageUser2Character"
+                android:layout_width="100dp"
+                android:layout_height="225dp"
+                android:layout_below="@id/gameTxtUser2Username"
+                android:src="@drawable/test_character_flipped"
+                android:layout_centerInParent="true"/>
+
+            <LinearLayout
+                android:id="@+id/gameLinearLayoutUser2Stats"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/gameImageUser2Character">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_weight="1"
+                    android:fontFamily="@font/roboto_condensed_regular"
+                    android:text="HEALTH"
+                    android:textColor="@color/textColor"
+                    android:textSize="18sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/gameTxtUser2HealthValue"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginEnd="18dp"
+                    android:layout_weight="1"
+                    android:fontFamily="@font/roboto_condensed_regular"
+                    android:text="@string/numberLoading"
+                    android:textAlignment="viewEnd"
+                    android:textColor="@color/textColor"
+                    android:textSize="18sp"
+                    android:textStyle="bold" />
+
+            </LinearLayout>
+
+            <ProgressBar
+                android:id="@+id/gameProgressBarUser2Health"
+                style="?android:attr/progressBarStyleHorizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/gameLinearLayoutUser2Stats"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginEnd="16dp"
+                android:max="@integer/attributesMax"
+                android:progressDrawable="@drawable/custom_progressbar" />
+
+
+        </RelativeLayout>
+
+
+    </LinearLayout>
+
+
+
+    <RelativeLayout
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_margin="12dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/gameLinearLayoutCharacters">
+
+    </RelativeLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

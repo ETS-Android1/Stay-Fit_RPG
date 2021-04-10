@@ -22,6 +22,16 @@ public class User {
         setHealth(50);
     }
 
+    public User(String username, double level, int strength, int agility, int stamina, int health)
+    {
+        setUsername(username);
+        setLevel(level);
+        setStrength(strength);
+        setAgility(agility);
+        setStamina(stamina);
+        setHealth(health);
+    }
+
     public String getUsername() {
         return username;
     }

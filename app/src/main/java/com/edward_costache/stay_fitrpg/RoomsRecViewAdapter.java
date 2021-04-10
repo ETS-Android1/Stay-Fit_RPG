@@ -36,6 +36,7 @@ public class RoomsRecViewAdapter extends RecyclerView.Adapter<RoomsRecViewAdapte
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.room_list_item, parent, false);
         return new ViewHolder(view);
+
     }
 
     @Override
@@ -44,15 +45,18 @@ public class RoomsRecViewAdapter extends RecyclerView.Adapter<RoomsRecViewAdapte
         holder.parentLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.d("TAG", "onClick: "+rooms.get(position).getRoomName());
+                String roomName = rooms.get(position).getRoomName();
+                String roomID = rooms.get(position).getUserID1()+"ROOM";
+
+                FirebaseDatabase.getInstance().getReference("rooms").child(roomID).child("userID2").setValue(userID);
+
                 Intent intent = new Intent(context, RoomActivity.class);
                 intent.putExtra("role", "guest");
-                intent.putExtra("userID1", userID);
-                intent.putExtra("userID2", FirebaseAuth.getInstance().getCurrentUser().getUid());
-                FirebaseDatabase.getInstance().getReference("rooms").child(rooms.get(position).getUserID1()+"ROOM").child("amountPlayers").setValue(2);
-                FirebaseDatabase.getInstance().getReference("rooms").child(rooms.get(position).getUserID1()+"ROOM").child("userID2").setValue(FirebaseAuth.getInstance().getCurrentUser().getUid());
-                rooms.get(position).setUserID2(FirebaseAuth.getInstance().getCurrentUser().getUid());
+                intent.putExtra("userID", userID);
+
+                intent.putExtra("roomID", roomID);
                 context.startActivity(intent);
+                Log.d("TAG", "onClick: "+roomName);
             }
         });
     }
