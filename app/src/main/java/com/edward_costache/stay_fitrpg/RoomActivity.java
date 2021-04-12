@@ -51,12 +51,11 @@ public class RoomActivity extends AppCompatActivity {
         userRef = FirebaseDatabase.getInstance().getReference("users");
         roomRef = FirebaseDatabase.getInstance().getReference("rooms");
         gameRef = FirebaseDatabase.getInstance().getReference("games");
-
+        roomName = getIntent().getStringExtra("roomName");
+        txtRoomName.setText(roomName);
         //------------------------------------------------------------------------------- HOST
 
         if (role.equals("host")) {
-            roomName = getIntent().getStringExtra("roomName");
-            txtRoomName.setText(roomName);
             userID1 = getIntent().getStringExtra("userID");
             roomID = userID1 + "ROOM";
             //store the data for user 1 (host) in a User object
@@ -144,8 +143,10 @@ public class RoomActivity extends AppCompatActivity {
                         gameID = userID1 + "GAME";
                         roomRef.child(roomID).child("gameStarted").setValue(true);
 
-                        gameRef.child(gameID).child("user1").setValue(new User(user1.getUsername(), user1.getLevel(), user1.getStrength(), user1.getAgility(), user1.getStamina(), user1.getHealth()));
-                        gameRef.child(gameID).child("user2").setValue(new User(user2.getUsername(), user2.getLevel(), user2.getStrength(), user2.getAgility(), user2.getStamina(), user2.getHealth()));
+                        gameRef.child(gameID).child("user1").setValue(new User(user1.getUsername(), user1.getLevel(), user1.getStrength(), user1.getAgility(), user1.getStamina(), user1.getHealth(), false));
+                        gameRef.child(gameID).child("user2").setValue(new User(user2.getUsername(), user2.getLevel(), user2.getStrength(), user2.getAgility(), user2.getStamina(), user2.getHealth(), false));
+                        gameRef.child(gameID).child("playerTurn").setValue(1);
+                        gameRef.child(gameID).child("roomName").setValue(roomName);
 
                         Intent intent = new Intent(RoomActivity.this, GameActivity.class);
                         intent.putExtra("userID1", userID1);

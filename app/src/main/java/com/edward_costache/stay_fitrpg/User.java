@@ -8,6 +8,8 @@ public class User {
     private int stamina;
     private int health;
 
+    private boolean isDefending, left;
+
     public User()
     {
 
@@ -30,6 +32,18 @@ public class User {
         setAgility(agility);
         setStamina(stamina);
         setHealth(health);
+    }
+
+    public User(String username, double level, int strength, int agility, int stamina, int health, boolean isDefending)
+    {
+        setUsername(username);
+        setLevel(level);
+        setStrength(strength);
+        setAgility(agility);
+        setStamina(stamina);
+        setHealth(health);
+        setDefending(isDefending);
+        setLeft(false);
     }
 
     public String getUsername() {
@@ -78,5 +92,21 @@ public class User {
 
     public void setHealth(int health) {
         this.health = health;
+    }
+
+    public boolean isDefending() {
+        return isDefending;
+    }
+
+    public void setDefending(boolean defending) {
+        isDefending = defending;
+    }
+
+    public boolean isLeft() {
+        return left;
+    }
+
+    public void setLeft(boolean left) {
+        this.left = left;
     }
 }

@@ -5,7 +5,20 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".GameActivity"
-    android:background="@color/backgroundBlack">
+    android:background="@color/backgroundBlack"
+    android:id="@+id/gameParent">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:id="@+id/gameTxtTurn"
+        android:textSize="23sp"
+        android:text="@string/letterLoading"
+        android:textColor="@color/textColor"
+        android:fontFamily="@font/roboto_condensed_regular"/>
 
     <com.google.android.material.card.MaterialCardView
         android:id="@+id/gameCardViewMenu"
@@ -198,6 +211,143 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/gameLinearLayoutCharacters">
+
+        <TextView
+            android:id="@+id/gameTxtSkills"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="SKILLS"
+            android:textSize="20sp"
+            android:fontFamily="@font/roboto_condensed_regular"
+            android:textColor="@color/textColor"
+            android:layout_centerHorizontal="true"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_below="@id/gameTxtSkills">
+
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/gameCardViewAttack"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_margin="4dp"
+                app:cardBackgroundColor="@color/purple_500"
+                app:cardCornerRadius="8dp"
+                android:layout_weight="1">
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+
+                    <ImageView
+                        android:id="@+id/gameImageAttack"
+                        android:layout_width="35dp"
+                        android:layout_height="35dp"
+                        android:layout_margin="5dp"
+                        android:src="@drawable/sword" />
+
+                    <TextView
+                        android:id="@+id/profileTxtTrain"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerHorizontal="true"
+                        android:layout_toEndOf="@id/gameImageAttack"
+                        android:layout_centerVertical="true"
+                        android:layout_marginTop="2dp"
+                        android:layout_marginBottom="5dp"
+                        android:fontFamily="@font/roboto_condensed_regular"
+                        android:text="ATTACK"
+                        android:textColor="@color/textColor"
+                        android:textSize="16sp"
+                        android:textStyle="bold"
+                        />
+
+                </RelativeLayout>
+
+            </com.google.android.material.card.MaterialCardView>
+
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/gameCardViewDefend"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_margin="4dp"
+                app:cardBackgroundColor="@color/purple_500"
+                app:cardCornerRadius="8dp"
+                android:layout_weight="1">
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+
+                    <ImageView
+                        android:id="@+id/gameImageDefend"
+                        android:layout_width="35dp"
+                        android:layout_height="35dp"
+                        android:layout_margin="5dp"
+                        android:src="@drawable/shield" />
+
+                    <TextView
+                        android:id="@+id/gameTxtDefend"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerHorizontal="true"
+                        android:layout_toEndOf="@id/gameImageDefend"
+                        android:layout_centerVertical="true"
+                        android:layout_marginTop="2dp"
+                        android:layout_marginBottom="5dp"
+                        android:fontFamily="@font/roboto_condensed_regular"
+                        android:text="DEFEND"
+                        android:textColor="@color/textColor"
+                        android:textSize="16sp"
+                        android:textStyle="bold" />
+
+                </RelativeLayout>
+
+            </com.google.android.material.card.MaterialCardView>
+
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/gameCardViewRest"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_margin="4dp"
+                app:cardBackgroundColor="@color/purple_500"
+                app:cardCornerRadius="8dp"
+                android:layout_weight="1">
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+
+                    <ImageView
+                        android:id="@+id/gameImageRest"
+                        android:layout_width="35dp"
+                        android:layout_height="35dp"
+                        android:layout_margin="5dp"
+                        android:src="@drawable/like" />
+
+                    <TextView
+                        android:id="@+id/gameTxtRest"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerHorizontal="true"
+                        android:layout_toEndOf="@id/gameImageRest"
+                        android:layout_centerVertical="true"
+                        android:layout_marginTop="2dp"
+                        android:layout_marginBottom="5dp"
+                        android:fontFamily="@font/roboto_condensed_regular"
+                        android:text="REST"
+                        android:textColor="@color/textColor"
+                        android:textSize="16sp"
+                        android:textStyle="bold"
+                        android:layout_marginEnd="10dp"/>
+
+                </RelativeLayout>
+
+            </com.google.android.material.card.MaterialCardView>
+
+        </LinearLayout>
 
     </RelativeLayout>
 
