@@ -24,17 +24,8 @@ import java.util.ArrayList;
 public class OnlineMenuActivity extends AppCompatActivity {
 
     private RecyclerView roomsRecView;
-
-    private RelativeLayout roomsLayout;
-    private ConstraintLayout makeRoomLayout;
-
-    private EditText editTxtRoomName;
-    private Button btnCreateRoom, btnCreateRoomConfirm;
-
+    private Button btnCreateRoom;
     private ArrayList<Room> rooms;
-
-    private boolean creatingRoom = false;
-
     private RoomsRecViewAdapter adapter;
 
 
@@ -48,52 +39,41 @@ public class OnlineMenuActivity extends AppCompatActivity {
         rooms = new ArrayList<>();
         displayRooms();
 
-        roomsLayout.setVisibility(View.VISIBLE);
-        makeRoomLayout.setVisibility(View.GONE);
-
         btnCreateRoom.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                creatingRoom = true;
-                roomsLayout.setVisibility(View.GONE);
-                makeRoomLayout.setVisibility(View.VISIBLE);
+                FirebaseDatabase.getInstance().getReference("users").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        if (snapshot.getValue() != null) {
+                            User user = snapshot.getValue(User.class);
+                            String roomName = user.getUsername() + "'s room";
+                            FirebaseDatabase.getInstance().getReference("rooms").child(FirebaseAuth.getInstance().getCurrentUser().getUid() + "ROOM").setValue(new Room(roomName, FirebaseAuth.getInstance().getCurrentUser().getUid()));
+                            refreshRooms();
+                            Intent intent = new Intent(OnlineMenuActivity.this, RoomActivity.class);
+                            intent.putExtra("roomName", roomName);
+                            intent.putExtra("role", "host");
+                            intent.putExtra("userID", FirebaseAuth.getInstance().getCurrentUser().getUid());
+                            startActivity(intent);
+                            finish();
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+                    }
+                });
             }
         });
-
-        btnCreateRoomConfirm.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if(creatingRoom)
-                {
-                    String roomName = editTxtRoomName.getText().toString();
-                    FirebaseDatabase.getInstance().getReference("rooms").child(FirebaseAuth.getInstance().getCurrentUser().getUid()+"ROOM").setValue(new Room(roomName, FirebaseAuth.getInstance().getCurrentUser().getUid()));
-                    refreshRooms();
-                    creatingRoom = false;
-                    roomsLayout.setVisibility(View.VISIBLE);
-                    makeRoomLayout.setVisibility(View.GONE);
-
-                    Intent intent = new Intent(OnlineMenuActivity.this, RoomActivity.class);
-                    intent.putExtra("roomName", roomName);
-                    intent.putExtra("role", "host");
-                    intent.putExtra("userID", FirebaseAuth.getInstance().getCurrentUser().getUid());
-                    startActivity(intent);
-                    finish();
-                }
-            }
-        });
-
     }
 
-    private void displayRooms()
-    {
+    private void displayRooms() {
         FirebaseDatabase.getInstance().getReference("rooms").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 rooms.clear();
-                if(snapshot.getChildrenCount() != 0)
-                {
-                    for(DataSnapshot ds : snapshot.getChildren())
-                    {
+                if (snapshot.getChildrenCount() != 0) {
+                    for (DataSnapshot ds : snapshot.getChildren()) {
                         Room room = ds.getValue(Room.class);
                         rooms.add(room);
                     }
@@ -111,44 +91,20 @@ public class OnlineMenuActivity extends AppCompatActivity {
         roomsRecView.setLayoutManager(new LinearLayoutManager(OnlineMenuActivity.this));
     }
 
-    private void refreshRooms()
-    {
+    private void refreshRooms() {
         adapter.notifyDataSetChanged();
-    }
-
-    @Override
-    public void onBackPressed() {
-        if(creatingRoom)
-        {
-            roomsLayout.setVisibility(View.VISIBLE);
-            makeRoomLayout.setVisibility(View.GONE);
-            editTxtRoomName.setText("");
-            creatingRoom = false;
-        }
-        else
-        {
-            super.onBackPressed();
-            finish();
-        }
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        FirebaseDatabase.getInstance().getReference("rooms").child(FirebaseAuth.getInstance().getCurrentUser().getUid()+"-").removeValue();
+        FirebaseDatabase.getInstance().getReference("rooms").child(FirebaseAuth.getInstance().getCurrentUser().getUid() + "-").removeValue();
         rooms.clear();
     }
 
-    private void initViews()
-    {
+    private void initViews() {
         adapter = new RoomsRecViewAdapter(OnlineMenuActivity.this, FirebaseAuth.getInstance().getCurrentUser().getUid());
         roomsRecView = findViewById(R.id.onlineMenuRecViewRooms);
-
-        roomsLayout = findViewById(R.id.onlineMenuRoomsLayout);
-        makeRoomLayout = findViewById(R.id.onlineMenuMakeRoomLayout);
-
-        editTxtRoomName = findViewById(R.id.onlineMenuEditTxtRoomName);
         btnCreateRoom = findViewById(R.id.onlineMenuBtnCreateRoom);
-        btnCreateRoomConfirm = findViewById(R.id.onlineMenuBtnConfirmRoom);
     }
 }

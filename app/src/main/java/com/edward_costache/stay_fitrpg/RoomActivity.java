@@ -146,7 +146,6 @@ public class RoomActivity extends AppCompatActivity {
                         gameRef.child(gameID).child("user1").setValue(new User(user1.getUsername(), user1.getLevel(), user1.getStrength(), user1.getAgility(), user1.getStamina(), user1.getHealth(), false));
                         gameRef.child(gameID).child("user2").setValue(new User(user2.getUsername(), user2.getLevel(), user2.getStrength(), user2.getAgility(), user2.getStamina(), user2.getHealth(), false));
                         gameRef.child(gameID).child("playerTurn").setValue(1);
-                        gameRef.child(gameID).child("roomName").setValue(roomName);
 
                         Intent intent = new Intent(RoomActivity.this, GameActivity.class);
                         intent.putExtra("userID1", userID1);
@@ -195,19 +194,6 @@ public class RoomActivity extends AppCompatActivity {
                 public void onDataChange(@NonNull DataSnapshot snapshot) {
                     user1 = snapshot.getValue(User.class);
                     txtPlayer1Username.setText(user1.getUsername());
-                }
-
-                @Override
-                public void onCancelled(@NonNull DatabaseError error) {
-
-                }
-            });
-
-            roomRef.child(roomID).child("roomName").addListenerForSingleValueEvent(new ValueEventListener() {
-                @Override
-                public void onDataChange(@NonNull DataSnapshot snapshot) {
-                    roomName = snapshot.getValue(String.class);
-                    txtRoomName.setText(roomName);
                 }
 
                 @Override
