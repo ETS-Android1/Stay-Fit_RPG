@@ -6,6 +6,7 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -28,12 +29,12 @@ public class OnlineMenuActivity extends AppCompatActivity {
     private ArrayList<Room> rooms;
     private RoomsRecViewAdapter adapter;
 
-
+    public static Activity OMA;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_online_menu);
-
+        OMA = this;
         initViews();
         roomsRecView.setLayoutManager(new LinearLayoutManager(this));
         rooms = new ArrayList<>();
@@ -55,6 +56,7 @@ public class OnlineMenuActivity extends AppCompatActivity {
                             intent.putExtra("role", "host");
                             intent.putExtra("userID", FirebaseAuth.getInstance().getCurrentUser().getUid());
                             startActivity(intent);
+                            rooms.clear();
                             finish();
                         }
                     }
@@ -98,8 +100,6 @@ public class OnlineMenuActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        FirebaseDatabase.getInstance().getReference("rooms").child(FirebaseAuth.getInstance().getCurrentUser().getUid() + "-").removeValue();
-        rooms.clear();
     }
 
     private void initViews() {

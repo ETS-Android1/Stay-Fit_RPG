@@ -17,6 +17,14 @@ public class Room {
 
     }
 
+    Room(String roomName, String userID1, String userID2)
+    {
+        setRoomName(roomName);
+        setUserID1(userID1);
+        setUserID2(userID2);
+        playersReady = 1;
+    }
+
     public String getRoomName() {
         return roomName;
     }

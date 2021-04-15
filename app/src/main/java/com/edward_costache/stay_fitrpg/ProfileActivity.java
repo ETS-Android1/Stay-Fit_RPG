@@ -5,6 +5,7 @@ import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -41,7 +42,6 @@ public class ProfileActivity extends AppCompatActivity{
     private TextView txtUsername, txtProgress, txtLevel, txtOverallSteps, txtHealth, txtStrength, txtAgility, txtStamina;
     private Button btnLogout;
     private ImageView imageCharacter;
-    //private Button btnTest;
     private com.google.android.material.card.MaterialCardView cardViewTrain, cardViewFight, cardViewProgress;
     private androidx.constraintlayout.widget.ConstraintLayout layout;
 
@@ -67,11 +67,14 @@ public class ProfileActivity extends AppCompatActivity{
 
     private final int STARTING_STEP_GOAL = 100;
     private final double MULTIPLIER = 1.0;
+    private static final String TAG = "PROFILE ACTIVITY";
+
+    public static Activity PA;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile);
-
+        PA = this;
         sharedPreferencesAccount = getSharedPreferences("account", MODE_PRIVATE);
         sharedPreferencesData = getSharedPreferences("data", MODE_PRIVATE);
         // Set-up functions that initialize declarations
@@ -113,19 +116,6 @@ public class ProfileActivity extends AppCompatActivity{
                 updateSteps(steps, progressMax);
             }
         });
-
-
-
-        /* TESTING
-        btnTest.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                steps++;
-                overallSteps++;
-                updateSteps(steps, progressMax);
-            }
-        });
-         */
     }
 
     @Override
@@ -145,7 +135,6 @@ public class ProfileActivity extends AppCompatActivity{
 
     @Override
     protected void onDestroy() {
-        mAuth.signOut();
         super.onDestroy();
     }
 
@@ -153,18 +142,14 @@ public class ProfileActivity extends AppCompatActivity{
     {
         mAuth = FirebaseAuth.getInstance();
         reference = FirebaseDatabase.getInstance().getReference("users");
-        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-        if(user != null)
+        if(mAuth.getCurrentUser() != null)
         {
-            userID = user.getUid();
+            userID = mAuth.getCurrentUser().getUid();
         }
         else
         {
-            Snackbar.make(ProfileActivity.this, layout, "Something went wrong, logout and login again!", Snackbar.LENGTH_LONG).setAction("OK", new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                }
-            }).show();
+            Toast.makeText(this, "User is not signed in", Toast.LENGTH_SHORT).show();
+            Log.d(TAG, "setUpUser: USER NOT FOUND");
         }
     }
 
@@ -252,11 +237,17 @@ public class ProfileActivity extends AppCompatActivity{
 
     private void displayUserInfo()
     {
-        reference.child(userID).child("username").addValueEventListener(new ValueEventListener() {
+        reference.child(userID).child("username").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                username = snapshot.getValue(String.class);
-                txtUsername.setText(username);
+                if(snapshot.getValue() != null) {
+                    username = snapshot.getValue(String.class);
+                    txtUsername.setText(username);
+                }
+                else
+                {
+                    Log.d(TAG, "displayUserInfo: NULL PATH");
+                }
             }
 
             @Override
@@ -376,7 +367,6 @@ public class ProfileActivity extends AppCompatActivity{
                 .setTitle("Exiting the Application")
                 .setMessage("Are you sure you want to exit?")
                 .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         Log.i("ON STOP: ", "YES");

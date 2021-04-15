@@ -54,7 +54,6 @@ public class RoomsRecViewAdapter extends RecyclerView.Adapter<RoomsRecViewAdapte
                 intent.putExtra("role", "guest");
                 intent.putExtra("userID", userID);
                 intent.putExtra("roomName", roomName);
-
                 intent.putExtra("roomID", roomID);
                 context.startActivity(intent);
             }

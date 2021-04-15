@@ -153,6 +153,7 @@ public class RoomActivity extends AppCompatActivity {
                         intent.putExtra("role", "host");
                         intent.putExtra("gameID", gameID);
                         startActivity(intent);
+                        OnlineMenuActivity.OMA.finish();
                         finish();
                     } else if (user2 == null) {
                         Toast.makeText(RoomActivity.this, "You need 2 players to start a game!", Toast.LENGTH_SHORT).show();

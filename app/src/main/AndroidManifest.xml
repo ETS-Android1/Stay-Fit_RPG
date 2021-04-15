@@ -17,7 +17,8 @@
         android:theme="@style/Theme.StayFitRPG">
         <activity android:name=".GameActivity"></activity>
         <activity android:name=".RoomActivity" />
-        <activity android:name=".OnlineMenuActivity" />
+        <activity android:name=".OnlineMenuActivity"
+            />
         <activity android:name=".exercises.RunningExerciseActivity" />
         <activity android:name=".exercises.SquatExerciseActivity" />
         <activity android:name=".exercises.SitupExerciseActivity" />
@@ -28,7 +29,8 @@
         <activity android:name=".EasterEggActivity" />
         <activity android:name=".exercises.PushupMenuActivity" />
         <activity android:name=".ExercisesActivity" />
-        <activity android:name=".ProfileActivity" />
+        <activity android:name=".ProfileActivity"
+            />
         <activity android:name=".ForgotPasswordActivity" />
         <activity android:name=".SignUpActivity" />
         <activity android:name=".LoginActivity">

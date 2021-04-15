@@ -12,12 +12,15 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.PopupMenu;
 import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.edward_costache.stay_fitrpg.exercises.PushupExerciseActivity;
+import com.google.android.gms.common.GooglePlayServicesRepairableException;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
@@ -31,21 +34,16 @@ import java.util.concurrent.ExecutionException;
 public class GameActivity extends AppCompatActivity {
 
     public static final String TAG = "GAME ACTIVITY";
-    private TextView txtUsername1, txtUsername2, txtHealthUser1, txtHealthUser2, txtPlayerTurn;
+    private TextView txtUsername1, txtUsername2, txtHealthUser1, txtHealthUser2, txtPlayerTurn, txtGameOverInfo, txtRematchInfo;
     private ProgressBar progressBarUser1Health, progressBarUser2Health;
     private com.google.android.material.card.MaterialCardView cardAttack, cardDefend, cardRest, cardMenu;
-    private androidx.constraintlayout.widget.ConstraintLayout parentView;
+    private androidx.constraintlayout.widget.ConstraintLayout parentView, gameOverConstraint, rematchConstraint;
+    private Button btnRematch, btnExit, btnAccept, btnDecline;
 
     private String role, userID1, userID2, gameID;
     private DatabaseReference gameRef;
 
     private User user1, user2;
-
-    private AlertDialog.Builder hostAlertBuilder;
-    private AlertDialog hostAlertDialog;
-
-    private AlertDialog.Builder guestAlertBuilder;
-    private AlertDialog guestAlertDialog;
 
     private boolean gameOver = false;
 
@@ -60,6 +58,9 @@ public class GameActivity extends AppCompatActivity {
         userID2 = getIntent().getStringExtra("userID2");
         gameID = getIntent().getStringExtra("gameID");
         gameRef = FirebaseDatabase.getInstance().getReference("games");
+
+        gameOverConstraint.setVisibility(View.GONE);
+        rematchConstraint.setVisibility(View.GONE);
         //-------------------------------------------------------------------- HOST ----------------------------------------------------------------------------------------------------//
         if (role.equals("host")) {
             gameRef.child(gameID).child("user1").addValueEventListener(new ValueEventListener() {
@@ -74,40 +75,35 @@ public class GameActivity extends AppCompatActivity {
                         //host lost
                         if (user1.getHealth() <= 0) {
                             gameOver = true;
-                            if(!GameActivity.this.isFinishing()) {
-                                if(hostAlertDialog != null)
-                                {
-                                    hostAlertDialog.dismiss();
-                                    hostAlertDialog = null;
+                            gameOverConstraint.setVisibility(View.VISIBLE);
+                            txtGameOverInfo.setText("YOU LOST!");
+                            cardEnable(false);
+
+                            //host requests rematch
+                            btnRematch.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    if (user2.isLeft()) {
+                                        Toast.makeText(GameActivity.this, user2.getUsername() + " already left the game!", Toast.LENGTH_SHORT).show();
+                                    } else {
+                                        //send rematch request from host
+                                        gameRef.child(gameID).child("rematch").setValue(user1.getUsername());
+                                        Toast.makeText(GameActivity.this, "Waiting for response from " + user2.getUsername(), Toast.LENGTH_SHORT).show();
+                                    }
+                                    btnRematch.setEnabled(false);
+                                    btnRematch.setBackgroundColor(getResources().getColor(R.color.purple_700));
                                 }
-                                hostAlertBuilder = new AlertDialog.Builder(GameActivity.this);
-                                hostAlertBuilder.setTitle("Game Result")
-                                        .setMessage("You Lost!")
-                                        .setNegativeButton("Exit", new DialogInterface.OnClickListener() {
-                                            @Override
-                                            public void onClick(DialogInterface dialog, int which) {
-                                                gameRef.child(gameID).child("user1").child("left").setValue(true);
-                                                dialog.dismiss();
-                                                finish();
-                                            }
-                                        })
-                                        .setPositiveButton("Rematch", new DialogInterface.OnClickListener() {
-                                            @Override
-                                            public void onClick(DialogInterface dialog, int which) {
-                                                if (user2.isLeft()) {
-                                                    Toast.makeText(GameActivity.this, user2.getUsername() + " already left the game!", Toast.LENGTH_SHORT).show();
-                                                } else {
-                                                    //send rematch request from host
-                                                    dialog.dismiss();
-                                                    gameRef.child(gameID).child("rematch").setValue(user1.getUsername());
-                                                    cardEnable(false);
-                                                }
-                                            }
-                                        })
-                                        .setCancelable(false);
-                                hostAlertDialog = hostAlertBuilder.create();
-                                hostAlertDialog.show();
-                            }
+                            });
+
+                            //host exits the game
+                            btnExit.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    gameRef.child(gameID).child("user1").child("left").setValue(true);
+                                    startActivity(new Intent(GameActivity.this, ProfileActivity.class));
+                                    finish();
+                                }
+                            });
                         }
                     } else {
                         Log.d(TAG, "onDataChange: USER1 NOT FOUND ON DATABASE");
@@ -132,53 +128,47 @@ public class GameActivity extends AppCompatActivity {
                         //host wins
                         if (user2.getHealth() <= 0) {
                             gameOver = true;
-                            if(!GameActivity.this.isFinishing()) {
-                                hostAlertBuilder = new AlertDialog.Builder(GameActivity.this);
-                                hostAlertBuilder.setTitle("Game Result")
-                                        .setMessage("You Won!")
-                                        .setPositiveButton("Exit", new DialogInterface.OnClickListener() {
-                                            @Override
-                                            public void onClick(DialogInterface dialog, int which) {
-                                                gameRef.child(gameID).child("user1").child("left").setValue(true);
-                                                dialog.dismiss();
-                                                finish();
-                                            }
-                                        })
-                                        .setCancelable(false);
-                                hostAlertDialog = hostAlertBuilder.create();
-                                hostAlertDialog.show();
-                            }
+                            gameOverConstraint.setVisibility(View.VISIBLE);
+                            btnRematch.setEnabled(false);
+                            btnRematch.setBackgroundColor(getResources().getColor(R.color.purple_700));
+                            txtGameOverInfo.setText("YOU WON!");
+                            cardEnable(false);
+
+                            //host exits the game
+                            btnExit.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    gameRef.child(gameID).child("user1").child("left").setValue(true);
+                                    startActivity(new Intent(GameActivity.this, ProfileActivity.class));
+                                    finish();
+                                }
+                            });
                         }
 
                         //guest left the game
-                        if (user2.isLeft()) {
-                            if(!GameActivity.this.isFinishing()) {
-                                if (!gameOver) {
-                                    if (hostAlertDialog != null) {
-                                        hostAlertDialog.dismiss();
-                                        hostAlertDialog = null;
-                                    }
-                                    hostAlertBuilder = new AlertDialog.Builder(GameActivity.this);
-                                    hostAlertBuilder.setTitle("Game Result")
-                                            .setMessage(user2.getUsername() + " left the game, you win by default.")
-                                            .setPositiveButton("Exit", new DialogInterface.OnClickListener() {
-                                                @Override
-                                                public void onClick(DialogInterface dialog, int which) {
-                                                    gameRef.child(gameID).removeValue();
-                                                    finish();
-                                                }
-                                            })
-                                            .setCancelable(false);
+                        if (user2.isLeft() && user2.getUsername() != null) {
+                            if(!gameOver) {
+                                gameOver = true;
+                                gameOverConstraint.setVisibility(View.VISIBLE);
+                                cardEnable(false);
+                                btnRematch.setEnabled(false);
+                                btnRematch.setBackgroundColor(getResources().getColor(R.color.purple_700));
+                                txtGameOverInfo.setText("YOU WON!");
+                                Toast.makeText(GameActivity.this, user2.getUsername() + " left the game!", Toast.LENGTH_SHORT).show();
 
-                                    hostAlertDialog = hostAlertBuilder.create();
-                                    hostAlertDialog.show();
-                                }
-                                else
-                                {
-                                    Toast.makeText(GameActivity.this, user2.getUsername()+" left the game.", Toast.LENGTH_SHORT).show();
-                                    gameRef.child(gameID).removeValue();
-                                    finish();
-                                }
+                                btnExit.setOnClickListener(new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View v) {
+                                        gameRef.child(gameID).removeValue();
+                                        startActivity(new Intent(GameActivity.this, ProfileActivity.class));
+                                        finish();
+                                    }
+                                });
+                            }
+                            else
+                            {
+                                Toast.makeText(GameActivity.this, user2.getUsername() + " left the game!", Toast.LENGTH_SHORT).show();
+                                gameRef.child(gameID).removeValue();
                             }
                         }
                     } else {
@@ -196,13 +186,15 @@ public class GameActivity extends AppCompatActivity {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot snapshot) {
                     if (snapshot.getValue() != null) {
-                        if (snapshot.getValue(Integer.class) == 1) {
-                            gameRef.child(gameID).child("user1").child("defending").setValue(false);
-                            cardEnable(true);
-                            txtPlayerTurn.setText("Your Turn!");
-                        } else if (snapshot.getValue(Integer.class) == 2) {
-                            cardEnable(false);
-                            txtPlayerTurn.setText(user2.getUsername() + "'s Turn!");
+                        if(!gameOver) {
+                            if (snapshot.getValue(Integer.class) == 1) {
+                                gameRef.child(gameID).child("user1").child("defending").setValue(false);
+                                cardEnable(true);
+                                txtPlayerTurn.setText("Your Turn!");
+                            } else if (snapshot.getValue(Integer.class) == 2) {
+                                cardEnable(false);
+                                txtPlayerTurn.setText(user2.getUsername() + "'s Turn!");
+                            }
                         }
                     }
                 }
@@ -275,71 +267,48 @@ public class GameActivity extends AppCompatActivity {
                     if (snapshot.getValue() != null) {
                         //check if the guest wants a rematch
                         if (snapshot.getValue(String.class).equals(user2.getUsername())) {
-                            if(!GameActivity.this.isFinishing()) {
-                                if(hostAlertDialog!= null)
-                                {
-                                    hostAlertDialog.dismiss();
-                                    hostAlertDialog = null;
+                            gameOverConstraint.setVisibility(View.GONE);
+                            rematchConstraint.setVisibility(View.VISIBLE);
+                            txtRematchInfo.setText(user2.getUsername() + " is requesting a rematch!");
+                            btnAccept.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    //accept rematch
+                                    gameRef.child(gameID).child("rematch").setValue(user2.getUsername() + "accept");
+                                    Intent intent = new Intent(GameActivity.this, RoomActivity.class);
+                                    intent.putExtra("roomName", user1.getUsername() + "' room");
+                                    intent.putExtra("role", "host");
+                                    intent.putExtra("userID", userID1);
+                                    startActivity(intent);
+                                    finishAndRemoveTask();
                                 }
-                                hostAlertBuilder = new AlertDialog.Builder(GameActivity.this);
-                                hostAlertBuilder.setTitle("Rematch")
-                                        .setMessage(user2.getUsername() + " wants a rematch!")
-                                        .setPositiveButton("Accept", new DialogInterface.OnClickListener() {
-                                            @Override
-                                            public void onClick(DialogInterface dialog, int which) {
-                                                //accept rematch
-                                                gameRef.child(gameID).child("rematch").setValue(user2.getUsername() + "accept");
-                                                Intent intent = new Intent(GameActivity.this, RoomActivity.class);
-                                                intent.putExtra("roomName", user1.getUsername()+"' room");
-                                                intent.putExtra("role", "host");
-                                                intent.putExtra("userID", userID1);
-                                                startActivity(intent);
-                                                finish();
-                                            }
-                                        })
-                                        .setNegativeButton("Reject", new DialogInterface.OnClickListener() {
-                                            @Override
-                                            public void onClick(DialogInterface dialog, int which) {
-                                                gameRef.child(gameID).child("rematch").setValue(user2.getUsername() + "decline");
-                                                gameRef.child(gameID).child("user1").child("left").setValue(true);
-                                                finish();
-                                            }
-                                        })
-                                        .setCancelable(false);
-                                hostAlertDialog = hostAlertBuilder.create();
-                                hostAlertDialog.show();
-                            }
+                            });
+
+                            btnDecline.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    gameRef.child(gameID).child("rematch").setValue(user2.getUsername() + "decline");
+                                    gameRef.child(gameID).child("user1").child("left").setValue(true);
+                                    finishAndRemoveTask();
+                                }
+                            });
                         }
                         //check if guest accept host rematch
                         else if (snapshot.getValue(String.class).equals(user1.getUsername() + "accept")) {
                             Intent intent = new Intent(GameActivity.this, RoomActivity.class);
-                            intent.putExtra("roomName", user1.getUsername()+"'s room");
+                            intent.putExtra("roomName", user1.getUsername() + "'s room");
                             intent.putExtra("role", "host");
                             intent.putExtra("userID", userID1);
+                            intent.putExtra("roomID", userID1+"ROOM");
+                            FirebaseDatabase.getInstance().getReference("rooms").child(userID1 + "ROOM").setValue(new Room(user1.getUsername()+"'s room", userID1, userID2));
                             startActivity(intent);
-                            finish();
-                        } else if (snapshot.getValue(String.class).equals(user1.getUsername() + "decline")) {
                             gameRef.child(gameID).removeValue();
-                            if(!GameActivity.this.isFinishing()) {
-                                if(hostAlertDialog != null)
-                                {
-                                    hostAlertDialog.dismiss();
-                                    hostAlertDialog = null;
-                                }
-                                hostAlertBuilder = new AlertDialog.Builder(GameActivity.this);
-                                hostAlertBuilder.setMessage(user2.getUsername() + " rejected your rematch!")
-                                        .setNegativeButton("Exit", new DialogInterface.OnClickListener() {
-                                            @Override
-                                            public void onClick(DialogInterface dialog, int which) {
-                                                gameRef.child(gameID).removeValue();
-                                                dialog.dismiss();
-                                                finish();
-                                            }
-                                        });
-
-                                hostAlertDialog = hostAlertBuilder.create();
-                                hostAlertDialog.show();
-                            }
+                            finishAndRemoveTask();
+                        }
+                        //check if guest declined host rematch
+                        else if (snapshot.getValue(String.class).equals(user1.getUsername() + "decline")) {
+                            gameRef.child(gameID).removeValue();
+                            txtRematchInfo.setText(user2.getUsername() + " declined!");
                         }
                     }
                 }
@@ -352,6 +321,7 @@ public class GameActivity extends AppCompatActivity {
         }
         //-------------------------------------------------------------------- GUEST --------------------------------------------------------------------------------------//
         else if (role.equals("guest")) {
+            OnlineMenuActivity.OMA.finish();
             gameRef.child(gameID).child("user1").addValueEventListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -364,52 +334,45 @@ public class GameActivity extends AppCompatActivity {
                         //guest wins
                         if (user1.getHealth() <= 0) {
                             gameOver = true;
-                            if(!GameActivity.this.isFinishing()) {
-                                guestAlertBuilder = new AlertDialog.Builder(GameActivity.this);
-                                guestAlertBuilder.setTitle("Game Result")
-                                        .setMessage("You Won!")
-                                        .setPositiveButton("Exit", new DialogInterface.OnClickListener() {
-                                            @Override
-                                            public void onClick(DialogInterface dialog, int which) {
-                                                dialog.dismiss();
-                                                gameRef.child(gameID).child("user2").child("left").setValue(true);
-                                                finish();
-                                            }
-                                        })
-                                        .setCancelable(false);
-                                guestAlertDialog = guestAlertBuilder.create();
-                                guestAlertDialog.show();
-                            }
+                            gameOverConstraint.setVisibility(View.VISIBLE);
+                            btnRematch.setEnabled(false);
+                            btnRematch.setBackgroundColor(getResources().getColor(R.color.purple_700));
+                            cardEnable(false);
+                            txtGameOverInfo.setText("YOU WON!");
+                            //guest exits
+                            btnExit.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    gameRef.child(gameID).child("user2").child("left").setValue(true);
+                                    startActivity(new Intent(GameActivity.this, ProfileActivity.class));
+                                    finishAndRemoveTask();
+                                }
+                            });
                         }
 
                         //host leaves the game
-                        if (user1.isLeft()) {
-                            if(!GameActivity.this.isFinishing()) {
-                                if (!gameOver) {
-                                    if (guestAlertDialog != null) {
-                                        guestAlertDialog.dismiss();
-                                        guestAlertDialog = null;
+                        if (user1.isLeft() && user1.getUsername() != null) {
+                            if(!gameOver) {
+                                gameOver = true;
+                                cardEnable(false);
+                                gameOverConstraint.setVisibility(View.VISIBLE);
+                                btnRematch.setEnabled(false);
+                                btnRematch.setBackgroundColor(getResources().getColor(R.color.purple_700));
+                                txtGameOverInfo.setText("YOU WON!");
+                                Toast.makeText(GameActivity.this, user1.getUsername() + " left the game!", Toast.LENGTH_SHORT).show();
+                                btnExit.setOnClickListener(new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View v) {
+                                        gameRef.child(gameID).removeValue();
+                                        startActivity(new Intent(GameActivity.this, ProfileActivity.class));
+                                        finishAndRemoveTask();
                                     }
-                                    guestAlertBuilder = new AlertDialog.Builder(GameActivity.this);
-                                    guestAlertBuilder.setTitle("Game Result")
-                                            .setMessage(user1.getUsername() + " left the game, you win by default.")
-                                            .setPositiveButton("Exit", new DialogInterface.OnClickListener() {
-                                                @Override
-                                                public void onClick(DialogInterface dialog, int which) {
-                                                    gameRef.child(gameID).removeValue();
-                                                    finish();
-                                                }
-                                            })
-                                            .setCancelable(false);
-                                    guestAlertDialog = guestAlertBuilder.create();
-                                    guestAlertDialog.show();
-                                }
+                                });
                             }
                             else
                             {
-                                Toast.makeText(GameActivity.this, user1.getUsername()+" left the game!", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(GameActivity.this, user1.getUsername() + " left the game!", Toast.LENGTH_SHORT).show();
                                 gameRef.child(gameID).removeValue();
-                                finish();
                             }
                         }
                     } else {
@@ -429,13 +392,10 @@ public class GameActivity extends AppCompatActivity {
                     if (snapshot.getValue() != null) {
                         user2 = snapshot.getValue(User.class);
                         txtUsername1.setText(user2.getUsername());
-                        if(user2.getHealth() < 0)
-                        {
+                        if (user2.getHealth() < 0) {
                             txtHealthUser1.setText("0");
                             progressBarUser1Health.setProgress(0);
-                        }
-                        else
-                        {
+                        } else {
                             txtHealthUser1.setText(Integer.toString(user2.getHealth()));
                             progressBarUser1Health.setProgress(user2.getHealth());
 
@@ -443,46 +403,35 @@ public class GameActivity extends AppCompatActivity {
                         //guest looses
                         if (user2.getHealth() <= 0) {
                             gameOver = true;
-                            if(!GameActivity.this.isFinishing()) {
-                                if(guestAlertDialog != null)
-                                {
-                                    guestAlertDialog.dismiss();
-                                    guestAlertDialog = null;
+                            gameOverConstraint.setVisibility(View.VISIBLE);
+                            cardEnable(false);
+                            btnRematch.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    if (user1.isLeft()) {
+                                        Toast.makeText(GameActivity.this, user1.getUsername() + " already left the game!", Toast.LENGTH_SHORT).show();
+                                    } else {
+                                        //send rematch request from guest
+                                        gameRef.child(gameID).child("rematch").setValue(user2.getUsername());
+                                        cardEnable(false);
+                                        Toast.makeText(GameActivity.this, "Waiting for Response", Toast.LENGTH_SHORT).show();
+                                        btnRematch.setEnabled(false);
+                                        btnRematch.setBackgroundColor(getResources().getColor(R.color.purple_700));
+                                    }
                                 }
-                                guestAlertBuilder = new AlertDialog.Builder(GameActivity.this);
-                                guestAlertBuilder.setTitle("Game Result")
-                                        .setMessage("You Lost!")
-                                        .setNegativeButton("Exit", new DialogInterface.OnClickListener() {
-                                            @Override
-                                            public void onClick(DialogInterface dialog, int which) {
-                                                try {
-                                                    gameRef.child(gameID).child("user2").child("left").setValue(true);
-                                                }
-                                                catch(Exception e)
-                                                {
-                                                    Log.d(TAG, "onClick: guest, user2 - No DB");
-                                                }
-                                                finish();
-                                            }
-                                        })
-                                        .setPositiveButton("Rematch", new DialogInterface.OnClickListener() {
-                                            @Override
-                                            public void onClick(DialogInterface dialog, int which) {
-                                                if (user1.isLeft()) {
-                                                    Toast.makeText(GameActivity.this, user1.getUsername() + " already left the game!", Toast.LENGTH_SHORT).show();
-                                                } else {
-                                                    //send rematch request from guest
-                                                    dialog.dismiss();
-                                                    gameRef.child(gameID).child("rematch").setValue(user2.getUsername());
-                                                    cardEnable(false);
-                                                    Toast.makeText(GameActivity.this, "Waiting for Response", Toast.LENGTH_SHORT).show();
-                                                }
-                                            }
-                                        })
-                                        .setCancelable(false);
-                                guestAlertDialog = guestAlertBuilder.create();
-                                guestAlertDialog.show();
-                            }
+                            });
+
+                            btnExit.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    gameRef.child(gameID).child("user2").child("left").setValue(true);
+
+                                    startActivity(new Intent(GameActivity.this, ProfileActivity.class));
+                                    finishAndRemoveTask();
+                                }
+                            });
+
+                            txtGameOverInfo.setText("YOU LOST!");
                         }
 
                     } else {
@@ -499,79 +448,53 @@ public class GameActivity extends AppCompatActivity {
             gameRef.child(gameID).child("rematch").addValueEventListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot snapshot) {
-                if (snapshot.getValue() != null) {
+                    if (snapshot.getValue() != null) {
                         //check if host requested rematch
                         if (snapshot.getValue(String.class).equals(user1.getUsername())) {
-                            if(!GameActivity.this.isFinishing()) {
-                                if(guestAlertDialog != null)
-                                {
-                                    guestAlertDialog.dismiss();
-                                    guestAlertDialog = null;
+                            gameOverConstraint.setVisibility(View.GONE);
+                            rematchConstraint.setVisibility(View.VISIBLE);
+
+                            txtRematchInfo.setText(user1.getUsername() + " is requesting a rematch!");
+                            btnAccept.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    //accept rematch
+                                    gameRef.child(gameID).child("rematch").setValue(user1.getUsername() + "accept");
+                                    Intent intent = new Intent(GameActivity.this, RoomActivity.class);
+                                    intent.putExtra("roomName", user1.getUsername() + "' room");
+                                    intent.putExtra("role", "guest");
+                                    intent.putExtra("userID", userID2);
+                                    startActivity(intent);
+                                    finishAndRemoveTask();
                                 }
-                                guestAlertBuilder = new AlertDialog.Builder(GameActivity.this);
-                                guestAlertBuilder.setTitle("Rematch")
-                                        .setMessage(user1.getUsername() + " wants a rematch!")
-                                        .setPositiveButton("Accept", new DialogInterface.OnClickListener() {
-                                            @Override
-                                            public void onClick(DialogInterface dialog, int which) {
-                                                //accept rematch
-                                                gameRef.child(gameID).child("rematch").setValue(user1.getUsername() + "accept");
+                            });
 
-                                                FirebaseDatabase.getInstance().getReference("rooms").child(userID1 + "ROOM").child("userID2").setValue(userID2);
+                            btnDecline.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    gameRef.child(gameID).child("rematch").setValue(user1.getUsername() + "decline");
+                                    gameRef.child(gameID).child("user2").child("left").setValue(true);
+                                    finishAndRemoveTask();
+                                }
+                            });
 
-                                                Intent intent = new Intent(GameActivity.this, RoomActivity.class);
-                                                intent.putExtra("role", "guest");
-                                                intent.putExtra("userID", userID2);
-                                                intent.putExtra("roomID", userID1 + "ROOM");
-                                                intent.putExtra("roomName", user1.getUsername()+"'s room");
-                                                startActivity(intent);
-                                                gameRef.child(gameID).removeValue();
-                                                dialog.dismiss();
-                                                finish();
-                                            }
-                                        })
-                                        .setNegativeButton("Reject", new DialogInterface.OnClickListener() {
-                                            @Override
-                                            public void onClick(DialogInterface dialog, int which) {
-                                                gameRef.child(gameID).child("rematch").setValue(user1.getUsername() + "decline");
-                                                gameRef.child(gameID).child("user2").child("left").setValue(true);
-
-                                                dialog.dismiss();
-                                                finish();
-                                            }
-                                        })
-                                        .setCancelable(false);
-                                guestAlertDialog = guestAlertBuilder.create();
-                                guestAlertDialog.show();
-                            }
                         }
                         //check if host accepted guest rematch
                         else if (snapshot.getValue(String.class).equals(user2.getUsername() + "accept")) {
-                            FirebaseDatabase.getInstance().getReference("rooms").child(userID1 + "ROOM").child("userID2").setValue(userID2);
-
                             Intent intent = new Intent(GameActivity.this, RoomActivity.class);
+                            intent.putExtra("roomName", user1.getUsername() + "'s room");
                             intent.putExtra("role", "guest");
                             intent.putExtra("userID", userID2);
-                            intent.putExtra("roomID", userID1 + "ROOM");
-                            intent.putExtra("roomName", user1.getUsername()+"'s room");
+                            intent.putExtra("roomID", userID1+"ROOM");
                             startActivity(intent);
-                            finish();
                             gameRef.child(gameID).removeValue();
-
-                        } else if (snapshot.getValue(String.class).equals(user2.getUsername() + "decline")) {
-                            if(!GameActivity.this.isFinishing()) {
-                                new AlertDialog.Builder(GameActivity.this)
-                                        .setMessage(user1.getUsername() + " rejected your rematch!")
-                                        .setNegativeButton("Exit", new DialogInterface.OnClickListener() {
-                                            @Override
-                                            public void onClick(DialogInterface dialog, int which) {
-                                                dialog.dismiss();
-                                                gameRef.child(gameID).child("user2").child("left").setValue(true);
-                                                finish();
-                                            }
-                                        })
-                                        .show();
-                            }
+                            FirebaseDatabase.getInstance().getReference("rooms").child(userID1 + "ROOM").setValue(new Room(user1.getUsername()+"'s room", userID1, userID2));
+                            finishAndRemoveTask();
+                        }
+                        //check if host declined guest rematch
+                        else if (snapshot.getValue(String.class).equals(user2.getUsername() + "decline")) {
+                            gameRef.child(gameID).removeValue();
+                            txtRematchInfo.setText(user1.getUsername() + " declined!");
                         }
                     }
                 }
@@ -588,13 +511,15 @@ public class GameActivity extends AppCompatActivity {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot snapshot) {
                     if (snapshot.getValue() != null) {
-                        if (snapshot.getValue(Integer.class) == 1) {
-                            cardEnable(false);
-                            txtPlayerTurn.setText(user1.getUsername() + "'s Turn!");
-                        } else if (snapshot.getValue(Integer.class) == 2) {
-                            gameRef.child(gameID).child("user2").child("defending").setValue(false);
-                            cardEnable(true);
-                            txtPlayerTurn.setText("Your Turn!");
+                        if(!gameOver) {
+                            if (snapshot.getValue(Integer.class) == 1) {
+                                cardEnable(false);
+                                txtPlayerTurn.setText(user1.getUsername() + "'s Turn!");
+                            } else if (snapshot.getValue(Integer.class) == 2) {
+                                gameRef.child(gameID).child("user2").child("defending").setValue(false);
+                                cardEnable(true);
+                                txtPlayerTurn.setText("Your Turn!");
+                            }
                         }
                     }
                 }
@@ -619,7 +544,9 @@ public class GameActivity extends AppCompatActivity {
                                             @Override
                                             public void onClick(DialogInterface dialog, int which) {
                                                 gameRef.child(gameID).child("user2").child("left").setValue(true);
-                                                finish();
+
+                                                startActivity(new Intent(GameActivity.this, ProfileActivity.class));
+                                                finishAffinity();
                                             }
                                         })
                                         .setCancelable(true)
@@ -665,29 +592,8 @@ public class GameActivity extends AppCompatActivity {
     }
 
     @Override
-    protected void onStop() {
-        if(role.equals("host"))
-        {
-            if(hostAlertDialog != null)
-            {
-                hostAlertDialog.dismiss();
-                hostAlertDialog = null;
-            }
-        }
-        else if(role.equals("guest"))
-        {
-            if(guestAlertDialog != null)
-            {
-                guestAlertDialog.dismiss();
-                guestAlertDialog = null;
-            }
-        }
-        super.onStop();
-    }
-
-    @Override
     public void onBackPressed() {
-        if(!GameActivity.this.isFinishing()) {
+        if (!GameActivity.this.isFinishing()) {
             if (role.equals("host")) {
                 new AlertDialog.Builder(GameActivity.this)
                         .setTitle("Exiting the game!")
@@ -703,7 +609,9 @@ public class GameActivity extends AppCompatActivity {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 gameRef.child(gameID).child("user1").child("left").setValue(true);
-                                finish();
+
+                                startActivity(new Intent(GameActivity.this, ProfileActivity.class));
+                                finishAffinity();
                             }
                         })
                         .show();
@@ -722,7 +630,9 @@ public class GameActivity extends AppCompatActivity {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 gameRef.child(gameID).child("user2").child("left").setValue(true);
-                                finish();
+
+                                startActivity(new Intent(GameActivity.this, ProfileActivity.class));
+                                finishAffinity();
                             }
                         })
                         .show();
@@ -755,6 +665,8 @@ public class GameActivity extends AppCompatActivity {
         txtHealthUser1 = findViewById(R.id.gameTxtUser1HealthValue);
         txtHealthUser2 = findViewById(R.id.gameTxtUser2HealthValue);
         txtPlayerTurn = findViewById(R.id.gameTxtTurn);
+        txtGameOverInfo = findViewById(R.id.gameTxtGameOverInfo);
+        txtRematchInfo = findViewById(R.id.gameTxtRematchInfo);
 
         progressBarUser1Health = findViewById(R.id.gameProgressBarUser1Health);
         progressBarUser2Health = findViewById(R.id.gameProgressBarUser2Health);
@@ -765,5 +677,12 @@ public class GameActivity extends AppCompatActivity {
         cardMenu = findViewById(R.id.gameCardViewMenu);
 
         parentView = findViewById(R.id.gameParent);
+        gameOverConstraint = findViewById(R.id.gameConstLayoutGameOver);
+        rematchConstraint = findViewById(R.id.gameConstLayoutRematch);
+
+        btnRematch = findViewById(R.id.gameBtnRematch);
+        btnExit = findViewById(R.id.gameBtnExit);
+        btnAccept = findViewById(R.id.gameBtnRematchAccept);
+        btnDecline = findViewById(R.id.gameBtnRematchDecline);
     }
 }
