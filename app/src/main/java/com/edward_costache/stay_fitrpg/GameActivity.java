@@ -37,7 +37,7 @@ public class GameActivity extends AppCompatActivity {
     private TextView txtUsername1, txtUsername2, txtHealthUser1, txtHealthUser2, txtPlayerTurn, txtGameOverInfo, txtRematchInfo;
     private ProgressBar progressBarUser1Health, progressBarUser2Health;
     private com.google.android.material.card.MaterialCardView cardAttack, cardDefend, cardRest, cardMenu;
-    private androidx.constraintlayout.widget.ConstraintLayout parentView, gameOverConstraint, rematchConstraint;
+    private androidx.constraintlayout.widget.ConstraintLayout gameOverConstraint, rematchConstraint;
     private Button btnRematch, btnExit, btnAccept, btnDecline;
 
     private String role, userID1, userID2, gameID;
@@ -676,7 +676,6 @@ public class GameActivity extends AppCompatActivity {
         cardRest = findViewById(R.id.gameCardViewRest);
         cardMenu = findViewById(R.id.gameCardViewMenu);
 
-        parentView = findViewById(R.id.gameParent);
         gameOverConstraint = findViewById(R.id.gameConstLayoutGameOver);
         rematchConstraint = findViewById(R.id.gameConstLayoutRematch);
 

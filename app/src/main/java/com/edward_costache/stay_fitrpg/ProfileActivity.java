@@ -216,7 +216,7 @@ public class ProfileActivity extends AppCompatActivity{
         cardViewProgress.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Util.displayNotImplemented(ProfileActivity.this, layout);
+                startActivity(new Intent(ProfileActivity.this, ProgressActivity.class));
             }
         });
 

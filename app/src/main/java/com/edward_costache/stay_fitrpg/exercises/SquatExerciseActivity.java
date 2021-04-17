@@ -33,17 +33,20 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
 
 public class SquatExerciseActivity extends AppCompatActivity {
 
+    public static final String TAG = "SquatExercise";
     private Accelerometer accelerometer;
     private Gravimeter gravimeter;
 
     private TextView AccX, AccY, AccZ, gravX, gravY, gravZ;
-    private final String TAG = "TEST";
 
-    private DatabaseReference reference;
+    private DatabaseReference reference, weekRef;
     private String userID;
     private LinearLayout layoutRound, layoutBreak;
     private androidx.constraintlayout.widget.ConstraintLayout mainLayout;
@@ -248,6 +251,25 @@ public class SquatExerciseActivity extends AppCompatActivity {
         ready = false;
         reference.child(userID).child("strength").setValue(userStrength + getIntent().getIntExtra("strength", 0));
         reference.child(userID).child("stamina").setValue(userStamina + getIntent().getIntExtra("stamina", 0));
+
+        weekRef = FirebaseDatabase.getInstance().getReference("users").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child("progress");
+        Calendar calendar = new GregorianCalendar();
+        String week_year = Integer.toString(calendar.get(Calendar.WEEK_OF_YEAR));
+        SimpleDateFormat formatterForDay = new SimpleDateFormat("E, dd-MM");
+        String todayDay = formatterForDay.format(calendar.getTime());
+        weekRef.child(week_year).child("days").child(todayDay).child("squats").addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if (snapshot.getValue() != null) {
+                    weekRef.child(week_year).child("days").child(todayDay).child("squats").setValue(snapshot.getValue(Integer.class) + overallSquats);
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
 
         // currentTimeInMillis() returns the milliseconds for Epoch time, just like the Util.java class
         // Here i am subtracting the milliseconds at the start of the Activity from the milliseconds recorded at the end of the Activity

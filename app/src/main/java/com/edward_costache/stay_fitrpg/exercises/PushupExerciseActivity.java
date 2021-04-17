@@ -31,15 +31,19 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
 
 public class PushupExerciseActivity extends AppCompatActivity {
 
+    public static final String TAG = "PushupExercise";
     private LinearLayout layoutRound, layoutBreak;
     private TextView txtTitle;
     private boolean isRound = true;
 
-    private DatabaseReference reference;
+    private DatabaseReference reference, weekRef;
     private String userID;
     private androidx.constraintlayout.widget.ConstraintLayout mainLayout;
     private User userProfile;
@@ -58,7 +62,7 @@ public class PushupExerciseActivity extends AppCompatActivity {
     private CountDownTimer breakTimer;
     private long startMilliseconds;
     private TextView txtRound1, txtRound2, txtRound3, txtRound4, txtRound5, txtRound6, txtTime;
-    private final int BREAK_TIME = 60;
+    private final int BREAK_TIME = 2;
 
 
     @Override
@@ -71,6 +75,7 @@ public class PushupExerciseActivity extends AppCompatActivity {
         startMilliseconds = System.currentTimeMillis();
         Log.i("ARRAY AFTER INTENT: ", rounds.toString());
         initViews();
+
 
         // TESTING
         btnAction.setVisibility(View.GONE);
@@ -304,6 +309,25 @@ public class PushupExerciseActivity extends AppCompatActivity {
         readyForPushup = false;
         reference.child(userID).child("strength").setValue(userStrength + getIntent().getIntExtra("strength", 0));
         reference.child(userID).child("health").setValue(userHealth + getIntent().getIntExtra("health", 0));
+
+        weekRef = FirebaseDatabase.getInstance().getReference("users").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child("progress");
+        Calendar calendar = new GregorianCalendar();
+        String week_year = Integer.toString(calendar.get(Calendar.WEEK_OF_YEAR));
+        SimpleDateFormat formatterForDay = new SimpleDateFormat("E, dd-MM");
+        String todayDay = formatterForDay.format(calendar.getTime());
+        weekRef.child(week_year).child("days").child(todayDay).child("pushups").addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if (snapshot.getValue() != null) {
+                    weekRef.child(week_year).child("days").child(todayDay).child("pushups").setValue(snapshot.getValue(Integer.class) + overallPushups);
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
 
         // currentTimeInMillis() returns the milliseconds for Epoch time, just like the Util.java class
         // Here i am subtracting the milliseconds at the start of the Activity from the milliseconds recorded at the end of the Activity

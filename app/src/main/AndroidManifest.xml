@@ -15,10 +15,11 @@
         android:roundIcon="@mipmap/app_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.StayFitRPG">
-        <activity android:name=".GameActivity"></activity>
+        <activity android:name=".ProgressDaysActivity"></activity>
+        <activity android:name=".ProgressActivity" />
+        <activity android:name=".GameActivity" />
         <activity android:name=".RoomActivity" />
-        <activity android:name=".OnlineMenuActivity"
-            />
+        <activity android:name=".OnlineMenuActivity" />
         <activity android:name=".exercises.RunningExerciseActivity" />
         <activity android:name=".exercises.SquatExerciseActivity" />
         <activity android:name=".exercises.SitupExerciseActivity" />
@@ -29,8 +30,7 @@
         <activity android:name=".EasterEggActivity" />
         <activity android:name=".exercises.PushupMenuActivity" />
         <activity android:name=".ExercisesActivity" />
-        <activity android:name=".ProfileActivity"
-            />
+        <activity android:name=".ProfileActivity" />
         <activity android:name=".ForgotPasswordActivity" />
         <activity android:name=".SignUpActivity" />
         <activity android:name=".LoginActivity">
