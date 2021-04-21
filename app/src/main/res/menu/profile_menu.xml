@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/profileMenuChangeUsername"
+        android:title="Update Username"/>
+
+    <item
+        android:id="@+id/profileMenuChangeEmail"
+        android:title="Update Email"/>
+
+    <item
+        android:id="@+id/profileMenuChangePassword"
+        android:title="Update Password"/>
+
+    <item
+        android:id="@+id/profileMenuDeleteAccount"
+        android:title="Delete Account"/>
+
+    <item
+        android:id="@+id/profileMenuLogout"
+        android:title="Log Out" />
+
+</menu>

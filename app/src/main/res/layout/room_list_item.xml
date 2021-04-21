@@ -10,7 +10,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/itemListTxtRoomName"
-        android:text="roomName"
+        android:text="@string/letterLoading"
         android:textSize="20sp"
         android:fontFamily="@font/roboto_condensed_regular"
         android:textColor="@color/textColor"/>
@@ -19,7 +19,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/itemListTxtRoomCapacity"
-        android:text="1/2"
+        android:text="@string/letterLoading"
         android:textSize="20sp"
         android:fontFamily="@font/roboto_condensed_regular"
         android:textColor="@color/textColor"

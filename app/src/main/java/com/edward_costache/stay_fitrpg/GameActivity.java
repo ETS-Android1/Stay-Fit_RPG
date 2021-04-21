@@ -1,13 +1,11 @@
 package com.edward_costache.stay_fitrpg;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
@@ -15,21 +13,14 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.PopupMenu;
 import android.widget.ProgressBar;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.edward_costache.stay_fitrpg.exercises.PushupExerciseActivity;
-import com.google.android.gms.common.GooglePlayServicesRepairableException;
-import com.google.android.material.snackbar.Snackbar;
-import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-
-import java.util.concurrent.ExecutionException;
 
 public class GameActivity extends AppCompatActivity {
 
@@ -61,6 +52,11 @@ public class GameActivity extends AppCompatActivity {
 
         gameOverConstraint.setVisibility(View.GONE);
         rematchConstraint.setVisibility(View.GONE);
+
+        //the most viable method for me to use to manage two users on the same activity was to use an if statement to compute different logic
+        //if the user was either the host of the room, or the guest.
+        //the role is gained by passing it through the intent when the user navigates from the OnlineMenuActivity to this activity
+
         //-------------------------------------------------------------------- HOST ----------------------------------------------------------------------------------------------------//
         if (role.equals("host")) {
             gameRef.child(gameID).child("user1").addValueEventListener(new ValueEventListener() {
@@ -261,6 +257,7 @@ public class GameActivity extends AppCompatActivity {
                 }
             });
 
+            //a listener to the database is used to decide what happens when a player requests a rematch, or declines a rematch
             gameRef.child(gameID).child("rematch").addValueEventListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -445,6 +442,7 @@ public class GameActivity extends AppCompatActivity {
                 }
             });
 
+            //a listener to the database is used to decide what happens when a player requests a rematch, or declines a rematch
             gameRef.child(gameID).child("rematch").addValueEventListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot snapshot) {

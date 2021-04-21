@@ -5,24 +5,19 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
-import android.widget.CompoundButton;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 
 import com.edward_costache.stay_fitrpg.R;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.ArrayList;
 
 public class PushupMenuActivity extends AppCompatActivity {
-
     private RadioGroup radioGroup;
-    private RadioButton radioButtonVeryEasy, radioButtonEasy, radioButtonMedium, radioButtonHard;
+    private RadioButton radioButtonMedium;
     private TextView txtStrength, txtHealth, txtRound1, txtRound2, txtRound3, txtRound4, txtRound5, txtRound6;
     private Button btnStart;
 
@@ -36,7 +31,7 @@ public class PushupMenuActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_pushup_menu);
         initViews();
-        radioButtonMedium.setChecked(true);
+        radioButtonMedium.setChecked(true);     //start by having the medium button checked
         setMedium();
         updateViews();
         setOnCheckedListeners();
@@ -49,7 +44,6 @@ public class PushupMenuActivity extends AppCompatActivity {
                 intent.putExtra("health", healthGained);
                 intent.putExtra("rounds", rounds);
 
-                Log.i("ARRAY LIST: ", rounds.toString());
                 startActivity(intent);
             }
         });
@@ -165,6 +159,11 @@ public class PushupMenuActivity extends AppCompatActivity {
         //Round 3
         txtRound3.setText(String.format("ROUND 3: %02d", rounds.get(2)));
 
+        //try catch used to stop the code at the required rounds.
+        //calling setText will produce an error if the TextView is set to Gone
+        //i.e setMedium() sets the visibility of round 5 and 6 TextViews to Gone which will produce an error here
+        //unless its a try catch, the code will only update for round 4 TextView and skip the rest as round 5 will give error
+        //this trick avoids if statements for all TextViews to check if they are visible.
         try {
             txtRound4.setText(String.format("ROUND 4: %02d", rounds.get(3)));
             txtRound4.setVisibility(View.VISIBLE);
@@ -173,11 +172,9 @@ public class PushupMenuActivity extends AppCompatActivity {
             txtRound6.setText(String.format("ROUND 6: %02d", rounds.get(5)));
             txtRound6.setVisibility(View.VISIBLE);
         }
-        catch (Exception e)
+        catch (Exception ignored)
         {
-            Log.i("UPDATE VIEWS", ": STOPPED");
         }
-
 
         txtStrength.setText(String.format("STRENGTH: +%02d", strengthGained));
         txtHealth.setText(String.format("HEALTH: +%02d", healthGained));
@@ -187,10 +184,7 @@ public class PushupMenuActivity extends AppCompatActivity {
     private void initViews()
     {
         radioGroup = findViewById(R.id.pushupDifficultyRadioGrp);
-        radioButtonVeryEasy = findViewById(R.id.pushupRadioButtonVeryEasy);
-        radioButtonEasy = findViewById(R.id.pushupRadioButtonEasy);
         radioButtonMedium = findViewById(R.id.pushupRadioButtonMedium);
-        radioButtonHard = findViewById(R.id.pushupRadioButtonHard);
 
         txtStrength = findViewById(R.id.pushupTxtStrength);
         txtHealth = findViewById(R.id.pushupTxtHealth);

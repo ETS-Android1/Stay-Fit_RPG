@@ -2,10 +2,18 @@ package com.edward_costache.stay_fitrpg;
 
 import androidx.core.app.RemoteInput;
 
+/**
+ * A class for managing a recorded progress day in the application. A progress day is simply the day
+ * for which an exercise was completed and its progress documented.
+ */
 public class ProgressDay {
     private int pushups, situps, squats;
     private double distance;
 
+    /**
+     * The default constructed for a ProgressDay, for simplicity in the Database, values are set to 0 and not null
+     * to avoid nullPointerExceptions.
+     */
     ProgressDay()
     {
         setPushups(0);

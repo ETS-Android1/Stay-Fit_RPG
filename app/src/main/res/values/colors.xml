@@ -9,6 +9,7 @@
     <color name="backgroundBlack">#181818</color>
     <color name="white">#FFFFFFFF</color>
     <color name="textColor">#C3C3C3</color>
+    <color name="hintColor">#B2C3C3C3</color>
     <color name="progressBarStrokeColor">#B4B4D0</color>
     <color name="red">#C50000</color>
     <color name="redText">#970101</color>

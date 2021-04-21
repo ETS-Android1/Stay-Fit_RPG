@@ -163,6 +163,12 @@ public class SquatMenuActivity extends AppCompatActivity {
         //Round 3
         txtRound3.setText(String.format("ROUND 3: %02d", rounds.get(2)));
 
+
+        //try catch used to stop the code at the required rounds.
+        //calling setText will produce an error if the TextView is set to Gone
+        //i.e setMedium() sets the visibility of round 5 and 6 TextViews to Gone which will produce an error here
+        //unless its a try catch, the code will only update for round 4 TextView and skip the rest as round 5 will give error
+        //this trick avoids if statements for all TextViews to check if they are visible.
         try {
             txtRound4.setText(String.format("ROUND 4: %02d", rounds.get(3)));
             txtRound4.setVisibility(View.VISIBLE);

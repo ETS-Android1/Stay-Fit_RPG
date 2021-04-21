@@ -21,7 +21,6 @@ import java.util.HashMap;
 
 public class ProgressDaysActivity extends AppCompatActivity {
 
-    private TextView weekName;
     private RecyclerView daysRecView;
     private ArrayList<ProgressDay> days;
     private ArrayList<String> names;
@@ -32,7 +31,7 @@ public class ProgressDaysActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_progress_days);
-        weekName = findViewById(R.id.progressDaysWeekName);
+        TextView weekName = findViewById(R.id.progressDaysWeekName);
         daysRecView = findViewById(R.id.progressDaysRecView);
 
         days = new ArrayList<>();
@@ -43,8 +42,18 @@ public class ProgressDaysActivity extends AppCompatActivity {
         week = Integer.toString(calendar.get(Calendar.WEEK_OF_YEAR));
         displayDays();
         weekName.setText(getIntent().getStringExtra("weekName"));
+
     }
 
+    /**
+     * A function for displaying all of the recorded weeks since the user has started exercising using the application.
+     * The function uses a ValueEventListener to listen to the Firebase Database and fetch all of the weeks for that user, and store
+     * that information in a ProgressWeek object, which is then added to a list.
+     *
+     * NOTE: When a ValueEventListener is constructed and added to a FirebaseDatabase reference, the code within onDataChanged() will be triggered when called once.
+     * With a ValueEventListener, the code will also trigger reference the data in the reference changes.
+     * A listenerForSingleValueEvent is only triggered when added to a reference.
+     */
     private void displayDays()
     {
         FirebaseDatabase.getInstance().getReference("users").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child("progress").child(week).child("days").addValueEventListener(new ValueEventListener() {

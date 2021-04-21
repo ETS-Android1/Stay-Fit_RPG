@@ -1,12 +1,15 @@
 package com.edward_costache.stay_fitrpg;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 
+/**
+ * A class for defining a ProgressWeek, which has a name, and a HashMap of days.
+ */
 public class ProgressWeek {
     private String weekName;
     private HashMap<String, ProgressDay> days;
 
+    //Empty constructed needed for FirebaseDatabase ValueEventListeners
     ProgressWeek()
     {
 

@@ -23,6 +23,7 @@ import com.edward_costache.stay_fitrpg.R;
 import com.edward_costache.stay_fitrpg.User;
 import com.edward_costache.stay_fitrpg.util.Accelerometer;
 import com.edward_costache.stay_fitrpg.util.SoundLibrary;
+import com.edward_costache.stay_fitrpg.util.Util;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -32,14 +33,11 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.GregorianCalendar;
+
 
 public class SitupExerciseActivity extends AppCompatActivity {
 
-    private static final String TAG = "SitupExercise";
     private LinearLayout layoutRound, layoutBreak;
     private TextView txtTitle;
     private boolean isRound = true;
@@ -188,9 +186,9 @@ public class SitupExerciseActivity extends AppCompatActivity {
                         overallSitups++;
                         ready = false;
 
-                        if (currentSitups == goal) {
+                        if (currentSitups == goal) {        //break time
                             round++;
-                            if (round == maxRounds) {
+                            if (round == maxRounds) {       //end of exercise
                                 vibrator.vibrate(500);
                                 endOfExercise();
                             } else {
@@ -297,15 +295,11 @@ public class SitupExerciseActivity extends AppCompatActivity {
         reference.child(userID).child("health").setValue(userHealth + getIntent().getIntExtra("health", 0));
 
         weekRef = FirebaseDatabase.getInstance().getReference("users").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child("progress");
-        Calendar calendar = new GregorianCalendar();
-        String week_year = Integer.toString(calendar.get(Calendar.WEEK_OF_YEAR));
-        SimpleDateFormat formatterForDay = new SimpleDateFormat("E, dd-MM");
-        String todayDay = formatterForDay.format(calendar.getTime());
-        weekRef.child(week_year).child("days").child(todayDay).child("situps").addListenerForSingleValueEvent(new ValueEventListener() {
+        weekRef.child(Util.getCurrentWeekOfYear()).child("days").child(Util.getTodayAsStringFormat()).child("situps").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 if (snapshot.getValue() != null) {
-                    weekRef.child(week_year).child("days").child(todayDay).child("situps").setValue(snapshot.getValue(Integer.class) + overallSitups);
+                    weekRef.child(Util.getCurrentWeekOfYear()).child("days").child(Util.getTodayAsStringFormat()).child("situps").setValue(snapshot.getValue(Integer.class) + overallSitups);
                 }
             }
 

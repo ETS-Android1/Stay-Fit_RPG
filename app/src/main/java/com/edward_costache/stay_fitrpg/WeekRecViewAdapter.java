@@ -17,7 +17,7 @@ import java.util.ArrayList;
 public class WeekRecViewAdapter extends RecyclerView.Adapter<WeekRecViewAdapter.ViewHolder>{
 
     private ArrayList<ProgressWeek> weeks = new ArrayList<>();
-    private Context fromContext;
+    private final Context fromContext;
 
     WeekRecViewAdapter(Context fromContext)
     {

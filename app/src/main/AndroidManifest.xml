@@ -15,7 +15,13 @@
         android:roundIcon="@mipmap/app_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.StayFitRPG">
-        <activity android:name=".ProgressDaysActivity"></activity>
+        <activity
+            android:name=".PasswordChangeActivity"
+            android:label="@string/title_activity_password_change"
+            android:theme="@style/Theme.StayFitRPG.NoActionBar" />
+        <activity android:name=".EmailChangeActivity" />
+        <activity android:name=".UsernameChangeActivity" />
+        <activity android:name=".ProgressDaysActivity" />
         <activity android:name=".ProgressActivity" />
         <activity android:name=".GameActivity" />
         <activity android:name=".RoomActivity" />
@@ -27,7 +33,6 @@
         <activity android:name=".exercises.SquatMenuActivity" />
         <activity android:name=".exercises.SitupMenuActivity" />
         <activity android:name=".exercises.RunningMenuActivity" />
-        <activity android:name=".EasterEggActivity" />
         <activity android:name=".exercises.PushupMenuActivity" />
         <activity android:name=".ExercisesActivity" />
         <activity android:name=".ProfileActivity" />

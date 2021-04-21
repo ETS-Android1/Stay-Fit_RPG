@@ -1,34 +1,27 @@
 package com.edward_costache.stay_fitrpg;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
-
 import android.app.Activity;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.hardware.Sensor;
-import android.hardware.SensorEvent;
-import android.hardware.SensorEventListener;
-import android.hardware.SensorManager;
-import android.os.Build;
 import android.os.Bundle;
 import android.provider.ContactsContract;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.PopupMenu;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.edward_costache.stay_fitrpg.exercises.PushupExerciseActivity;
 import com.edward_costache.stay_fitrpg.util.StepDetector;
 import com.edward_costache.stay_fitrpg.util.Util;
-import com.google.android.material.snackbar.Snackbar;
+import com.google.firebase.FirebaseApp;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -42,41 +35,31 @@ public class ProfileActivity extends AppCompatActivity{
     private TextView txtUsername, txtProgress, txtLevel, txtOverallSteps, txtHealth, txtStrength, txtAgility, txtStamina;
     private Button btnLogout;
     private ImageView imageCharacter;
-    private com.google.android.material.card.MaterialCardView cardViewTrain, cardViewFight, cardViewProgress;
+    private com.google.android.material.card.MaterialCardView cardViewTrain, cardViewFight, cardViewProgress, cardViewMenu;
     private androidx.constraintlayout.widget.ConstraintLayout layout;
 
     private pl.pawelkleczkowski.customgauge.CustomGauge progressBarTest;
     private ProgressBar progressBarHealth, progressBarStamina, progressBarAgility, progressBarStrength;
 
-    private FirebaseAuth mAuth;
-
     private DatabaseReference reference;
     private SharedPreferences sharedPreferencesAccount, sharedPreferencesData;
     private StepDetector stepDetector;
 
-    private String username;
-    private String userID;
-    private int health;
-    private int strength;
-    private int stamina;
-    private int agility;
-    private int steps;
-    private int overallSteps;
-    private int progressMax;
+    private String username, userID;
+    private int health, strength, stamina, agility, steps, overallSteps, progressMax;
     private double level;
 
     private final int STARTING_STEP_GOAL = 100;
     private final double MULTIPLIER = 1.0;
     private static final String TAG = "PROFILE ACTIVITY";
 
-    public static Activity PA;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile);
-        PA = this;
         sharedPreferencesAccount = getSharedPreferences("account", MODE_PRIVATE);
         sharedPreferencesData = getSharedPreferences("data", MODE_PRIVATE);
+
         // Set-up functions that initialize declarations
         initViews();
         setUpUser();
@@ -87,12 +70,7 @@ public class ProfileActivity extends AppCompatActivity{
 
         long time = sharedPreferencesData.getLong("time", 0);
 
-        // If it is a new day, reset the user progress
-        if(time == Util.getToday())
-        {
-            Log.i("SAME DAY: ", "NOT A NEW DAY, STEPS REMAIN SAME");
-        }
-        else if(time != Util.getToday() && time != 0)
+        if(time != Util.getToday() && time != 0)
         {
             sharedPreferencesData.edit().putInt("progress", 0).apply();
             sharedPreferencesData.edit().putInt("overallSteps", 0).apply();
@@ -140,7 +118,7 @@ public class ProfileActivity extends AppCompatActivity{
 
     private void setUpUser()
     {
-        mAuth = FirebaseAuth.getInstance();
+        FirebaseAuth mAuth = FirebaseAuth.getInstance();
         reference = FirebaseDatabase.getInstance().getReference("users");
         if(mAuth.getCurrentUser() != null)
         {
@@ -158,6 +136,7 @@ public class ProfileActivity extends AppCompatActivity{
         SharedPreferences.Editor editor = sharedPreferencesAccount.edit();
         editor.clear();
         editor.apply();
+        FirebaseAuth.getInstance().signOut();
         startActivity(new Intent(ProfileActivity.this, LoginActivity.class));
         finish();
     }
@@ -176,10 +155,10 @@ public class ProfileActivity extends AppCompatActivity{
         cardViewTrain = findViewById(R.id.profileCardViewTrain);
         cardViewFight = findViewById(R.id.profileCardViewFight);
         cardViewProgress = findViewById(R.id.profileCardViewProgress);
+        cardViewMenu = findViewById(R.id.profileCardViewMenu);
 
         btnLogout = findViewById(R.id.profileBtnLogout);
         imageCharacter = findViewById(R.id.profileImageCharacter);
-        //btnTest = findViewById(R.id.profileBtnStepTest);
 
         progressBarTest = findViewById(R.id.profileProgressBar);
         progressBarHealth = findViewById(R.id.profileProgressBarHealth);
@@ -196,6 +175,7 @@ public class ProfileActivity extends AppCompatActivity{
             @Override
             public void onClick(View v) {
                 logout();
+                FirebaseAuth.getInstance().signOut();
             }
         });
 
@@ -219,25 +199,77 @@ public class ProfileActivity extends AppCompatActivity{
                 startActivity(new Intent(ProfileActivity.this, ProgressActivity.class));
             }
         });
-
-        imageCharacter.setOnClickListener(new View.OnClickListener() {
+        cardViewMenu.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Util.displayNotImplemented(ProfileActivity.this, layout);
-            }
-        });
+                PopupMenu menu = new PopupMenu(ProfileActivity.this, v);
+                menu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+                    @Override
+                    public boolean onMenuItemClick(MenuItem item) {
+                        //logout the user
+                        if (item.getItemId() == R.id.profileMenuLogout) {
+                            new AlertDialog.Builder(ProfileActivity.this)
+                                    .setTitle("Log Out!")
+                                    .setMessage("Are you sure you want to log out?")
+                                    .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialog, int which) {
+                                            logout();
+                                        }
+                                    })
+                                    .setCancelable(true)
+                                    .show();
+                        }
+                        //update username
+                        else if(item.getItemId() == R.id.profileMenuChangeUsername)
+                        {
+                            startActivity(new Intent(ProfileActivity.this,UsernameChangeActivity.class));
+                        }
+                        //update password
+                        else if(item.getItemId() == R.id.profileMenuChangePassword)
+                        {
+                            startActivity(new Intent(ProfileActivity.this, PasswordChangeActivity.class));
+                        }
+                        //update email
+                        else if(item.getItemId() == R.id.profileMenuChangeEmail)
+                        {
+                            startActivity(new Intent(ProfileActivity.this, EmailChangeActivity.class));
+                        }
+                        //delete account
+                        else if(item.getItemId() == R.id.profileMenuDeleteAccount)
+                        {
+                            new AlertDialog.Builder(ProfileActivity.this)
+                                    .setTitle("WARNING")
+                                    .setMessage("Are you sure you want to delete your account?")
+                                    .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialog, int which) {
+                                            startActivity(new Intent(ProfileActivity.this, LoginActivity.class));
+                                            FirebaseAuth.getInstance().getCurrentUser().delete();
+                                            finish();
+                                        }
+                                    })
+                                    .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialog, int which) {
 
-        txtLevel.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startActivity(new Intent(ProfileActivity.this, EasterEggActivity.class));
+                                        }
+                                    })
+                                    .setCancelable(true)
+                                    .show();
+                        }
+                        return true;
+                    }
+                });
+                menu.inflate(R.menu.profile_menu);
+                menu.show();
             }
         });
     }
 
     private void displayUserInfo()
     {
-        reference.child(userID).child("username").addListenerForSingleValueEvent(new ValueEventListener() {
+        reference.child(userID).child("username").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 if(snapshot.getValue() != null) {

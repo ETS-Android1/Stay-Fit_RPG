@@ -10,11 +10,13 @@ public class User {
 
     private boolean isDefending, left;
 
+    //empty constructor needed to FirebaseDatabase
     public User()
     {
 
     }
 
+    //constructor used when creating a brand new user
     public User(String username) {
         setUsername(username);
         setLevel(1);
@@ -24,16 +26,7 @@ public class User {
         setHealth(50);
     }
 
-    public User(String username, double level, int strength, int agility, int stamina, int health)
-    {
-        setUsername(username);
-        setLevel(level);
-        setStrength(strength);
-        setAgility(agility);
-        setStamina(stamina);
-        setHealth(health);
-    }
-
+    //constructor used when cloning the user data into the game room.
     public User(String username, double level, int strength, int agility, int stamina, int health, boolean isDefending)
     {
         setUsername(username);

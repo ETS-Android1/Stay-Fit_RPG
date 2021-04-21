@@ -38,6 +38,15 @@ public class ProgressActivity extends AppCompatActivity {
         weeksRevView = findViewById(R.id.progressWeeksRV);
     }
 
+    /**
+     * A function for displaying all of the recorded weeks since the user has started exercising using the application.
+     * The function uses a ValueEventListener to listen to the Firebase Database and fetch all of the weeks for that user, and store
+     * that information in a ProgressWeek object, which is then added to a list.
+     *
+     * NOTE: When a ValueEventListener is constructed and added to a FirebaseDatabase reference, the code within onDataChanged() will be triggered when called once.
+     * With a ValueEventListener, the code will also trigger reference the data in the reference changes.
+     * A listenerForSingleValueEvent is only triggered when added to a reference.
+     */
     private void displayWeeks() {
         FirebaseDatabase.getInstance().getReference("users").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child("progress").addValueEventListener(new ValueEventListener() {
             @Override

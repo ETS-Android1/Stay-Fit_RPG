@@ -23,6 +23,7 @@ import com.edward_costache.stay_fitrpg.R;
 import com.edward_costache.stay_fitrpg.User;
 import com.edward_costache.stay_fitrpg.util.SoundLibrary;
 import com.edward_costache.stay_fitrpg.util.StepDetector;
+import com.edward_costache.stay_fitrpg.util.Util;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -32,14 +33,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.GregorianCalendar;
-
 public class RunningExerciseActivity extends AppCompatActivity {
-
-    public static final String TAG = "RunningExercise";
 
     private LinearLayout layoutRound, layoutBreak;
     private TextView txtTitle;
@@ -88,9 +82,9 @@ public class RunningExerciseActivity extends AppCompatActivity {
                 steps++;
                 distanceKm = (steps * STEP_LENGTH)/100000.0;
                 distanceOverall = (steps * STEP_LENGTH)/100000.0;
-                if (distanceKm >= goal) {
+                if (distanceKm >= goal) {       //break time
                     round++;
-                    if (round == maxRounds) {
+                    if (round == maxRounds) {   //end of exercise
                         endOfExercise();
                         SoundLibrary.playLoopSound(RunningExerciseActivity.this, R.raw.ding, 3);
                         vibrator.vibrate(700);
@@ -226,8 +220,11 @@ public class RunningExerciseActivity extends AppCompatActivity {
 
     @SuppressLint("ResourceAsColor")
     private void switchLayout() {
+        //instead of creating a new activity for break time. I decided to create a new layout for break, make it visible and make the round layout GONE
+        //because i am making the layout gone, all children within the layout will adopt gone as well.
         if (isRound) {
             // Change to break
+            stepDetector.un_registerListener();
             layoutRound.setVisibility(View.GONE);
             layoutBreak.setVisibility(View.VISIBLE);
 
@@ -277,20 +274,16 @@ public class RunningExerciseActivity extends AppCompatActivity {
     }
 
     private void endOfExercise() {
-        stepDetector.un_registerListener();
-        reference.child(userID).child("stamina").setValue(userStamina + getIntent().getIntExtra("stamina", 0));
+        stepDetector.un_registerListener();     //i am unregistering the detector so that steps aren't counted after exercise completion.
+        reference.child(userID).child("stamina").setValue(userStamina + getIntent().getIntExtra("stamina", 0));     //reward values are given through the intent in the previous activity
         reference.child(userID).child("agility").setValue(userAgility + getIntent().getIntExtra("agility", 0));
 
         weekRef = FirebaseDatabase.getInstance().getReference("users").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child("progress");
-        Calendar calendar = new GregorianCalendar();
-        String week_year = Integer.toString(calendar.get(Calendar.WEEK_OF_YEAR));
-        SimpleDateFormat formatterForDay = new SimpleDateFormat("E, dd-MM");
-        String todayDay = formatterForDay.format(calendar.getTime());
-        weekRef.child(week_year).child("days").child(todayDay).child("running").addListenerForSingleValueEvent(new ValueEventListener() {
+        weekRef.child(Util.getCurrentWeekOfYear()).child("days").child(Util.getTodayAsStringFormat()).child("running").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 if (snapshot.getValue() != null) {
-                    weekRef.child(week_year).child("days").child(todayDay).child("running").setValue(snapshot.getValue(Double.class) + distanceOverall);
+                    weekRef.child(Util.getCurrentWeekOfYear()).child("days").child(Util.getTodayAsStringFormat()).child("running").setValue(snapshot.getValue(Double.class) + distanceOverall);
                 }
             }
 

@@ -4,6 +4,7 @@ public class Room {
     private String roomName, userID1, userID2;
     private int playersReady;
 
+    //Constructed used when creating an empty room
     Room(String roomName, String userID1)
     {
         setRoomName(roomName);
@@ -12,11 +13,13 @@ public class Room {
         playersReady = 1;
     }
 
+    //Empty constructed needed to FirebaseDatabase ValueEventListeners
     Room()
     {
 
     }
 
+    //Constructor used when creating a room from a rematch
     Room(String roomName, String userID1, String userID2)
     {
         setRoomName(roomName);

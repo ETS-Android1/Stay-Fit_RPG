@@ -21,7 +21,6 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
@@ -61,7 +60,7 @@ public class ExercisesActivity extends AppCompatActivity {
                     SimpleDateFormat formatterForDay = new SimpleDateFormat("E, dd-MM");
                     for(int i = 1; i<8;i++)
                     {
-                        //adding i to the name, so that in the firebase database they are sorted numerically
+                        //adding i to the name, so that in the firebase database they are sorted numerically, will be removed later
                         String name = i+formatterForDay.format(dayCalendar.getTime());
                         days.put(name, new ProgressDay());
                         dayCalendar.add(Calendar.DAY_OF_MONTH, 1);

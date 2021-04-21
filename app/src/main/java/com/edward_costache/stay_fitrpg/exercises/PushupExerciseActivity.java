@@ -8,13 +8,11 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.annotation.SuppressLint;
 import android.content.DialogInterface;
 import android.graphics.Color;
-import android.media.MediaPlayer;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.util.Log;
 import android.view.View;
-import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -22,6 +20,7 @@ import com.edward_costache.stay_fitrpg.R;
 import com.edward_costache.stay_fitrpg.User;
 import com.edward_costache.stay_fitrpg.util.Proximiter;
 import com.edward_costache.stay_fitrpg.util.SoundLibrary;
+import com.edward_costache.stay_fitrpg.util.Util;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -31,10 +30,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.GregorianCalendar;
 
 public class PushupExerciseActivity extends AppCompatActivity {
 
@@ -49,7 +45,6 @@ public class PushupExerciseActivity extends AppCompatActivity {
     private User userProfile;
 
     // Round
-    private Button btnAction;
     private TextView txtPushupCount;
 
     private ArrayList<Integer> rounds;
@@ -62,7 +57,7 @@ public class PushupExerciseActivity extends AppCompatActivity {
     private CountDownTimer breakTimer;
     private long startMilliseconds;
     private TextView txtRound1, txtRound2, txtRound3, txtRound4, txtRound5, txtRound6, txtTime;
-    private final int BREAK_TIME = 2;
+    private final int BREAK_TIME = 60;
 
 
     @Override
@@ -76,16 +71,13 @@ public class PushupExerciseActivity extends AppCompatActivity {
         Log.i("ARRAY AFTER INTENT: ", rounds.toString());
         initViews();
 
-
-        // TESTING
-        btnAction.setVisibility(View.GONE);
-
         layoutRound.setVisibility(View.VISIBLE);
         layoutBreak.setVisibility(View.GONE);
         initListeners();
         goal = rounds.get(round);
         updateTextView();
         txtTitle.setText(String.format("ROUND: %d", round + 1));
+
 
         if (maxRounds == 4) {
             txtRound4.setVisibility(View.VISIBLE);
@@ -172,45 +164,22 @@ public class PushupExerciseActivity extends AppCompatActivity {
         txtRound6 = findViewById(R.id.pushupExerciseTxtRound6);
         txtTime = findViewById(R.id.pushupExerciseTxtTime);
 
-        btnAction = findViewById(R.id.pushupExerciseBtnAction);
         proximiter = new Proximiter(PushupExerciseActivity.this);
     }
 
     private void initListeners() {
-        btnAction.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                SoundLibrary.playSound(PushupExerciseActivity.this, R.raw.ding);
-                currentPushups++;
-                overallPushups++;
-                if (currentPushups == goal) {
-                    round++;
-                    if (round == maxRounds) {
-                        endOfExercise();
-                    } else {
-                        currentPushups = 0;
-                        goal = rounds.get(round);
-                        switchLayout();
-                    }
-
-                } else {
-                    updateTextView();
-                }
-            }
-        });
-
         proximiter.setListener(new Proximiter.Listener() {
             @Override
             public void onDistance(float cm) {
                 // When user's face gets close to sensor, count a pushup
                 if (cm < 8.0f && readyForPushup) {
-                    readyForPushup = false;
+                    readyForPushup = false;         //a boolean is used to make sure a pushup is only counted again after boolean is set to true
                     SoundLibrary.playSound(PushupExerciseActivity.this, R.raw.ding);
                     currentPushups++;
                     overallPushups++;
-                    if (currentPushups == goal) {
+                    if (currentPushups == goal) {   //user completed round
                         round++;
-                        if (round == maxRounds) {
+                        if (round == maxRounds) {   //user completed exercise
                             endOfExercise();
                         } else {
                             currentPushups = 0;
@@ -235,6 +204,8 @@ public class PushupExerciseActivity extends AppCompatActivity {
 
     @SuppressLint("ResourceAsColor")
     private void switchLayout() {
+        //instead of creating a new activity for break time. I decided to create a new layout for break, make it visible and make the round layout GONE
+        //because i am making the layout gone, all children within the layout will adopt gone as well.
         if (isRound) {
             // Change to break
             readyForPushup = false;
@@ -286,16 +257,19 @@ public class PushupExerciseActivity extends AppCompatActivity {
     }
 
     private void getUserCurrentStats() {
-        reference.child(userID).addValueEventListener(new ValueEventListener() {
+        reference.child(userID).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                try {
+
+                if(snapshot.getValue() != null)             //making sure user is not going to be null
+                {
                     userProfile = snapshot.getValue(User.class);
-                    userStrength = (int) userProfile.getStrength();
-                    userHealth = (int) userProfile.getHealth();
-                } catch (Exception e) {
-                    e.printStackTrace();
-                    Log.i("DISPLAY USER INFO: ", "USER IS NULL");
+                    userStrength = userProfile.getStrength();
+                    userHealth = userProfile.getHealth();
+                }
+                else
+                {
+                    Log.i(TAG, "USER IS NULL");
                 }
             }
 
@@ -306,20 +280,21 @@ public class PushupExerciseActivity extends AppCompatActivity {
     }
 
     private void endOfExercise() {
-        readyForPushup = false;
-        reference.child(userID).child("strength").setValue(userStrength + getIntent().getIntExtra("strength", 0));
+        proximiter.un_registerListener();
+        reference.child(userID).child("strength").setValue(userStrength + getIntent().getIntExtra("strength", 0));      //reward values are given through the intent in the previous activity
         reference.child(userID).child("health").setValue(userHealth + getIntent().getIntExtra("health", 0));
 
         weekRef = FirebaseDatabase.getInstance().getReference("users").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child("progress");
-        Calendar calendar = new GregorianCalendar();
-        String week_year = Integer.toString(calendar.get(Calendar.WEEK_OF_YEAR));
-        SimpleDateFormat formatterForDay = new SimpleDateFormat("E, dd-MM");
-        String todayDay = formatterForDay.format(calendar.getTime());
-        weekRef.child(week_year).child("days").child(todayDay).child("pushups").addListenerForSingleValueEvent(new ValueEventListener() {
+        weekRef.child(Util.getCurrentWeekOfYear()).child("days").child(Util.getTodayAsStringFormat()).child("pushups").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 if (snapshot.getValue() != null) {
-                    weekRef.child(week_year).child("days").child(todayDay).child("pushups").setValue(snapshot.getValue(Integer.class) + overallPushups);
+                    //changing the pushup value for the current day in the database
+                    weekRef.child(Util.getCurrentWeekOfYear()).child("days").child(Util.getTodayAsStringFormat()).child("pushups").setValue(snapshot.getValue(Integer.class) + overallPushups);
+                }
+                else
+                {
+                    Log.d(TAG, "onDataChange: PUSHUP PROGRESS NOT FOUND");
                 }
             }
 

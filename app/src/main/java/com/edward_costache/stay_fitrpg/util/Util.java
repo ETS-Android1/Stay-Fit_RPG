@@ -13,7 +13,9 @@ import com.edward_costache.stay_fitrpg.ProfileActivity;
 import com.edward_costache.stay_fitrpg.R;
 import com.google.android.material.snackbar.Snackbar;
 
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.GregorianCalendar;
 
 public abstract class Util {
 
@@ -49,12 +51,42 @@ public abstract class Util {
         return c.getTimeInMillis();
     }
 
+    /**
+     * A method for displaying a simple Snackbar message when a tester clicks on a button which does not yet have a function
+     * @param context the current context the user is looking at, otherwise known as Activity.
+     * @param view the root container of the context.
+     */
     public static void displayNotImplemented(Context context, View view)
     {
-        Snackbar.make(context, view, "Not yet implemented G!", Snackbar.LENGTH_LONG).setAction("Snm G!", new View.OnClickListener() {
+        Snackbar.make(context, view, "Not yet implemented", Snackbar.LENGTH_LONG).setAction("Ok", new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                //closes the Snackbar
             }
         }).show();
+    }
+
+
+    /**
+     *
+     * @return The number of the current week of the year. i.e 52 weeks in a year so for example 01/01/2021 to 08/01/2021 is the 1st week of the year.
+     * Result is cast as a string.
+     */
+    public static String getCurrentWeekOfYear()
+    {
+        Calendar calendar = new GregorianCalendar();
+        return Integer.toString(calendar.get(Calendar.WEEK_OF_YEAR));
+    }
+
+    /**
+     * The formatter is used to present the date by the day name, day and month. i.e Fri, 01-01
+     * applying the formatter to a date object that is similar to this, Wed May 02 14:14:06 EEST 2012 would result in Wed, 02-05
+     * @return A string representing today's date as formatted date.
+     */
+    public static String getTodayAsStringFormat()
+    {
+        Calendar calendar = new GregorianCalendar();
+        SimpleDateFormat formatterForDay = new SimpleDateFormat("E, dd-MM");
+        return formatterForDay.format(calendar.getTime());
     }
 }

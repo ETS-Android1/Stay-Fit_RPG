@@ -44,8 +44,6 @@ public class SquatExerciseActivity extends AppCompatActivity {
     private Accelerometer accelerometer;
     private Gravimeter gravimeter;
 
-    private TextView AccX, AccY, AccZ, gravX, gravY, gravZ;
-
     private DatabaseReference reference, weekRef;
     private String userID;
     private LinearLayout layoutRound, layoutBreak;
@@ -163,13 +161,6 @@ public class SquatExerciseActivity extends AppCompatActivity {
             @Override
             public void onGravitation(float gx, float gy, float gz) {
                 gravityX = gx;
-                /*
-                TESTING
-                gravX.setText(String.format("X: %.2f", gx));
-                gravY.setText(String.format("Y: %.2f", gy));
-                gravZ.setText(String.format("Z: %.2f", gz));
-
-                 */
             }
         });
     }
@@ -310,13 +301,6 @@ public class SquatExerciseActivity extends AppCompatActivity {
 
         accelerometer = new Accelerometer(SquatExerciseActivity.this, Sensor.TYPE_ACCELEROMETER);
         gravimeter = new Gravimeter(SquatExerciseActivity.this);
-        AccX = findViewById(R.id.AccX);
-        AccY = findViewById(R.id.AccY);
-        AccZ = findViewById(R.id.AccZ);
-
-        gravX = findViewById(R.id.gravityX);
-        gravY = findViewById(R.id.gravityY);
-        gravZ = findViewById(R.id.gravityZ);
 
         txtSquatCount = findViewById(R.id.squatExerciseTxtSquatCount);
         vibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);

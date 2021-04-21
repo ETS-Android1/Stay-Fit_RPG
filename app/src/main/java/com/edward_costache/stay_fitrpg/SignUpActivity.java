@@ -49,6 +49,7 @@ public class SignUpActivity extends AppCompatActivity {
         });
     }
 
+    //initialize the rooms
     private void initViews() {
         editTxtUsername = findViewById(R.id.signupExitTxtUsername);
         editTxtEmail = findViewById(R.id.signupExitTxtEmail);
@@ -58,43 +59,46 @@ public class SignUpActivity extends AppCompatActivity {
         btnSignup = findViewById(R.id.signupBtnSignup);
     }
 
+    //create an account once all fields are complete and valid
     private void createAccount() {
         String username = editTxtUsername.getText().toString().trim();
         String email = editTxtEmail.getText().toString().trim();
         String password = editTxtPassword.getText().toString().trim();
 
-        if (username.isEmpty()) {
+
+        if (username.isEmpty()) {       //check if user entered their username
             editTxtUsername.setError("Username required!");
             editTxtUsername.requestFocus();
             return;
         }
 
-        if (email.isEmpty()) {
+        if (email.isEmpty()) {      //check if user entered their email
             editTxtEmail.setError("Email required!");
             editTxtEmail.requestFocus();
             return;
-        } else if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
+        } else if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {      //check if the user email matches an authentic email address pattern
             editTxtEmail.setError("Please enter valid email!");
             editTxtEmail.requestFocus();
             return;
         }
 
-        if (password.isEmpty()) {
+        if (password.isEmpty()) {       //check if a user has entered a password
             editTxtPassword.setError("Password required!");
             editTxtPassword.requestFocus();
             return;
-        } else if (password.length() < 6) {
+        } else if (password.length() < 6) {     //check if the password entered is longer than 5 characters
             editTxtPassword.setError("Password must be longer than 5 characters!");
             editTxtPassword.requestFocus();
             return;
         }
 
-        if (!editTxtPasswordRetry.getText().toString().equals(password)) {
+        if (!editTxtPasswordRetry.getText().toString().equals(password)) {      //check if the user has re-entered their password correctly
             editTxtPasswordRetry.setError("Password doesn't match!");
             editTxtPasswordRetry.requestFocus();
             return;
         }
 
+        //this code will only trigger if none of the if statements above have been triggered, in other words everything is entered correctly
         mAuth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
             @Override
             public void onComplete(@NonNull Task<AuthResult> task) {
@@ -110,6 +114,7 @@ public class SignUpActivity extends AppCompatActivity {
                                 intent.putExtra("password", password);
                                 startActivity(intent);
                                 finish();
+
                                 SharedPreferences sharedPreferences = getSharedPreferences("account", MODE_PRIVATE);
                                 SharedPreferences.Editor editor = sharedPreferences.edit();
                                 editor.putBoolean("hasAccount", true);
