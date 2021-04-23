@@ -12,11 +12,13 @@ import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.auth.AuthCredential;
+import com.google.firebase.auth.EmailAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
 public class EmailChangeActivity extends AppCompatActivity {
-    private EditText editTxtNewEmail;
+    private EditText editTxtNewEmail, editTxtCurrentPassword;
     private Button btnChange;
 
     @Override
@@ -29,6 +31,14 @@ public class EmailChangeActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 String email = editTxtNewEmail.getText().toString();
+                String password = editTxtCurrentPassword.getText().toString();
+
+                if(password.isEmpty())
+                {
+                    editTxtCurrentPassword.setError("Please enter a password!");
+                    editTxtCurrentPassword.requestFocus();
+                    return;
+                }
 
                 if (email.isEmpty()) {
                     editTxtNewEmail.setError("Please enter an email address!");
@@ -41,7 +51,7 @@ public class EmailChangeActivity extends AppCompatActivity {
                     editTxtNewEmail.requestFocus();
                 }
 
-                changeEmail(email);
+                changeEmail(email, password);
             }
         });
     }
@@ -52,28 +62,44 @@ public class EmailChangeActivity extends AppCompatActivity {
         finish();
     }
 
-    private void changeEmail(String email) {
+    private void changeEmail(String email, String password) {
         //get the current user logged in and update their email
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-        user.updateEmail(email)
+        AuthCredential authCredential = EmailAuthProvider.getCredential(user.getEmail(), password);
+        //check if they have entered the current current password by attempting to re-authenticate them using the old password they have provided
+        user.reauthenticate(authCredential)
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void aVoid) {
-                        Toast.makeText(EmailChangeActivity.this, "Email successfully changed!", Toast.LENGTH_SHORT).show();
-                        finish();
+                        user.updateEmail(email)
+                                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                    @Override
+                                    public void onSuccess(Void aVoid) {
+                                        Toast.makeText(EmailChangeActivity.this, "Email successfully changed!", Toast.LENGTH_SHORT).show();
+                                        finish();
+                                    }
+                                })
+                                .addOnFailureListener(new OnFailureListener() {
+                                    @Override
+                                    public void onFailure(@NonNull Exception e) {
+                                        Toast.makeText(EmailChangeActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
+                                        editTxtNewEmail.setText("");
+                                    }
+                                });
                     }
                 })
                 .addOnFailureListener(new OnFailureListener() {
+                    //current password is incorrect
                     @Override
                     public void onFailure(@NonNull Exception e) {
-                        Toast.makeText(EmailChangeActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
-                        editTxtNewEmail.setText("");
+                        Toast.makeText(EmailChangeActivity.this, "You old password is not correct!", Toast.LENGTH_SHORT).show();
                     }
                 });
     }
 
     private void initViews() {
         editTxtNewEmail = findViewById(R.id.emailChangeEditTxtEmail);
+        editTxtCurrentPassword = findViewById(R.id.emailChangeEditTextTextPassword);
         btnChange = findViewById(R.id.emailChangeBtnChange);
     }
 }

@@ -3,6 +3,7 @@ package com.edward_costache.stay_fitrpg;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+
 import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -13,6 +14,7 @@ import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.PopupMenu;
 import android.widget.ProgressBar;
@@ -21,7 +23,11 @@ import android.widget.Toast;
 
 import com.edward_costache.stay_fitrpg.util.StepDetector;
 import com.edward_costache.stay_fitrpg.util.Util;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.FirebaseApp;
+import com.google.firebase.auth.AuthCredential;
+import com.google.firebase.auth.EmailAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -30,13 +36,11 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
-public class ProfileActivity extends AppCompatActivity{
+public class ProfileActivity extends AppCompatActivity implements DeleteAccountDialog.DialogDeleteAccountListener {
 
     private TextView txtUsername, txtProgress, txtLevel, txtOverallSteps, txtHealth, txtStrength, txtAgility, txtStamina;
     private Button btnLogout;
-    private ImageView imageCharacter;
     private com.google.android.material.card.MaterialCardView cardViewTrain, cardViewFight, cardViewProgress, cardViewMenu;
-    private androidx.constraintlayout.widget.ConstraintLayout layout;
 
     private pl.pawelkleczkowski.customgauge.CustomGauge progressBarTest;
     private ProgressBar progressBarHealth, progressBarStamina, progressBarAgility, progressBarStrength;
@@ -70,16 +74,14 @@ public class ProfileActivity extends AppCompatActivity{
 
         long time = sharedPreferencesData.getLong("time", 0);
 
-        if(time != Util.getToday() && time != 0)
-        {
+        if (time != Util.getToday() && time != 0) {
             sharedPreferencesData.edit().putInt("progress", 0).apply();
             sharedPreferencesData.edit().putInt("overallSteps", 0).apply();
             Log.i("NEW DAY: ", "A NEW DAY, THEREFORE STEPS RESET");
         }
 
         // If the application has been closed before, retrieve the progress
-        if(sharedPreferencesData.getInt("overallSteps", 0) != 0)
-        {
+        if (sharedPreferencesData.getInt("overallSteps", 0) != 0) {
             steps = sharedPreferencesData.getInt("progress", 0);
             overallSteps = sharedPreferencesData.getInt("overallSteps", 0);
         }
@@ -116,23 +118,18 @@ public class ProfileActivity extends AppCompatActivity{
         super.onDestroy();
     }
 
-    private void setUpUser()
-    {
+    private void setUpUser() {
         FirebaseAuth mAuth = FirebaseAuth.getInstance();
         reference = FirebaseDatabase.getInstance().getReference("users");
-        if(mAuth.getCurrentUser() != null)
-        {
+        if (mAuth.getCurrentUser() != null) {
             userID = mAuth.getCurrentUser().getUid();
-        }
-        else
-        {
+        } else {
             Toast.makeText(this, "User is not signed in", Toast.LENGTH_SHORT).show();
             Log.d(TAG, "setUpUser: USER NOT FOUND");
         }
     }
 
-    private void logout()
-    {
+    private void logout() {
         SharedPreferences.Editor editor = sharedPreferencesAccount.edit();
         editor.clear();
         editor.apply();
@@ -141,8 +138,7 @@ public class ProfileActivity extends AppCompatActivity{
         finish();
     }
 
-    private void initViews()
-    {
+    private void initViews() {
         txtUsername = findViewById(R.id.profileTxtUsername);
         txtProgress = findViewById(R.id.profileTxtProgress);
         txtLevel = findViewById(R.id.profileTxtLevel);
@@ -158,19 +154,15 @@ public class ProfileActivity extends AppCompatActivity{
         cardViewMenu = findViewById(R.id.profileCardViewMenu);
 
         btnLogout = findViewById(R.id.profileBtnLogout);
-        imageCharacter = findViewById(R.id.profileImageCharacter);
 
         progressBarTest = findViewById(R.id.profileProgressBar);
         progressBarHealth = findViewById(R.id.profileProgressBarHealth);
         progressBarAgility = findViewById(R.id.profileProgressBarAgility);
         progressBarStamina = findViewById(R.id.profileProgressBarStamina);
         progressBarStrength = findViewById(R.id.profileProgressBarStrength);
-
-        layout = findViewById(R.id.profileLayout);
     }
 
-    private void initOnClickListeners()
-    {
+    private void initOnClickListeners() {
         btnLogout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -221,42 +213,21 @@ public class ProfileActivity extends AppCompatActivity{
                                     .show();
                         }
                         //update username
-                        else if(item.getItemId() == R.id.profileMenuChangeUsername)
-                        {
-                            startActivity(new Intent(ProfileActivity.this,UsernameChangeActivity.class));
+                        else if (item.getItemId() == R.id.profileMenuChangeUsername) {
+                            startActivity(new Intent(ProfileActivity.this, UsernameChangeActivity.class));
                         }
                         //update password
-                        else if(item.getItemId() == R.id.profileMenuChangePassword)
-                        {
+                        else if (item.getItemId() == R.id.profileMenuChangePassword) {
                             startActivity(new Intent(ProfileActivity.this, PasswordChangeActivity.class));
                         }
                         //update email
-                        else if(item.getItemId() == R.id.profileMenuChangeEmail)
-                        {
+                        else if (item.getItemId() == R.id.profileMenuChangeEmail) {
                             startActivity(new Intent(ProfileActivity.this, EmailChangeActivity.class));
                         }
                         //delete account
-                        else if(item.getItemId() == R.id.profileMenuDeleteAccount)
-                        {
-                            new AlertDialog.Builder(ProfileActivity.this)
-                                    .setTitle("WARNING")
-                                    .setMessage("Are you sure you want to delete your account?")
-                                    .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                                        @Override
-                                        public void onClick(DialogInterface dialog, int which) {
-                                            startActivity(new Intent(ProfileActivity.this, LoginActivity.class));
-                                            FirebaseAuth.getInstance().getCurrentUser().delete();
-                                            finish();
-                                        }
-                                    })
-                                    .setNegativeButton("No", new DialogInterface.OnClickListener() {
-                                        @Override
-                                        public void onClick(DialogInterface dialog, int which) {
-
-                                        }
-                                    })
-                                    .setCancelable(true)
-                                    .show();
+                        else if (item.getItemId() == R.id.profileMenuDeleteAccount) {
+                            DeleteAccountDialog dialog = new DeleteAccountDialog();
+                            dialog.show(getSupportFragmentManager(), "DELETE ACCOUNT DIALOG");
                         }
                         return true;
                     }
@@ -267,17 +238,14 @@ public class ProfileActivity extends AppCompatActivity{
         });
     }
 
-    private void displayUserInfo()
-    {
+    private void displayUserInfo() {
         reference.child(userID).child("username").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                if(snapshot.getValue() != null) {
+                if (snapshot.getValue() != null) {
                     username = snapshot.getValue(String.class);
                     txtUsername.setText(username);
-                }
-                else
-                {
+                } else {
                     Log.d(TAG, "displayUserInfo: NULL PATH");
                 }
             }
@@ -292,17 +260,14 @@ public class ProfileActivity extends AppCompatActivity{
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 level = snapshot.getValue(Integer.class);
-                if(level == 1)
-                {
+                if (level == 1) {
                     progressMax = STARTING_STEP_GOAL;
-                }
-                else
-                {
+                } else {
                     // A formula for deriving the required steps for next level
-                    double levelPercent = ((level/7) * (level/7)) + MULTIPLIER;
-                    progressMax = (int)(STARTING_STEP_GOAL * levelPercent);
+                    double levelPercent = ((level / 7) * (level / 7)) + MULTIPLIER;
+                    progressMax = (int) (STARTING_STEP_GOAL * levelPercent);
                 }
-                txtLevel.setText(String.format("LEVEL: %d", (int)level));
+                txtLevel.setText(String.format("LEVEL: %d", (int) level));
                 progressBarTest.setEndValue(progressMax);
                 updateSteps(steps, progressMax);
             }
@@ -370,10 +335,8 @@ public class ProfileActivity extends AppCompatActivity{
         });
     }
 
-    private void updateSteps(int progress, int progressMax)
-    {
-        if(progress >= progressMax)
-        {
+    private void updateSteps(int progress, int progressMax) {
+        if (progress >= progressMax) {
             increaseLevel();
         }
         progressBarTest.setValue(progress);
@@ -381,9 +344,8 @@ public class ProfileActivity extends AppCompatActivity{
         txtOverallSteps.setText(String.format("%05d", overallSteps));
     }
 
-    private void increaseLevel()
-    {
-        reference.child(userID).child("level").setValue(level+1);
+    private void increaseLevel() {
+        reference.child(userID).child("level").setValue(level + 1);
         steps = 0;
     }
 
@@ -392,8 +354,7 @@ public class ProfileActivity extends AppCompatActivity{
         displayClosingAlertBox();
     }
 
-    private void displayClosingAlertBox()
-    {
+    private void displayClosingAlertBox() {
         new AlertDialog.Builder(ProfileActivity.this, R.style.MyDialogTheme)
                 .setIcon(android.R.drawable.ic_dialog_alert)
                 .setTitle("Exiting the Application")
@@ -407,5 +368,36 @@ public class ProfileActivity extends AppCompatActivity{
                 })
                 .setNegativeButton("No", null)
                 .show();
+    }
+
+    @Override
+    public void validate(String password, EditText editTxtPassword) {
+        if (password.isEmpty()) {
+            editTxtPassword.setError("Please enter a password!");
+            editTxtPassword.requestFocus();
+            return;
+        }
+
+        //get the current user logged in
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        AuthCredential authCredential = EmailAuthProvider.getCredential(user.getEmail(), password);
+        //check if they have entered the current current password by attempting to re-authenticate them using the old password they have provided
+        user.reauthenticate(authCredential)
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        user.delete();
+                        reference.child(FirebaseAuth.getInstance().getCurrentUser().getUid()).removeValue();
+                        Toast.makeText(ProfileActivity.this, "Account deleted! Bye!", Toast.LENGTH_SHORT).show();
+                        startActivity(new Intent(ProfileActivity.this, LoginActivity.class));
+                        finish();
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Toast.makeText(ProfileActivity.this, "Password was incorrect!", Toast.LENGTH_SHORT).show();
+                    }
+                });
     }
 }
