@@ -32,6 +32,9 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 
+/**
+ * Created by Edward Costache
+ */
 public class PushupExerciseActivity extends AppCompatActivity {
 
     public static final String TAG = "PushupExercise";
@@ -149,6 +152,9 @@ public class PushupExerciseActivity extends AppCompatActivity {
                 .show();
     }
 
+    /**
+     * A function for initializing all Views
+     */
     private void initViews() {
         layoutRound = findViewById(R.id.pushupExerciseRoundLayout);
         layoutBreak = findViewById(R.id.pushupExerciseBreakLayout);
@@ -167,6 +173,9 @@ public class PushupExerciseActivity extends AppCompatActivity {
         proximiter = new Proximiter(PushupExerciseActivity.this);
     }
 
+    /**
+     * A function for initializing all listeners
+     */
     private void initListeners() {
         proximiter.setListener(new Proximiter.Listener() {
             @Override
@@ -202,6 +211,9 @@ public class PushupExerciseActivity extends AppCompatActivity {
         txtPushupCount.setText(String.format("%02d / %02d", currentPushups, goal));
     }
 
+    /**
+     * A function for switching the layout from round to break
+     */
     @SuppressLint("ResourceAsColor")
     private void switchLayout() {
         //instead of creating a new activity for break time. I decided to create a new layout for break, make it visible and make the round layout GONE
@@ -256,6 +268,10 @@ public class PushupExerciseActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * A function for obtaining the attributes from the user
+     * Using a ListenerForSingleValueEvent because it only needs to be fetched once
+     */
     private void getUserCurrentStats() {
         reference.child(userID).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -279,6 +295,9 @@ public class PushupExerciseActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * A function for applying the user's rewards to their database and showing the user their exercise statistics
+     */
     private void endOfExercise() {
         proximiter.un_registerListener();
         reference.child(userID).child("strength").setValue(userStrength + getIntent().getIntExtra("strength", 0));      //reward values are given through the intent in the previous activity
@@ -323,6 +342,9 @@ public class PushupExerciseActivity extends AppCompatActivity {
                 .show();
     }
 
+    /**
+     * A function for assigning the userID to the userID variable
+     */
     private void setUpUser() {
         reference = FirebaseDatabase.getInstance().getReference("users");
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();

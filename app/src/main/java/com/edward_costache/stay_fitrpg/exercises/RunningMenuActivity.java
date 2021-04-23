@@ -16,6 +16,9 @@ import com.edward_costache.stay_fitrpg.R;
 
 import java.util.ArrayList;
 
+/**
+ * Created by Edward Costache
+ */
 public class RunningMenuActivity extends AppCompatActivity {
 
     private RadioGroup radioGroup;
@@ -65,6 +68,9 @@ public class RunningMenuActivity extends AppCompatActivity {
         finish();
     }
 
+    /**
+     * A function that sets up actions when one of the radio buttons in pressed
+     */
     private void setOnCheckedListeners()
     {
         radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
@@ -92,6 +98,9 @@ public class RunningMenuActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * A function for setting the difficulty of the Running exercise to very easy
+     */
     private void setVeryEasy()
     {
         staminaGained = 5;
@@ -111,6 +120,9 @@ public class RunningMenuActivity extends AppCompatActivity {
         rounds.add(maxDistance);
     }
 
+    /**
+     * A function for setting the difficulty for the Running exercise to easy
+     */
     private void setEasy()
     {
         staminaGained = 7;
@@ -129,6 +141,9 @@ public class RunningMenuActivity extends AppCompatActivity {
         rounds.add((maxDistance*0.5));
     }
 
+    /**
+     * A function for setting the difficulty for the Running exercise to medium
+     */
     private void setMedium()
     {
         staminaGained = 9;
@@ -145,6 +160,9 @@ public class RunningMenuActivity extends AppCompatActivity {
         rounds.add((maxDistance*0.8));
     }
 
+    /**
+     * A function for setting the difficulty of the Running exercise to hard
+     */
     private void setHard()
     {
         staminaGained = 12;
@@ -160,6 +178,9 @@ public class RunningMenuActivity extends AppCompatActivity {
         rounds.add(maxDistance);
     }
 
+    /**
+     * A function for displaying the updated information when a difficulty is set
+     */
     private void updateViews()
     {
         //Round 1
@@ -190,6 +211,9 @@ public class RunningMenuActivity extends AppCompatActivity {
         txtAgility.setText(String.format("AGILITY: +%02d", agilityGained));
     }
 
+    /**
+     * A function for initializing the Views for the Running exercise
+     */
     private void initViews()
     {
         radioGroup = findViewById(R.id.runningDifficultyRadioGrp);

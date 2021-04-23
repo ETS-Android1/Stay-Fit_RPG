@@ -19,6 +19,9 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 
+/**
+ * Created by Edward Costache
+ */
 public class OnlineMenuActivity extends AppCompatActivity {
 
     private RecyclerView roomsRecView;
@@ -66,6 +69,9 @@ public class OnlineMenuActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * A function for displaying all rooms available to the user
+     */
     private void displayRooms() {
         FirebaseDatabase.getInstance().getReference("rooms").addValueEventListener(new ValueEventListener() {
             @Override
@@ -85,6 +91,7 @@ public class OnlineMenuActivity extends AppCompatActivity {
 
             }
         });
+
         adapter.setRooms(rooms);
         roomsRecView.setAdapter(adapter);
         roomsRecView.setLayoutManager(new LinearLayoutManager(OnlineMenuActivity.this));
@@ -99,6 +106,9 @@ public class OnlineMenuActivity extends AppCompatActivity {
         super.onDestroy();
     }
 
+    /**
+     * A function for initializing all Views
+     */
     private void initViews() {
         adapter = new RoomsRecViewAdapter(OnlineMenuActivity.this, FirebaseAuth.getInstance().getCurrentUser().getUid());
         roomsRecView = findViewById(R.id.onlineMenuRecViewRooms);

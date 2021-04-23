@@ -22,6 +22,9 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+/**
+ * Created by Edward Costache
+ */
 public class GameActivity extends AppCompatActivity {
 
     public static final String TAG = "GAME ACTIVITY";
@@ -642,6 +645,10 @@ public class GameActivity extends AppCompatActivity {
         gameRef.child(gameID).child("playerTurn").setValue(user);
     }
 
+    /**
+     * A function for setting the skill buttons of a user enabled/disabled
+     * @param enabled Variable to determine whether the Views should be enabled or disabled
+     */
     private void cardEnable(boolean enabled) {
         cardAttack.setEnabled(enabled);
         cardDefend.setEnabled(enabled);
@@ -657,6 +664,9 @@ public class GameActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * A function for initializing the Views
+     */
     private void initViews() {
         txtUsername1 = findViewById(R.id.gameTxtUser1Username);
         txtUsername2 = findViewById(R.id.gameTxtUser2Username);

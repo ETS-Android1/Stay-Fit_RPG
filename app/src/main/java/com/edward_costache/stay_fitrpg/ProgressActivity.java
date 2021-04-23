@@ -16,6 +16,9 @@ import com.google.firebase.database.ValueEventListener;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 
+/**
+ * Created by Edward Costache
+ */
 public class ProgressActivity extends AppCompatActivity {
 
     private RecyclerView weeksRevView;
@@ -33,6 +36,9 @@ public class ProgressActivity extends AppCompatActivity {
         displayWeeks();
     }
 
+    /**
+     * A function for initializing all Views
+     */
     private void initViews()
     {
         weeksRevView = findViewById(R.id.progressWeeksRV);

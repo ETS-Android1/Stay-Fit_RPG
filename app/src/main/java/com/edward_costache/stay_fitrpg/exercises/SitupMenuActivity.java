@@ -16,6 +16,9 @@ import com.edward_costache.stay_fitrpg.R;
 
 import java.util.ArrayList;
 
+/**
+ * Created by Edward Costache
+ */
 public class SitupMenuActivity extends AppCompatActivity {
 
     private RadioGroup radioGroup;
@@ -58,7 +61,9 @@ public class SitupMenuActivity extends AppCompatActivity {
         finish();
     }
 
-
+    /**
+     * A function that sets up actions when one of the radio buttons in pressed
+     */
     private void setOnCheckedListeners()
     {
         radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
@@ -86,6 +91,9 @@ public class SitupMenuActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * A function for setting the difficulty of the Situp exercise to very easy
+     */
     private void setVeryEasy()
     {
         staminaGained = 5;
@@ -105,6 +113,9 @@ public class SitupMenuActivity extends AppCompatActivity {
         rounds.add(maxReps);
     }
 
+    /**
+     * A function for setting the difficulty for the Situp exercise to easy
+     */
     private void setEasy()
     {
         staminaGained = 6;
@@ -123,6 +134,9 @@ public class SitupMenuActivity extends AppCompatActivity {
         rounds.add((int)(maxReps*0.5));
     }
 
+    /**
+     * A function for setting the difficulty for the Situp exercise to medium
+     */
     private void setMedium()
     {
         staminaGained = 7;
@@ -139,6 +153,9 @@ public class SitupMenuActivity extends AppCompatActivity {
         rounds.add((int)(maxReps*0.8));
     }
 
+    /**
+     * A function for setting the difficulty of the Situp exercise to hard
+     */
     private void setHard()
     {
         staminaGained = 9;
@@ -154,6 +171,9 @@ public class SitupMenuActivity extends AppCompatActivity {
         rounds.add(maxReps);
     }
 
+    /**
+     * A function for displaying the updated information when a difficulty is set
+     */
     private void updateViews()
     {
         //Round 1
@@ -186,6 +206,9 @@ public class SitupMenuActivity extends AppCompatActivity {
         txtHealth.setText(String.format("HEALTH: +%02d", healthGained));
     }
 
+    /**
+     * A function for initializing the Views for the Situp exercise
+     */
     private void initViews()
     {
         radioGroup = findViewById(R.id.situpDifficultyRadioGrp);

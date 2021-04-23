@@ -22,6 +22,9 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
+/**
+ * Created by Edward Costache
+ */
 public class SignUpActivity extends AppCompatActivity {
 
     private EditText editTxtUsername, editTxtEmail, editTxtPassword, editTxtPasswordRetry;
@@ -49,7 +52,9 @@ public class SignUpActivity extends AppCompatActivity {
         });
     }
 
-    //initialize the rooms
+    /**
+     * A function for initializing all Views
+     */
     private void initViews() {
         editTxtUsername = findViewById(R.id.signupExitTxtUsername);
         editTxtEmail = findViewById(R.id.signupExitTxtEmail);
@@ -59,7 +64,9 @@ public class SignUpActivity extends AppCompatActivity {
         btnSignup = findViewById(R.id.signupBtnSignup);
     }
 
-    //create an account once all fields are complete and valid
+    /**
+     * A function for creating a user account once all validation is gone through
+     */
     private void createAccount() {
         String username = editTxtUsername.getText().toString().trim();
         String email = editTxtEmail.getText().toString().trim();

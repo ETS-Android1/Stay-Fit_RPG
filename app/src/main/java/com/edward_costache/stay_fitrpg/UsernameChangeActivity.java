@@ -14,6 +14,9 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
+/**
+ * Created by Edward Costahce
+ */
 public class UsernameChangeActivity extends AppCompatActivity {
     private EditText editTxtUsername;
     private Button btnChange;
@@ -58,6 +61,9 @@ public class UsernameChangeActivity extends AppCompatActivity {
         finish();
     }
 
+    /**
+     * A function for initializing all Views
+     */
     private void initViews()
     {
         editTxtUsername = findViewById(R.id.usernameEditTxtUsername);

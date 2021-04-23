@@ -6,12 +6,14 @@ import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 
+/**
+ * Code adapted from Richvale Consulting, YouTube channel https://www.youtube.com/watch?v=OPsVr44uCb8&t=853s
+ */
 public class Accelerometer {
 
     private SensorManager sensorManager;
     private Sensor sensor;
     private SensorEventListener sensorEventListener;
-    private Context context;
 
     public interface Listener
     {
@@ -25,7 +27,6 @@ public class Accelerometer {
 
     public Accelerometer(Context context, int sensorType)
     {
-        this.context = context;
         sensorManager = (SensorManager) context.getSystemService(Context.SENSOR_SERVICE);
         sensor = sensorManager.getDefaultSensor(sensorType);
         sensorEventListener = new SensorEventListener() {

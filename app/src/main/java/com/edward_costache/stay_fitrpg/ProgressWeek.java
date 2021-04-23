@@ -4,6 +4,8 @@ import java.util.HashMap;
 
 /**
  * A class for defining a ProgressWeek, which has a name, and a HashMap of days.
+ *
+ * Created by Edward Costache
  */
 public class ProgressWeek {
     private String weekName;

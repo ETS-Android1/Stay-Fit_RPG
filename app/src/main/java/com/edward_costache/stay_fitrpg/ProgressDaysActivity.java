@@ -19,6 +19,9 @@ import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
 
+/**
+ * Created by Edward Costache
+ */
 public class ProgressDaysActivity extends AppCompatActivity {
 
     private RecyclerView daysRecView;

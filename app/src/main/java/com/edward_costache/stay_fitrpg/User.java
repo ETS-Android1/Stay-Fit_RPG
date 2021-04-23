@@ -1,5 +1,8 @@
 package com.edward_costache.stay_fitrpg;
 
+/**
+ * Created by Edward Costache
+ */
 public class User {
     private String username;
     private double level;

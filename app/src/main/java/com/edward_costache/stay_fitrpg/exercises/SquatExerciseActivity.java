@@ -38,6 +38,9 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 
+/**
+ * Created by Edward Costache
+ */
 public class SquatExerciseActivity extends AppCompatActivity {
 
     public static final String TAG = "SquatExercise";
@@ -75,10 +78,11 @@ public class SquatExerciseActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_squat_exercise);
 
-        rounds = getIntent().getIntegerArrayListExtra("rounds");
+        rounds = getIntent().getIntegerArrayListExtra("rounds");        //get the number of rounds from SquatMenuActivity
         maxRounds = rounds.size();
         startMilliseconds = System.currentTimeMillis();
         initViews();
+        initListeners();
         layoutRound.setVisibility(View.VISIBLE);
         layoutBreak.setVisibility(View.GONE);
 
@@ -98,51 +102,6 @@ public class SquatExerciseActivity extends AppCompatActivity {
         }
         setUpUser();
         getUserCurrentStats();
-
-        accelerometer.setListener(new Accelerometer.Listener() {
-            @Override
-            public void onTranslation(float tx, float ty, float tz) {
-                /*
-                TESTING
-                AccX.setText(String.format("X:%.2f", tx));
-                AccY.setText(String.format("Y:%.2f", ty));
-                AccZ.setText(String.format("Z:%.2f", tz));
-                 */
-
-                final double FINISH = 11.6;
-                final double START = 9.2;
-
-                // Make sure the phone is sideways
-                if (Math.abs(gravityX) >= 9 && Math.abs(gravityX) < 10) {
-                    // How a squat is recorded
-                    if (Math.abs(tx) >= FINISH && ready) {
-                        Log.i(TAG, String.format("X: %.2f", tx));
-                        SoundLibrary.playSound(SquatExerciseActivity.this, R.raw.ding);
-                        currentSquats++;
-                        overallSquats++;
-                        ready = false;
-
-                        if (currentSquats == goal) {
-                            round++;
-                            if (round == maxRounds) {
-                                vibrator.vibrate(500);
-                                endOfExercise();
-                            } else {
-                                vibrator.vibrate(500);
-                                goal = rounds.get(round);
-                                currentSquats = 0;
-                                switchLayout();
-                            }
-                        } else {
-                            updateTextView();
-                        }
-
-                    } else if (Math.abs(tx) <= START) {
-                        ready = true;
-                    }
-                }
-            }
-        });
 
         breakTimer = new CountDownTimer(BREAK_TIME * 1000 + 100, 1000) {
             @Override
@@ -165,6 +124,9 @@ public class SquatExerciseActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * A function for switching from round to break, and vice versa
+     */
     @SuppressLint("ResourceAsColor")
     private void switchLayout() {
         if (isRound) {
@@ -218,6 +180,9 @@ public class SquatExerciseActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * A function that fetches the user's attributes from the database only once
+     */
     private void getUserCurrentStats() {
         reference.child(userID).addValueEventListener(new ValueEventListener() {
             @Override
@@ -238,8 +203,11 @@ public class SquatExerciseActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * A function that applies the rewards to the user's profile and displays the exercise information
+     */
     private void endOfExercise() {
-        ready = false;
+        accelerometer.un_registerListener();
         reference.child(userID).child("strength").setValue(userStrength + getIntent().getIntExtra("strength", 0));
         reference.child(userID).child("stamina").setValue(userStamina + getIntent().getIntExtra("stamina", 0));
 
@@ -285,6 +253,9 @@ public class SquatExerciseActivity extends AppCompatActivity {
         txtSquatCount.setText(String.format("%02d / %02d", currentSquats, goal));
     }
 
+    /**
+     * A function for initializing all Views in the Squat exercise Activity
+     */
     private void initViews() {
         layoutRound = findViewById(R.id.squatExerciseRoundLayout);
         layoutBreak = findViewById(R.id.squatExerciseBreakLayout);
@@ -304,6 +275,50 @@ public class SquatExerciseActivity extends AppCompatActivity {
 
         txtSquatCount = findViewById(R.id.squatExerciseTxtSquatCount);
         vibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
+    }
+
+    /**
+     * A function for setting up the listener for the Accelerometer
+     */
+    private void initListeners()
+    {
+        accelerometer.setListener(new Accelerometer.Listener() {
+            @Override
+            public void onTranslation(float tx, float ty, float tz) {
+                final double FINISH = 11.6;
+                final double START = 9.2;
+
+                // Make sure the phone is sideways
+                if (Math.abs(gravityX) >= 9 && Math.abs(gravityX) < 10) {
+                    // How a squat is recorded
+                    if (Math.abs(tx) >= FINISH && ready) {
+                        Log.i(TAG, String.format("X: %.2f", tx));
+                        SoundLibrary.playSound(SquatExerciseActivity.this, R.raw.ding);
+                        currentSquats++;
+                        overallSquats++;
+                        ready = false;
+
+                        if (currentSquats == goal) {
+                            round++;
+                            if (round == maxRounds) {
+                                vibrator.vibrate(500);
+                                endOfExercise();
+                            } else {
+                                vibrator.vibrate(500);
+                                goal = rounds.get(round);
+                                currentSquats = 0;
+                                switchLayout();
+                            }
+                        } else {
+                            updateTextView();
+                        }
+
+                    } else if (Math.abs(tx) <= START) {
+                        ready = true;
+                    }
+                }
+            }
+        });
     }
 
     @Override
@@ -331,6 +346,9 @@ public class SquatExerciseActivity extends AppCompatActivity {
         displayClosingAlertBox();
     }
 
+    /**
+     * A function for displaying an AlertDialog that warns the user they are about to exit and loose all their progress
+     */
     private void displayClosingAlertBox() {
         int seconds = (int) ((System.currentTimeMillis() - startMilliseconds) / 1000);
         new AlertDialog.Builder(SquatExerciseActivity.this, R.style.MyDialogTheme)
@@ -351,6 +369,9 @@ public class SquatExerciseActivity extends AppCompatActivity {
                 .show();
     }
 
+    /**
+     * A function for assigning the userID to the userID variable
+     */
     private void setUpUser() {
         reference = FirebaseDatabase.getInstance().getReference("users");
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();

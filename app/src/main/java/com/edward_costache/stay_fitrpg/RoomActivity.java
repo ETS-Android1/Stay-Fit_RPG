@@ -21,6 +21,9 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+/**
+ * Created by Edward Costache
+ */
 public class RoomActivity extends AppCompatActivity {
     public static final String TAG = "user";
 
@@ -270,7 +273,9 @@ public class RoomActivity extends AppCompatActivity {
         }
     }
 
-    //initialize all views
+    /**
+     * A function for initializing all Views
+     */
     private void initViews() {
         txtRoomName = findViewById(R.id.roomTxtName);
         txtRoomCapacity = findViewById(R.id.roomTxtRoomCapacity);

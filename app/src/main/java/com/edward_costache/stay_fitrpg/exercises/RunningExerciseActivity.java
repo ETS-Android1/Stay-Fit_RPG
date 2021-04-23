@@ -33,6 +33,9 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+/**
+ * Created by Edward Costache
+ */
 public class RunningExerciseActivity extends AppCompatActivity {
 
     private LinearLayout layoutRound, layoutBreak;
@@ -70,12 +73,13 @@ public class RunningExerciseActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_running_exercise);
 
-        rounds = getIntent().getDoubleArrayExtra("rounds");
+        rounds = getIntent().getDoubleArrayExtra("rounds");     //getting the number of rounds from the RunningMenuActivity
         maxRounds = rounds.length;
         Log.i("TAG", "ROUNDS.LENGTH(): "+maxRounds);
         startMillis = System.currentTimeMillis();
         Log.i("ARRAY AFTER INTENT: ", rounds.toString());
         initViews();
+        //setting up the step detector to measure the distance travelled
         stepDetector.setListener(new StepDetector.Listener() {
             @Override
             public void onStep() {
@@ -178,6 +182,10 @@ public class RunningExerciseActivity extends AppCompatActivity {
 
     }
 
+    /**
+     *A function for displaying a AlertDialog when the user tries to back out from an exercise
+     *The AlertDialog will alert them that all progress will be lost
+     */
     private void displayClosingAlertBox() {
         int seconds = (int) ((System.currentTimeMillis() - startMillis) / 1000);
         new AlertDialog.Builder(RunningExerciseActivity.this, R.style.MyDialogTheme)
@@ -197,6 +205,9 @@ public class RunningExerciseActivity extends AppCompatActivity {
                 .show();
     }
 
+    /**
+     * A function for initializing the Views
+     */
     private void initViews() {
         stepDetector = new StepDetector(RunningExerciseActivity.this);
 
@@ -218,6 +229,9 @@ public class RunningExerciseActivity extends AppCompatActivity {
         btnTest = findViewById(R.id.btnTest);
     }
 
+    /**
+     * A function from switching the layout from round to break, and vice versa depending on a variable called isRound
+     */
     @SuppressLint("ResourceAsColor")
     private void switchLayout() {
         //instead of creating a new activity for break time. I decided to create a new layout for break, make it visible and make the round layout GONE
@@ -273,6 +287,10 @@ public class RunningExerciseActivity extends AppCompatActivity {
         txtDistance.setText(String.format("%.2f / %.2f", distanceKm, goal));
     }
 
+    /**
+     * A function for displaying the progress made by the user during the exercise
+     * The function will also update the user's attributes based on the rewards given for the exercise
+     */
     private void endOfExercise() {
         stepDetector.un_registerListener();     //i am unregistering the detector so that steps aren't counted after exercise completion.
         reference.child(userID).child("stamina").setValue(userStamina + getIntent().getIntExtra("stamina", 0));     //reward values are given through the intent in the previous activity
@@ -312,6 +330,9 @@ public class RunningExerciseActivity extends AppCompatActivity {
                 .show();
     }
 
+    /**
+     * A one time call to the database that fetches the user's respective attributes for the Running exercise
+     */
     private void getUserCurrentStats() {
         reference.child(userID).addValueEventListener(new ValueEventListener() {
             @Override
@@ -332,6 +353,9 @@ public class RunningExerciseActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * A function for assigning the UserID to its respective variable
+     */
     private void setUpUser() {
         reference = FirebaseDatabase.getInstance().getReference("users");
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();

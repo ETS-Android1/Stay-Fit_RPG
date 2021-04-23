@@ -1,26 +1,18 @@
 package com.edward_costache.stay_fitrpg.util;
 
 import android.content.Context;
-import android.content.DialogInterface;
-import android.os.Build;
-import android.util.Log;
 import android.view.View;
 
-import androidx.annotation.RequiresApi;
-import androidx.appcompat.app.AlertDialog;
-
-import com.edward_costache.stay_fitrpg.ProfileActivity;
-import com.edward_costache.stay_fitrpg.R;
 import com.google.android.material.snackbar.Snackbar;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 
+/**
+ * Created by Edward Costache
+ */
 public abstract class Util {
-
-    public final long MILLS_IN_DAY = 86400000;
-
     /**
      * The Calendar Abstract classes uses an offset from the Epoch January 1, 1970 00:00:00.000 GMT (Gregorian) to calculate time using milliseconds.
      * @return The time in milliseconds for the start of the day. Only returns the milliseconds for 00:00:00.

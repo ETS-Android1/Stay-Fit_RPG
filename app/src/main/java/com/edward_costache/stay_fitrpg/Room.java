@@ -1,5 +1,8 @@
 package com.edward_costache.stay_fitrpg;
 
+/**
+ * Created by Edward Costache
+ */
 public class Room {
     private String roomName, userID1, userID2;
     private int playersReady;

@@ -15,11 +15,13 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 
+/**
+ * Created by Edward Costache
+ */
 public class ForgotPasswordActivity extends AppCompatActivity {
 
     private EditText editTxtEmail;
     private Button btnReset;
-
     private FirebaseAuth mAuth;
 
     @Override
@@ -36,12 +38,19 @@ public class ForgotPasswordActivity extends AppCompatActivity {
             }
         });
     }
+
+    /**
+     * A function for initializing the Views
+     */
     private void initViews()
     {
         editTxtEmail = findViewById(R.id.forgotPassEditTxtEmail);
         btnReset = findViewById(R.id.forgotPassBtnRetrieve);
     }
 
+    /**
+     * A function for sending the user a reset password link to their email address
+     */
     private void resetPassword()
     {
         String email = editTxtEmail.getText().toString();

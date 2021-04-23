@@ -15,6 +15,9 @@ import com.edward_costache.stay_fitrpg.R;
 
 import java.util.ArrayList;
 
+/**
+ * Created by Edward Costache
+ */
 public class PushupMenuActivity extends AppCompatActivity {
     private RadioGroup radioGroup;
     private RadioButton radioButtonMedium;
@@ -55,6 +58,9 @@ public class PushupMenuActivity extends AppCompatActivity {
         finish();
     }
 
+    /**
+     * A function for setting up actions for each of the radio buttons
+     */
     private void setOnCheckedListeners()
     {
         radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
@@ -82,6 +88,9 @@ public class PushupMenuActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * A function for setting the difficulty to very easy
+     */
     private void setVeryEasy()
     {
         strengthGained = 5;
@@ -101,6 +110,9 @@ public class PushupMenuActivity extends AppCompatActivity {
         rounds.add(maxReps);
     }
 
+    /**
+     * A function for setting the difficulty to easy
+     */
     private void setEasy()
     {
         strengthGained = 6;
@@ -119,6 +131,9 @@ public class PushupMenuActivity extends AppCompatActivity {
         rounds.add((int)(maxReps*0.5));
     }
 
+    /**
+     * A function for setting the difficulty to medium
+     */
     private void setMedium()
     {
         strengthGained = 8;
@@ -135,6 +150,9 @@ public class PushupMenuActivity extends AppCompatActivity {
         rounds.add((int)(maxReps*0.8));
     }
 
+    /**
+     * A function for setting the difficulty to hard
+     */
     private void setHard()
     {
         strengthGained = 10;
@@ -150,6 +168,9 @@ public class PushupMenuActivity extends AppCompatActivity {
         rounds.add(maxReps);
     }
 
+    /**
+     * A function for updating the Views to display the right information after difficulty is changed
+     */
     private void updateViews()
     {
         //Round 1
@@ -180,7 +201,9 @@ public class PushupMenuActivity extends AppCompatActivity {
         txtHealth.setText(String.format("HEALTH: +%02d", healthGained));
     }
 
-
+    /**
+     * A function for initializing the Views
+     */
     private void initViews()
     {
         radioGroup = findViewById(R.id.pushupDifficultyRadioGrp);

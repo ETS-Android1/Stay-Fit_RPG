@@ -17,6 +17,9 @@ import com.google.firebase.auth.EmailAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
+/**
+ * Created by Edward Costache
+ */
 public class EmailChangeActivity extends AppCompatActivity {
     private EditText editTxtNewEmail, editTxtCurrentPassword;
     private Button btnChange;
@@ -33,20 +36,22 @@ public class EmailChangeActivity extends AppCompatActivity {
                 String email = editTxtNewEmail.getText().toString();
                 String password = editTxtCurrentPassword.getText().toString();
 
-                if(password.isEmpty())
+                if (password.isEmpty())      //make sure password is not empty
                 {
                     editTxtCurrentPassword.setError("Please enter a password!");
                     editTxtCurrentPassword.requestFocus();
                     return;
                 }
 
-                if (email.isEmpty()) {
+                if (email.isEmpty())        //make sure email is not empty
+                {
                     editTxtNewEmail.setError("Please enter an email address!");
                     editTxtNewEmail.requestFocus();
                     return;
                 }
 
-                if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
+                if (!Patterns.EMAIL_ADDRESS.matcher(email).matches())       //make sure the email matches a normal email pattern i.e name@exmaple.com
+                {
                     editTxtNewEmail.setError("Please enter a valid new email address!");
                     editTxtNewEmail.requestFocus();
                 }
@@ -62,6 +67,11 @@ public class EmailChangeActivity extends AppCompatActivity {
         finish();
     }
 
+    /**
+     * A function for validating the user before trying to change their email address
+     * @param email The email address they want to change to
+     * @param password The current password of their account
+     */
     private void changeEmail(String email, String password) {
         //get the current user logged in and update their email
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
@@ -97,6 +107,9 @@ public class EmailChangeActivity extends AppCompatActivity {
                 });
     }
 
+    /**
+     * A function for initializing the Views
+     */
     private void initViews() {
         editTxtNewEmail = findViewById(R.id.emailChangeEditTxtEmail);
         editTxtCurrentPassword = findViewById(R.id.emailChangeEditTextTextPassword);

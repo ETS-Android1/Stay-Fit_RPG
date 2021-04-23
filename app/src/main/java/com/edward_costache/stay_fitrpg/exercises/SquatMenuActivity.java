@@ -13,11 +13,12 @@ import android.widget.RadioGroup;
 import android.widget.TextView;
 
 import com.edward_costache.stay_fitrpg.R;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.ArrayList;
 
+/**
+ * Created by Edward Costache
+ */
 public class SquatMenuActivity extends AppCompatActivity {
 
     private RadioGroup radioGroup;
@@ -59,6 +60,9 @@ public class SquatMenuActivity extends AppCompatActivity {
         finish();
     }
 
+    /**
+     * A function that sets up actions when one of the radio buttons in pressed
+     */
     private void setOnCheckedListeners()
     {
         radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
@@ -86,6 +90,9 @@ public class SquatMenuActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * A function for setting the difficulty of the Squatting exercise to very easy
+     */
     private void setVeryEasy()
     {
         strengthGained = 6;
@@ -105,6 +112,9 @@ public class SquatMenuActivity extends AppCompatActivity {
         rounds.add(maxReps);
     }
 
+    /**
+     * A function for setting the difficulty for the Squatting exercise to easy
+     */
     private void setEasy()
     {
         strengthGained = 8;
@@ -123,6 +133,9 @@ public class SquatMenuActivity extends AppCompatActivity {
         rounds.add((int)(maxReps*0.5));
     }
 
+    /**
+     * A function for setting the difficulty for the Squatting exercise to medium
+     */
     private void setMedium()
     {
         strengthGained = 10;
@@ -139,6 +152,9 @@ public class SquatMenuActivity extends AppCompatActivity {
         rounds.add((int)(maxReps*0.8));
     }
 
+    /**
+     * A function for setting the difficulty for the Squatting exercise to hard
+     */
     private void setHard()
     {
         strengthGained = 12;
@@ -154,6 +170,9 @@ public class SquatMenuActivity extends AppCompatActivity {
         rounds.add(maxReps);
     }
 
+    /**
+     * A function for displaying the updated information when a difficulty is set
+     */
     private void updateViews()
     {
         //Round 1
@@ -186,7 +205,9 @@ public class SquatMenuActivity extends AppCompatActivity {
         txtStamina.setText(String.format("HEALTH: +%02d", staminaGained));
     }
 
-
+    /**
+     * A function for initializing the Views for the Squatting exercise
+     */
     private void initViews()
     {
         radioGroup = findViewById(R.id.squatDifficultyRadioGrp);

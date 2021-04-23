@@ -20,6 +20,9 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+/**
+ * Created by Edward Costache
+ */
 public class PasswordChangeActivity extends AppCompatActivity {
     private EditText editTxtOldPassword, editTxtNewPassword;
     private Button btnChange;
@@ -59,6 +62,11 @@ public class PasswordChangeActivity extends AppCompatActivity {
         finish();
     }
 
+    /**
+     * A function that changes the password if the user is authenticated
+     * @param currentPassword Current password of the account
+     * @param newPassword New password
+     */
     private void changePassword(String currentPassword, String newPassword) {
         //get the current user logged in
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
@@ -83,6 +91,9 @@ public class PasswordChangeActivity extends AppCompatActivity {
                 });
     }
 
+    /**
+     * A function for initializing all Views
+     */
     private void initViews() {
         editTxtNewPassword = findViewById(R.id.passChangeNewPassword);
         editTxtOldPassword = findViewById(R.id.passChangeOldPassword);

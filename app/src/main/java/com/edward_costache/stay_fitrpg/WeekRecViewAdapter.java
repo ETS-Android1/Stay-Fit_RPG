@@ -13,7 +13,10 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
 
-
+/**
+ * Adapted from freeCodeCamp.org, YouTube channel https://www.youtube.com/watch?v=fis26HvvDII&t=36127s
+ * Code creator: MeiCode https://www.youtube.com/channel/UCE3wAhsfp4wGRgHXIQjVx0w
+ */
 public class WeekRecViewAdapter extends RecyclerView.Adapter<WeekRecViewAdapter.ViewHolder>{
 
     private ArrayList<ProgressWeek> weeks = new ArrayList<>();

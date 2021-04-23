@@ -15,7 +15,6 @@ import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -23,6 +22,9 @@ import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 
+/**
+ * Created by Edward Costache
+ */
 public class LoginActivity extends AppCompatActivity {
 
     private Button btnLogin;
@@ -53,7 +55,6 @@ public class LoginActivity extends AppCompatActivity {
         }
 
         sharedPreferencesAccount = getSharedPreferences("account", MODE_PRIVATE);
-        //sharedPreferences.edit().clear().apply();
         if(sharedPreferencesAccount.getBoolean("rememberMe", false))
         {
             String email = sharedPreferencesAccount.getString("email", "");
@@ -103,6 +104,9 @@ public class LoginActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * A function for initializing the Views
+     */
     private void initViews() {
         btnLogin = findViewById(R.id.loginBtnLogin);
         txtSignup = findViewById(R.id.loginTxtSignup);
@@ -121,6 +125,9 @@ public class LoginActivity extends AppCompatActivity {
         progressBar = findViewById(R.id.loginProgressBar);
     }
 
+    /**
+     * A function for checking all TextFields are correct, if they are call login()
+     */
     private void checkCredentialLogin() {
         String email = editTxtEmail.getText().toString();
         String password = editTxtPassword.getText().toString();
@@ -160,6 +167,11 @@ public class LoginActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * A function that logs the user in when provided with an email and password
+     * @param email Required to log in
+     * @param password Required to log in
+     */
     private void login(String email, String password)
     {
         updateUI(true);
@@ -182,11 +194,18 @@ public class LoginActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * A function that navigates the user to the SignUpActivity
+     */
     private void moveSignup() {
         Intent intent = new Intent(LoginActivity.this, SignUpActivity.class);
         startActivity(intent);
     }
 
+    /**
+     * A function that updates the UI to a loading screen when enabled
+     * @param disappear Determines whether the UI should be loading or not
+     */
     private void updateUI(boolean disappear)
     {
         if(disappear) {

@@ -25,6 +25,9 @@ import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
 
+/**
+ * Created by Edward Costache
+ */
 public class ExercisesActivity extends AppCompatActivity {
 
     private com.google.android.material.card.MaterialCardView cardViewExercise1, cardViewExercise2, cardViewExercise3, cardViewExercise4, cardViewExercise5, cardViewExercise6;
@@ -42,8 +45,11 @@ public class ExercisesActivity extends AppCompatActivity {
         weekRef = FirebaseDatabase.getInstance().getReference("users").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child("progress");
 
         Calendar weekCalendar = new GregorianCalendar();
+        //get the start of the week with the provided format
         SimpleDateFormat formatterForWeek = new SimpleDateFormat("dd MMMM yyyy");
         String startOfWeek = formatterForWeek.format(weekCalendar.getTime());
+
+        //get the end of the week with the provided format
         String week_year = Integer.toString(weekCalendar.get(Calendar.WEEK_OF_YEAR));
         weekCalendar.add(Calendar.WEEK_OF_YEAR, 1);
         String endOfWeek = formatterForWeek.format(weekCalendar.getTime());
@@ -51,13 +57,16 @@ public class ExercisesActivity extends AppCompatActivity {
         weekRef.child(week_year).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
+                //create a new week, if there isn't one already in the database for the logged in user
                 if(snapshot.getValue() == null)
                 {
                     days = new HashMap<>();
+                    //combining the start of the week and the end of the week to create the whole week name.
                     String weekName = startOfWeek.substring(0, startOfWeek.length()-5)+" - "+endOfWeek.substring(0, endOfWeek.length()-5);
 
                     Calendar dayCalendar = new GregorianCalendar();
                     SimpleDateFormat formatterForDay = new SimpleDateFormat("E, dd-MM");
+                    //adding 7 days to the hashMap
                     for(int i = 1; i<8;i++)
                     {
                         //adding i to the name, so that in the firebase database they are sorted numerically, will be removed later
@@ -65,6 +74,7 @@ public class ExercisesActivity extends AppCompatActivity {
                         days.put(name, new ProgressDay());
                         dayCalendar.add(Calendar.DAY_OF_MONTH, 1);
                     }
+                    //assigning the days to a new ProgressWeek object
                     weekRef.child(week_year).setValue(new ProgressWeek(weekName, days));
                 }
             }
@@ -76,6 +86,9 @@ public class ExercisesActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * A function for initializing the Views
+     */
     private void initViews() {
         cardViewExercise1 = findViewById(R.id.exercises_pageCardViewExercise1);
         cardViewExercise2 = findViewById(R.id.exercises_pageCardViewExercise2);
@@ -87,7 +100,9 @@ public class ExercisesActivity extends AppCompatActivity {
         layout = findViewById(R.id.exercises_pageLayout);
     }
 
-
+    /**
+     * A function for initializing all clickListeners
+     */
     private void initClickListeners()
     {
         cardViewExercise1.setOnClickListener(new View.OnClickListener() {

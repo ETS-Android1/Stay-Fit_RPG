@@ -35,7 +35,9 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 
-
+/**
+ * Created by Edward Costache
+ */
 public class SitupExerciseActivity extends AppCompatActivity {
 
     private LinearLayout layoutRound, layoutBreak;
@@ -67,10 +69,11 @@ public class SitupExerciseActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_situp_exercise);
 
-        rounds = getIntent().getIntegerArrayListExtra("rounds");
+        rounds = getIntent().getIntegerArrayListExtra("rounds");        //get the number of rounds from SitupMenuActivity
         maxRounds = rounds.size();
         startMilliseconds = System.currentTimeMillis();
         initViews();
+        setUpListeners();
         layoutRound.setVisibility(View.VISIBLE);
         layoutBreak.setVisibility(View.GONE);
 
@@ -131,6 +134,9 @@ public class SitupExerciseActivity extends AppCompatActivity {
 
     }
 
+    /**
+     * A function for displaying an AlertDialog that warns the user they are about to exit and loose all their progress
+     */
     private void displayClosingAlertBox() {
         int seconds = (int) ((System.currentTimeMillis() - startMilliseconds) / 1000);
         new AlertDialog.Builder(SitupExerciseActivity.this, R.style.MyDialogTheme)
@@ -150,6 +156,9 @@ public class SitupExerciseActivity extends AppCompatActivity {
                 .show();
     }
 
+    /**
+     * A function for initializing all Views in the Situp exercise Activity
+     */
     private void initViews() {
         layoutRound = findViewById(R.id.situpExerciseRoundLayout);
         layoutBreak = findViewById(R.id.situpExerciseBreakLayout);
@@ -165,6 +174,14 @@ public class SitupExerciseActivity extends AppCompatActivity {
         txtRound6 = findViewById(R.id.situpExerciseTxtRound6);
         txtTime = findViewById(R.id.situpExerciseTxtTime);
 
+        vibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
+    }
+
+    /**
+     * A function for setting up the listener for the Accelerometer
+     */
+    private void setUpListeners()
+    {
         accelerometer = new Accelerometer(SitupExerciseActivity.this, Sensor.TYPE_ACCELEROMETER);
         accelerometer.setListener(new Accelerometer.Listener() {
             @Override
@@ -208,14 +225,15 @@ public class SitupExerciseActivity extends AppCompatActivity {
                 }
             }
         });
-
-        vibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
     }
 
     private void updateTextView() {
         txtSitupCount.setText(String.format("%02d / %02d", currentSitups, goal));
     }
 
+    /**
+     * A function for switching from round to break, and vice versa
+     */
     @SuppressLint("ResourceAsColor")
     private void switchLayout() {
         if (isRound) {
@@ -269,8 +287,11 @@ public class SitupExerciseActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * A function that fetches the user's attributes from the database only once
+     */
     private void getUserCurrentStats() {
-        reference.child(userID).addValueEventListener(new ValueEventListener() {
+        reference.child(userID).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 try {
@@ -289,8 +310,11 @@ public class SitupExerciseActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * A function that applies the rewards to the user's profile and displays the exercise information
+     */
     private void endOfExercise() {
-        ready = false;
+        accelerometer.un_registerListener();
         reference.child(userID).child("stamina").setValue(userStamina + getIntent().getIntExtra("stamina", 0));
         reference.child(userID).child("health").setValue(userHealth + getIntent().getIntExtra("health", 0));
 
@@ -328,6 +352,9 @@ public class SitupExerciseActivity extends AppCompatActivity {
                 .show();
     }
 
+    /**
+     * A function for assigning the userID to the userID variable
+     */
     private void setUpUser() {
         reference = FirebaseDatabase.getInstance().getReference("users");
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();

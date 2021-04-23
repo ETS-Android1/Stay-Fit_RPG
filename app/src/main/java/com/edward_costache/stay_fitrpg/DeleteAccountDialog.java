@@ -7,20 +7,15 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatDialogFragment;
 
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.firebase.auth.AuthCredential;
-import com.google.firebase.auth.EmailAuthProvider;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
-
+/**
+ * Code adapted from Coding in Flow, YouTube channel https://www.youtube.com/watch?v=ARezg1D9Zd0
+ */
 public class DeleteAccountDialog extends AppCompatDialogFragment{
     private EditText editTxtPassword;
     private DialogDeleteAccountListener listener;
